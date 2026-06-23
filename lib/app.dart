@@ -38,10 +38,6 @@ class MysticaTarotApp extends StatelessWidget {
         return const Locale('en');
       },
 
-      // Router
-      initialRoute: AppRouter.home,
-      onGenerateRoute: AppRouter.generateRoute,
-
       // Home
       home: const HomePage(),
     );
