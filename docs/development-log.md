@@ -760,3 +760,59 @@ e: Daemon compilation failed
 - Kotlin 2.3 daemon PersistentHashMap issue: https://youtrack.jetbrains.com/issue/KT-72876
 - Gradle 9.1 release notes: https://docs.gradle.org/9.1/release-notes.html
 - share_plus KGP-free migration: https://github.com/fluttercommunity/plus_plugins/pull/2710
+
+---
+
+## Phase 8b-followup-2: 修复 `:app:checkProfileAarMetadata` —— 启用 core library desugaring
+
+**完成日期**: 2026-06-23
+**耗时**: Phase 8b 同日
+**Git Commit**: `git log --grep="phase8b-followup-2" --oneline -1` 交付后查
+
+### 用户提示
+本轮首次在真机上跑 `scripts\profile-android.bat`。结果看到 Phase 8b Kotlin daemon 修复（`audioplayers_android:compileProfileKotlin` 跑过）生效了，但接着 Gradle 在同一管道下一阶段的 `:app:checkProfileAarMetadata` 步骤抛 desugaring demand——是另一个独立的前置条件问题。
+
+### 实际现象
+脚本 trace 输出（`docs\profile-traces\2026-06-23\flutter-run.log`）中以下关键行：
+
+```
+> Task :audioplayers_android:compileProfileKotlin
+... (Phase 8b 保护护圈生效，未打出现之前的 PersistentHashMap 报错)
+
+> Task :app:checkProfileAarMetadata FAILED
+> An issue was found when checking AAR metadata:
+> 1.  Dependency ':flutter_local_notifications' requires core library
+>     desugaring to be enabled for :app.
+
+BUILD FAILED in 24s
+Running Gradle task 'assembleProfile'... 24.3s
+Error: Gradle task assembleProfile failed with exit code 1
+```
+
+### 决策与路径选择
+- **Path A（交叉调查 share_plus + flutter_local_notifications）**：跳过。`flutter_local_notifications` 是 Phase 4 接入的每日提醒功能（生产代码使用），调查后判定两个插件在上游均保持兼容状态，不需替换。share_plus 同理。
+- **Path B（在 AGP 9.x Kotlin DSL 下打开 desugaring 并引入 desugar_jdk_libs）**：采纳。`compileOptions.isCoreLibraryDesugaringEnabled = true` + `dependencies.coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")` 两者同时启用。与 AGP 9.0.1 + Java 17 兼容，是 Flutter 社区标准修补模式。
+
+### 代码变更 (3 个文件)
+
+**`android/app/build.gradle.kts`**（2 处 edit）：
+- `compileOptions` 加 `isCoreLibraryDesugaringEnabled = true`（控制编译阶段 AAR 检查）。
+- 文件末尾加 `dependencies {}` 块，引入 `coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")`（仅是开关不起作用、必须同时带 polyfill artifact）。
+
+**`docs/bug-log.md`**：新增 **Bug #006** 条目——含完整现象、复现、根因、决策记录、教训、链接。与 Bug #005 是同一域不同故障路径，两个错都需现场走脚本才能复现。
+
+**`docs/development-log.md`**：本条目。
+
+### 验证
+- [x] `flutter analyze` → 0 issues（未改 Dart 代码，仅 Gradle config）
+- [x] 现场走 `flutter build apk --profile --target-platform=android-arm64` —— 跳过 `adb install` + DevTools，约 2–3 分钟，提前验相同 Gradle/Kotlin pipeline。**实证**: `app-profile.apk` (55.4MB) 成功输出，无 PersistentHashMap / desugaring 报错
+- [ ] 之后重跑 `scripts\profile-android.bat` —— 走完整 profile launch + DevTools ready 路径（手机设备需 adb 可用；APK 构建已验证 Gradle pipeline 干净）
+
+### 遗留问题/TODO
+- **Bug #005 的“`share_plus: outdated: applies KGP`”警告**：警告性，不会阻塞构建。Phase 8c 可以考虑 bump 到 `^13.0.0` 彻底去掉该警告。
+- **Phase 8 P4–P7（dev/Hive-lazy / const-audit / Provider-scope / i18n-lazy）**：需拿到能成功走到首帧的 trace 后才能开（Device Memory 面板拖到 Profile 页后可看）。
+
+### 参考资源
+- Android Java 8+ desugaring: https://developer.android.com/studio/write/java8-support
+- AGP 9 desugar_jdk_libs 版本掠过：https://developer.android.com/build/releases/gradle-plugin
+- docs/bug-log.md#006：完整复现与根因

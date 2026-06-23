@@ -366,3 +366,76 @@ flutter pub get
 - Gradle 9.1 release notes: https://docs.gradle.org/9.1/release-notes.html
 - Android Gradle Plugin 9.0 schema migration: https://developer.android.com/build/releases/gradle-plugin
 - share_plus KGP-free migration PR: https://github.com/fluttercommunity/plus_plugins/pull/2710
+
+---
+
+## Bug #006: `:app:checkProfileAarMetadata` 失败 — `flutter_local_notifications` 要求 core library desugaring 启用
+
+**发现日期**: 2026-06-23
+**发现阶段**: Phase 8b-followup-2 — 真机 Profile 实际跑验收
+**严重程度**: 🟠 高（Phase 8b Kotlin daemon 修复通过、`compileProfileKotlin` 跑过、`checkProfileAarMetadata` 兜底抛错，后续 AAR 检查全挂）
+**状态**: ✅ 已修复（`compileOptions.isCoreLibraryDesugaringEnabled = true` + `coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")`）
+
+### 现象描述
+`flutter run --profile` 在 Phase 8b Kotlin daemon 修复（f52c84d + 9686abd）后从 `audioplayers_android:compileProfileKotlin` 跑过了，但 Gradle 随即 abort 在：
+
+```
+FAILURE: Build failed with an exception.
+* What went wrong:
+Execution failed for task ':app:checkProfileAarMetadata'.
+> A failure occurred while executing com.android.build.gradle.internal.tasks.CheckAarMetadataWorkAction
+   > An issue was found when checking AAR metadata:
+       1.  Dependency ':flutter_local_notifications' requires core library
+           desugaring to be enabled for :app.
+           See https://developer.android.com/studio/write/java8-support.html
+           for more details.
+
+BUILD FAILED in 24s
+```
+
+### 复现步骤
+1. 设备: Xiaomi 22021211RC, Android 13 (API 33), `adb devices` 显示 `device`。
+2. E:\APP 下 Windows 11 24H2 + AGP 9.0.1 + Kotlin 2.3.20 + Flutter 3.44.3。
+3. 跑 `.\scripts\profile-android.bat`（已带 -d %DEVICE% + PowerShell date 修复后的）。
+4. 1️⃣ Gradle 走完 `compileProfileKotlin` — Phase 8b 修复在这一步生效。 
+5. 2️⃣ 接着到 `:app:checkProfileAarMetadata` — AAR 元数据检查要求 desugaring，脚本 abort。
+
+### 根因分析
+- `flutter_local_notifications` 现代版本使用 Java 8+ APIs（主要是 `java.time` 日期 API）在 Kotlin/Java 通信边界。
+- Android 22 以下原生不提供这些 API；Android 13 (API 33) 设备上时代过老、运行时缺少、所以检查阶段直接拒绝构建。
+- 即使 `compileOptions { sourceCompatibility = VERSION_17 }`，AAR 元数据仍要求显式打开 desugaring 才能带 polyfill 到 APK。
+- 与 Phase 8b Kotlin daemon 竞速问题无关 — 是另一条不同错误路径。
+
+### 解决方案
+补丁两个 `android/app/build.gradle.kts` 处：
+
+```kotlin
+android {
+    ...
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true   // <-- added
+    }
+    ...
+}
+
+flutter { source = "../.." }
+
+dependencies {                                       // <-- added block
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+}
+```
+
+1. `compileOptions` 里加 `isCoreLibraryDesugaringEnabled = true`。
+2. 文件末尾加 `dependencies {}` 块，引入 `desugar_jdk_libs:2.1.4`（与 AGP 9.0.1 兼容）。
+- 如果不引入 desugaring artifact（仅打开开关），Gradle 在应用插件阶段会报告 `coreLibraryDesugaring dependency 'com.android.tools:desugar_jdk_libs' is either disabled or could not be located` — 两步必须同时。
+
+### 教训/预防措施
+- **任何使用 `flutter_local_notifications` 或 `flutter_native_timezone` 等含 Java 8+ API 的 plugin 都要打开 desugaring**。Flutter 默认 Android 模板不自动打开。
+- **在新增 plugin 后一定要跑 `flutter build apk --profile`** 做快速检查（不像 `flutter run --profile` 还要装运行，能快 2-3 分钟）。
+- 不要只在 `compileOptions` 里加开关 — 还要在 `dependencies {}` 里实际引入 desugar_jdk_libs；两者缺一不可。
+
+### 相关链接
+- Android Java 8+ desugaring: https://developer.android.com/studio/write/java8-support
+- flutter_local_notifications: https://pub.dev/packages/flutter_local_notifications

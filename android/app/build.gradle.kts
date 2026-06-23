@@ -12,6 +12,10 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        // Bug #006: :app:checkProfileAarMetadata requires core library
+        // desugaring because flutter_local_notifications uses java.time +
+        // other Java 8+ APIs that older Android runtimes lack natively.
+        isCoreLibraryDesugaringEnabled = true
     }
 
     defaultConfig {
@@ -42,4 +46,11 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+// Bug #006: :app:checkProfileAarMetadata fails without this — see dev-log
+// Phase 8b-followup-2 for context. flutter_local_notifications uses java.time
+// APIs that older Android runtimes lack without the desugaring polyfill.
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
