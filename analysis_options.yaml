@@ -19,12 +19,10 @@ linter:
     # Error prevention
     avoid_empty_else: true
     avoid_init_to_null: true
-    avoid_null_checks_in_equality_operators: true
     avoid_shadowing_type_parameters: true
     avoid_types_as_parameter_names: true
     no_duplicate_case_values: true
     type_init_formals: true
-    unnecessary_null_comparison: true
     unrelated_type_equality_checks: true
     use_super_parameters: true
 

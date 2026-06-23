@@ -11,28 +11,16 @@ class DailyCardWidget extends StatelessWidget {
     // TODO: Show today's card
     return Card(
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(20)),
       ),
       color: AppColors.rosePink.withValues(alpha: 0.1),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+      child: const Padding(
+        padding: EdgeInsets.all(16),
         child: Row(
           children: [
-            Container(
-              width: 60,
-              height: 90,
-              decoration: BoxDecoration(
-                color: AppColors.softPurple,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.auto_stories,
-                color: Colors.white,
-                size: 28,
-              ),
-            ),
-            const SizedBox(width: 16),
+            _CardImage(),
+            SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,7 +29,7 @@ class DailyCardWidget extends StatelessWidget {
                     'Daily Card',
                     style: AppTextStyles.cardTitle,
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(
                     'Tap to draw your card for today',
                     style: AppTextStyles.cardSubtitle,
@@ -49,12 +37,34 @@ class DailyCardWidget extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(
+            Icon(
               Icons.chevron_right,
               color: AppColors.rosePink,
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Card image placeholder (extracted for const optimization)
+class _CardImage extends StatelessWidget {
+  const _CardImage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 60,
+      height: 90,
+      decoration: const BoxDecoration(
+        color: AppColors.softPurple,
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+      ),
+      child: const Icon(
+        Icons.auto_stories,
+        color: Colors.white,
+        size: 28,
       ),
     );
   }
