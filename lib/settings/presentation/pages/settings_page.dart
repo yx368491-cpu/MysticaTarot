@@ -6,6 +6,7 @@ import '../../../shared/widgets/gradient_background.dart';
 import '../../../shared/widgets/settings_tile.dart';
 import '../../../shared/widgets/language_selector.dart';
 import '../../providers/settings_provider.dart';
+import 'about_page.dart';
 
 /// Settings page
 class SettingsPage extends StatelessWidget {
@@ -169,17 +170,9 @@ class SettingsPage extends StatelessWidget {
   }
 
   void _showAbout(BuildContext context) {
-    showAboutDialog(
-      context: context,
-      applicationName: 'MysticaTarot',
-      applicationVersion: '0.1.0',
-      applicationLegalese: 'For entertainment purposes only.',
-      children: [
-        const Text(
-          'MysticaTarot is a free offline tarot and divination app '
-          'supporting English, Tagalog, and Chinese.',
-        ),
-      ],
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const AboutPage()),
     );
   }
 }
