@@ -287,3 +287,60 @@
 - 灵数学: https://en.wikipedia.org/wiki/Numerology
 - 御神签: https://en.wikipedia.org/wiki/Omikuji
 - Flutter 动画: https://docs.flutter.dev/ui/animations
+
+---
+
+## Phase 4: 每日抽卡 & 历史记录 & 音效 & 设置
+
+**完成日期**: 2026-06-23  
+**耗时**: 1 天  
+**Git Commits**: `feat: phase 4 daily card, history, settings, notifications, sound`
+
+### 完成的功能
+- [x] **每日抽卡** — 日期种子确定性抽牌（塔罗牌/Oracle 卡），Hive 缓存防重复抽取
+- [x] **历史记录** — 三语历史记录列表 + 类型图标 + 单条删除 + 清空所有 + 详情页
+- [x] **设置页面** — 语言切换（en/zh/tl）+ 每日通知开关 + 通知时间选择 + 音效开关 + 主题切换（Light/Dark/System）+ 牌背样式选择 + 关于页面
+- [x] **底部导航** — HomePage 新增底部导航栏（Home/History/Settings），IndexedStack 保持页面状态
+- [x] **每日抽卡横幅** — HomePage 顶部展示每日卡入口，点击进入抽卡页
+- [x] **本地通知** — flutter_local_notifications 每日定时提醒
+- [x] **音效框架** — SoundUtils 修复为 .wav 路径（基础设施就绪）
+- [x] **主题切换** — SettingsProvider → Consumer 实时切换浅色/深色/跟随系统
+- [x] flutter analyze — No issues found / flutter test — All tests passed
+
+### 新增文件
+| 文件 | 说明 |
+|------|------|
+| `lib/core/services/notification_service.dart` | 本地通知服务（每日提醒） |
+| `lib/features/home/services/daily_card_service.dart` | 日期种子确定性抽牌 + 双类型（塔罗/Oracle） |
+| `lib/features/home/providers/daily_card_provider.dart` | Hive 缓存每日状态防重复抽取 |
+| `lib/features/daily_card/presentation/pages/daily_card_page.dart` | 每日卡页面（翻牌展示 + 指南解读） |
+| `lib/features/history/presentation/pages/history_page.dart` | 历史记录列表 + 详情页 + 删除功能 |
+| `lib/settings/presentation/pages/settings_page.dart` | 完整设置页面（6项配置） |
+
+### 修改文件
+| 文件 | 变更 |
+|------|------|
+| `lib/app.dart` | → StatefulWidget + Consumer<SettingsProvider> + 通知初始化 + DailyCardProvider |
+| `lib/features/home/presentation/pages/home_page.dart` | → 底部导航（3 tab）+ 每日卡横幅 |
+| `lib/core/utils/sound_utils.dart` | .mp3 → .wav 路径 |
+| `test/widget_test.dart` | 更新测试结构 |
+
+### 关键技术决策
+- **决策**: Consumer<SettingsProvider> 包裹 MaterialApp 实现主题/语言实时切换
+  **理由**: 主题和语言切换需要 MaterialApp 重建，Consumer 负责监听并提供最新的 settings 值
+
+- **决策**: DailyCard 使用日期种子（YYYYMMDD）确定抽牌结果
+  **理由**: 同一用户同一天始终抽到同一张牌，符合 spec 要求；Hive 仅缓存"已抽取"状态防 UI 重复
+
+- **决策**: IndexedStack 实现底部导航
+  **理由**: 保持各 tab 页面状态（如历史列表滚动位置），避免每次切换重建 Widget
+
+- **决策**: 通知初始化在 app.dart initState 中异步执行
+  **理由**: 延迟初始化不影响 app 启动速度，失败静默捕获（非关键功能）
+
+### 注意事项
+- 音效基础设施已就绪但未接入 UI（需在 ShuffleAnimation/CardFlipAnimation 中添加 SoundUtils 调用）
+- 设置页面的音效开关尚未与 SoundUtils.setEnabled() 关联
+- 历史详情页显示 Card ID# 而非卡片名称（ReadingRecord 不持卡名，需后续完善）
+- widget_test.dart 当前为占位测试，因完整 app 依赖 Hive 初始化
+- 通知使用 inexactAllowWhileIdle 调度模式，非精确触发时间
