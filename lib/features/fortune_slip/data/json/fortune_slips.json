@@ -1,0 +1,202 @@
+[
+  {
+    "id": 0,
+    "grade": "daiji",
+    "gradeEn": "Great Blessing",
+    "gradeZh": "大吉",
+    "gradeTl": "Malaking Biyaya",
+    "textEn": "A time of great fortune and happiness. The universe smiles upon you. All your endeavors will succeed beyond expectations.",
+    "textZh": "大吉大利的时刻。宇宙对你微笑。你的一切努力都将超乎预期地成功。",
+    "textTl": "Isang panahon ng malaking kapalaran at kaligayahan. Ang sansinukob ay ngumingiti sa iyo."
+  },
+  {
+    "id": 1,
+    "grade": "chukichi",
+    "gradeEn": "Medium Blessing",
+    "gradeZh": "中吉",
+    "gradeTl": "Katamtamang Biyaya",
+    "textEn": "Good fortune is coming your way. Keep faith and continue your efforts. Success is near but requires patience.",
+    "textZh": "好运正向你走来。保持信念，继续努力。成功就在不远处，但需要耐心。",
+    "textTl": "Ang magandang kapalaran ay darating sa iyo. Panatilihin ang pananampalataya at magpatuloy."
+  },
+  {
+    "id": 2,
+    "grade": "shokichi",
+    "gradeEn": "Small Blessing",
+    "gradeZh": "小吉",
+    "gradeTl": "Maliit na Biyaya",
+    "textEn": "Small blessings lead to greater joys. Pay attention to the little things. Gratitude will attract more abundance.",
+    "textZh": "小福带来大乐。关注小事。感恩将吸引更多丰盛。",
+    "textTl": "Ang maliliit na biyaya ay humahantong sa mas malaking kagalakan. Magpasalamat."
+  },
+  {
+    "id": 3,
+    "grade": "kichi",
+    "gradeEn": "Blessing",
+    "gradeZh": "吉",
+    "gradeTl": "Biyaya",
+    "textEn": "A favorable sign. Things are moving in the right direction. Trust the process and stay positive.",
+    "textZh": "吉兆。事情正在朝着正确的方向发展。相信过程，保持积极。",
+    "textTl": "Isang paborableng tanda. Ang mga bagay ay gumagalaw sa tamang direksyon."
+  },
+  {
+    "id": 4,
+    "grade": "suekichi",
+    "gradeEn": "Future Blessing",
+    "gradeZh": "末吉",
+    "gradeTl": "Hinaharap na Biyaya",
+    "textEn": "This blessing will come later. Be patient and persevere. Good things take time to manifest.",
+    "textZh": "福气稍后到来。保持耐心和毅力。好事需要时间来实现。",
+    "textTl": "Ang biyayang ito ay darating mamaya. Maging matiyaga at magtiyaga."
+  },
+  {
+    "id": 5,
+    "grade": "kyo",
+    "gradeEn": "Curse",
+    "gradeZh": "凶",
+    "gradeTl": "Sumpa",
+    "textEn": "A challenging time. Be cautious and avoid major decisions. This too shall pass.",
+    "textZh": "充满挑战的时刻。谨慎行事，避免重大决定。一切都会过去。",
+    "textTl": "Isang mapanghamong panahon. Maging maingat at iwasan ang malalaking desisyon."
+  },
+  {
+    "id": 6,
+    "grade": "daiji",
+    "gradeEn": "Great Blessing",
+    "gradeZh": "大吉",
+    "gradeTl": "Malaking Biyaya",
+    "textEn": "A wish you hold dear is about to be fulfilled. The stars are aligned in your favor.",
+    "textZh": "你珍视的愿望即将实现。星辰为你排列。",
+    "textTl": "Isang hinahangad mo ay malapit nang matupad. Ang mga bituin ay pabor sa iyo."
+  },
+  {
+    "id": 7,
+    "grade": "chukichi",
+    "gradeEn": "Medium Blessing",
+    "gradeZh": "中吉",
+    "gradeTl": "Katamtamang Biyaya",
+    "textEn": "A new opportunity will present itself soon. Be ready to seize it with both hands.",
+    "textZh": "一个新机会即将出现。准备好用双手抓住它。",
+    "textTl": "Isang bagong pagkakataon ang magpapakita sa lalong madaling panahon."
+  },
+  {
+    "id": 8,
+    "grade": "kichi",
+    "gradeEn": "Blessing",
+    "gradeZh": "吉",
+    "gradeTl": "Biyaya",
+    "textEn": "Harmony and balance are returning to your life. Peace follows patience.",
+    "textZh": "和谐与平衡正在回归你的生活。平静紧随耐心而来。",
+    "textTl": "Ang harmoniya at balanse ay bumabalik sa iyong buhay."
+  },
+  {
+    "id": 9,
+    "grade": "shokichi",
+    "gradeEn": "Small Blessing",
+    "gradeZh": "小吉",
+    "gradeTl": "Maliit na Biyaya",
+    "textEn": "A small step today leads to a great leap tomorrow. Keep moving forward.",
+    "textZh": "今天的一小步带来明天的一大步。继续向前。",
+    "textTl": "Ang maliit na hakbang ngayon ay humahantong sa malaking lukso bukas."
+  },
+  {
+    "id": 10,
+    "grade": "suekichi",
+    "gradeEn": "Future Blessing",
+    "gradeZh": "末吉",
+    "gradeTl": "Hinaharap na Biyaya",
+    "textEn": "The seeds you plant now will bloom beautifully in the future. Have faith.",
+    "textZh": "你现在种下的种子将在未来美丽绽放。保持信心。",
+    "textTl": "Ang mga buto na iyong itinanim ngayon ay mamumulaklak nang maganda sa hinaharap."
+  },
+  {
+    "id": 11,
+    "grade": "kyo",
+    "gradeEn": "Curse",
+    "gradeZh": "凶",
+    "gradeTl": "Sumpa",
+    "textEn": "A period of reflection is needed. Look inward for answers and avoid impulsive actions.",
+    "textZh": "需要反思的时期。向内寻找答案，避免冲动行为。",
+    "textTl": "Kailangan ang panahon ng pagninilay. Tumingin sa loob para sa mga sagot."
+  },
+  {
+    "id": 12,
+    "grade": "daiji",
+    "gradeEn": "Great Blessing",
+    "gradeZh": "大吉",
+    "gradeTl": "Malaking Biyaya",
+    "textEn": "Joy and abundance flow into your life like a river. Share your blessings with others.",
+    "textZh": "喜悦和丰盛如河流般流入你的生活。与他人分享你的祝福。",
+    "textTl": "Ang kagalakan at kasaganaan ay dumadaloy sa iyong buhay tulad ng isang ilog."
+  },
+  {
+    "id": 13,
+    "grade": "chukichi",
+    "gradeEn": "Medium Blessing",
+    "gradeZh": "中吉",
+    "gradeTl": "Katamtamang Biyaya",
+    "textEn": "An unexpected meeting will bring positive change. Stay open to new connections.",
+    "textZh": "一次意外的相遇将带来积极的变化。对新联系保持开放。",
+    "textTl": "Isang hindi inaasahang pagkikita ay magdadala ng positibong pagbabago."
+  },
+  {
+    "id": 14,
+    "grade": "kichi",
+    "gradeEn": "Blessing",
+    "gradeZh": "吉",
+    "gradeTl": "Biyaya",
+    "textEn": "Your hard work is beginning to pay off. Continue with dedication and patience.",
+    "textZh": "你的努力开始得到回报。继续以奉献和耐心前进。",
+    "textTl": "Ang iyong pagsusumikap ay nagsisimulang magbunga. Magpatuloy nang may dedikasyon."
+  },
+  {
+    "id": 15,
+    "grade": "shokichi",
+    "gradeEn": "Small Blessing",
+    "gradeZh": "小吉",
+    "gradeTl": "Maliit na Biyaya",
+    "textEn": "A gentle reminder to appreciate the present moment. Happiness is found in the now.",
+    "textZh": "温柔的提醒，珍惜当下。快乐就在当下。",
+    "textTl": "Isang banayad na paalala na pahalagahan ang kasalukuyang sandali."
+  },
+  {
+    "id": 16,
+    "grade": "daiji",
+    "gradeEn": "Great Blessing",
+    "gradeZh": "大吉",
+    "gradeTl": "Malaking Biyaya",
+    "textEn": "The path ahead is bright and clear. Walk forward with confidence and joy.",
+    "textZh": "前方的道路明亮清晰。带着自信和喜悦向前走。",
+    "textTl": "Ang daan sa unahan ay maliwanag at malinaw. Lumakad nang may kumpiyansa."
+  },
+  {
+    "id": 17,
+    "grade": "suekichi",
+    "gradeEn": "Future Blessing",
+    "gradeZh": "末吉",
+    "gradeTl": "Hinaharap na Biyaya",
+    "textEn": "What you seek is seeking you. Trust that the universe is working in your favor.",
+    "textZh": "你所寻求的也在寻求你。相信宇宙正在以对你有利的方式运作。",
+    "textTl": "Ang iyong hinahanap ay hinahanap ka. Magtiwala na ang sansinukob ay pabor sa iyo."
+  },
+  {
+    "id": 18,
+    "grade": "kichi",
+    "gradeEn": "Blessing",
+    "gradeZh": "吉",
+    "gradeTl": "Biyaya",
+    "textEn": "A time of healing and renewal. Let go of what no longer serves you.",
+    "textZh": "疗愈和更新的时刻。放下不再服务你的事物。",
+    "textTl": "Isang panahon ng paggaling at pagbabago. Bitawan ang hindi na naglilingkod sa iyo."
+  },
+  {
+    "id": 19,
+    "grade": "chukichi",
+    "gradeEn": "Medium Blessing",
+    "gradeZh": "中吉",
+    "gradeTl": "Katamtamang Biyaya",
+    "textEn": "Creativity flows through you. Express yourself freely and inspiration will follow.",
+    "textZh": "创造力流经你。自由表达自己，灵感将随之而来。",
+    "textTl": "Ang pagkamalikhain ay dumadaloy sa iyo. Ipahayag ang iyong sarili nang malaya."
+  }
+]
