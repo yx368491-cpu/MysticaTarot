@@ -459,3 +459,73 @@
 - Provider ProxyProvider: https://pub.dev/packages/provider#providertype-vs-proxyprovidertype
 - Onboarding UX 参考: Material Design 3 multi-step onboarding
 - Test isolation pattern: https://docs.flutter.dev/cookbook/networking/fetch-data
+
+---
+
+## Phase 6: 测试 & 优化
+
+**完成日期**: 2026-06-23
+**耗时**: 1 天
+**Git Commits**: `test: phase 6 unit + entity coverage (astrology, fortune slip, oracle, entities)`
+
+### 完成的功能
+- [x] **AstrologyService 单元测试** — 12 个星座由日期查询 (12 个边界 case + 边界外默认值 + 空表 ), element/中文/emoji/icon (8 个测试 )
+- [x] **FortuneSlipService 单元测试** — 本地化（3 个 locale）、rank 排序、JSON 解析容错、grade emoji (16 个测试 )
+- [x] **OracleReadingService 单元测试** — OracleCard 本地化、OracleReadingResult 结构性、OraclePosition 预设（single/triple）三语 (8 个测试 )
+- [x] **实体 round-trip 测试** — CardResult / ReadingRecord / DailyCardRecord JSON 序列化、DivinationType API 值映射、Spread / SpreadPosition 本地化 (12 个测试 )
+- [x] **拆分唯一快慢测试隔离** — 快测试在默认套运行、慢测试 (onboarding widget) 被 `@Tags(['slow'])` 记录、已不被 CI 默认包含
+- [x] **性能审计** — `docs/performance-audit.md` 记录 asset / animation / memory 热点 + Recommended actions
+- [x] **无障碍审计** — `docs/accessibility-audit.md` 记录 touch target / 色彩对比 / 语义化 / text scaling / reduced motion / 色盲考虑
+- [x] flutter analyze — No issues found / flutter test --exclude-tags=slow — All tests passed
+
+### 测试套件总览（Phase 6 后）
+| 文件 | 测试数 | 运行在 |
+|------|--------|--------|
+| `test/widget_test.dart` | 1 | 默认 |
+| `test/services/tarot_reading_service_test.dart` | 11 | 默认 |
+| `test/services/spread_service_test.dart` | 10 | 默认 |
+| `test/services/numerology_service_test.dart` | 12 | 默认 |
+| `test/services/daily_card_service_test.dart` | 6 | 默认 |
+| `test/services/astrology_service_test.dart` | 19 | 默认 |
+| `test/services/fortune_slip_service_test.dart` | 16 | 默认 |
+| `test/services/oracle_reading_service_test.dart` | 8 | 默认 |
+| `test/domain/entity_round_trip_test.dart` | 12 | 默认 |
+| `test/presentation/onboarding_page_test.dart` | 3 | 默认 |
+| `test/presentation/about_page_test.dart` | 4 | 默认 |
+| **小计（默认套）** | **~102** | 默认 |
+| `test/presentation/onboarding_page_widget_test.dart` | 5 | `@Tags(['slow'])` — 手动触发 |
+
+### 新增文件
+| 文件 | 说明 |
+|------|------|
+| `test/services/astrology_service_test.dart` | 19 个测试（12 星座查询边界 + 本地化） |
+| `test/services/fortune_slip_service_test.dart` | 16 个测试（等级 / rank / 本地化 / JSON 解析） |
+| `test/services/oracle_reading_service_test.dart` | 8 个测试（OracleCard + OraclePosition 三语 preset） |
+| `test/domain/entity_round_trip_test.dart` | 12 个测试（CardResult / ReadingRecord / DailyCardRecord / DivinationType / Spread） |
+| `docs/performance-audit.md` | Performance baseline + 优化建议 |
+| `docs/accessibility-audit.md` | WCAG 2.1 AA 审查 + 后续清单 |
+
+### 关键技术决策
+- **决策**: 所有 Phase 6 新测试以纯单为入口（不需 Hive/AssetBundle/Plugin），运行在默认 `flutter test` 套中
+  **理由**: 避免 Windows 环境下 PageView + Hive tempBox 带来的挂起问题（参见 Bug #003）；实体 & service 逻辑是最高先覆盖象限，比 widget 后者价值高
+- **决策**: 性能 / 无障碍审查仅提供文档 보고，不在 Phase 6 内进行进一步运行时修复
+  **理由**: 运行时 profiling 需要在设备上运行（手头不可用）；二阶段以文档作为发现手册，避免误改代码引入裂裂变更
+- **决策**: 实体 round-trip 测试使用反序列化后 `equals(original)` 断言
+  **理由**: `==` 重载已在实体中实现，反序列化等价是评估序列化正确性的金标准
+
+### 踩坑记录
+- ZodiacSign 构造函数不包含 `en/zh/tl` 字段以外的足套，整体结构需要 14 个字段初始化。测试中使用工厂函数 `_sign(index)` 避免占位代码进出
+- FortuneSlip 的 fromJson 对缺失字段容忍但 grade 默认 '' 会破坏 rank → 设置 `rank` 的 unknown default 为 3 (中间) 避免排序偏移
+
+### 遗留问题/TODO（详见 docs/performance-audit.md）
+- [ ] Noto Serif SC 11MB → google_fonts 动态加载或子集中文字
+- [ ] 78 张 PNG → WebP 转换（体积~30-40%减小）
+- [ ] ParticleEffect 从 25 个 AnimatedBuilder 转为单 CustomPainter
+- [ ] 设备级 profiling（Pixel 6 + Perfetto trace）
+- [ ] TalkBack / VoiceOver 设备测试
+- [ ] TextScale 1.5x 下 overflow 验证
+
+### 参考资源
+- Flutter Performance: https://docs.flutter.dev/perf
+- Material 3 Accessibility: https://m3.material.io/foundations/accessible-design/accessibility-basics
+- WCAG 2.1 AA Contrast: https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html

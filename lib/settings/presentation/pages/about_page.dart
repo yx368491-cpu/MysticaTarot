@@ -220,7 +220,7 @@ class _Hero extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          Text(
+          const Text(
             AppConstants.appName,
             style: AppTextStyles.mysticalTitle,
           ),
