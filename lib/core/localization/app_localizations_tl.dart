@@ -35,6 +35,7 @@ class AppLocalizationsTl {
     'tarotTitle': 'Tarot Reading',
     'selectSpread': 'Pumili ng Spread',
     'startReading': 'Simulan ang Pagbabasa',
+    'sectionMeaning': 'Kahulugan',
     'shuffling': 'Naghahalo…',
     'cardMeaning': 'Kahulugan ng Card',
     'upright': 'Tuwid',

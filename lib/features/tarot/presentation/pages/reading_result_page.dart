@@ -45,11 +45,12 @@ class ReadingResultPage extends StatelessWidget {
             SafeArea(
               child: Column(
                 children: [
-                  // Spread title
+                  // Spread title (localized)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                     child: Text(
-                      provider.selectedSpread?.nameEn ?? 'Reading',
+                      provider.selectedSpread?.localizedName(provider.locale) ??
+                          l10n.translate('cardMeaning'),
                       style: AppTextStyles.mysticalTitle,
                     ),
                   ),
@@ -98,6 +99,7 @@ class _CardDetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return MysticalCard(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -148,7 +150,7 @@ class _CardDetailCard extends StatelessWidget {
                       style: AppTextStyles.cardTitle,
                     ),
                     const SizedBox(height: 4),
-                    // Position
+                    // Position (upright/reversed, localized)
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
@@ -159,7 +161,9 @@ class _CardDetailCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        interpretation.isReversed ? 'Reversed' : 'Upright',
+                        interpretation.isReversed
+                            ? l10n.translate('reversed')
+                            : l10n.translate('upright'),
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
@@ -200,21 +204,21 @@ class _CardDetailCard extends StatelessWidget {
           // Meaning
           _buildSection(
             icon: Icons.auto_stories,
-            title: 'Meaning',
+            title: l10n.translate('sectionMeaning'),
             content: interpretation.meaning,
           ),
           const SizedBox(height: 10),
           // Love
           _buildSection(
             icon: Icons.favorite,
-            title: 'Love',
+            title: l10n.translate('love'),
             content: interpretation.love,
           ),
           const SizedBox(height: 10),
           // Career
           _buildSection(
             icon: Icons.work,
-            title: 'Career',
+            title: l10n.translate('career'),
             content: interpretation.career,
           ),
           const SizedBox(height: 10),
@@ -239,12 +243,14 @@ class _CardDetailCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Advice',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.goldDark,
-                          )),
+                      Text(
+                        l10n.translate('advice'),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.goldDark,
+                        ),
+                      ),
                       const SizedBox(height: 4),
                       Text(
                         interpretation.advice,

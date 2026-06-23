@@ -8,6 +8,8 @@ import 'core/theme/app_theme.dart';
 import 'core/services/notification_service.dart';
 import 'features/home/presentation/pages/home_page.dart';
 import 'features/home/providers/daily_card_provider.dart';
+import 'features/onboarding/presentation/pages/onboarding_page.dart';
+import 'features/onboarding/providers/onboarding_provider.dart';
 import 'features/tarot/providers/tarot_provider.dart';
 import 'features/tarot/providers/reading_history_provider.dart';
 import 'features/astrology/providers/astrology_provider.dart';
@@ -52,14 +54,26 @@ class _MysticaTarotAppState extends State<MysticaTarotApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => TarotProvider()..init()),
+        // Settings is the source of truth for locale/theme.
+        ChangeNotifierProvider(create: (_) => SettingsProvider()..init()),
+        // TarotProvider stays in sync with SettingsProvider.locale via ProxyProvider.
+        // init() runs once at construction; setLocale() hydrates the locale
+        // from Settings every time settings changes.
+        ChangeNotifierProxyProvider<SettingsProvider, TarotProvider>(
+          create: (_) => TarotProvider()..init(),
+          update: (_, settings, tarot) {
+            final p = tarot ?? TarotProvider();
+            p.setLocale(settings.locale);
+            return p;
+          },
+        ),
+        ChangeNotifierProvider(create: (_) => OnboardingProvider()..init()),
         ChangeNotifierProvider(create: (_) => ReadingHistoryProvider()..init()),
         ChangeNotifierProvider(create: (_) => AstrologyProvider()..init()),
         ChangeNotifierProvider(create: (_) => NumerologyProvider()),
         ChangeNotifierProvider(create: (_) => FortuneSlipProvider()..init()),
         ChangeNotifierProvider(create: (_) => OracleProvider()..init()),
         ChangeNotifierProvider(create: (_) => DailyCardProvider()..init()),
-        ChangeNotifierProvider(create: (_) => SettingsProvider()..init()),
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settings, _) {
@@ -90,8 +104,17 @@ class _MysticaTarotAppState extends State<MysticaTarotApp> {
               return const Locale('en');
             },
 
-            // Home
-            home: const HomePage(),
+            // Home: route to Onboarding (first launch) or HomePage.
+            // OnboardingProvider.markCompleted() triggers Consumer rebuild
+            // which swaps home to HomePage automatically.
+            home: Consumer<OnboardingProvider>(
+              builder: (context, onboarding, _) {
+                if (onboarding.isLoaded && !onboarding.isCompleted) {
+                  return const OnboardingPage();
+                }
+                return const HomePage();
+              },
+            ),
           );
         },
       ),

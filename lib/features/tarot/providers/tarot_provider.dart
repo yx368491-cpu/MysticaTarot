@@ -20,6 +20,7 @@ class TarotProvider extends ChangeNotifier {
 
   // Getters
   List<TarotCard> get allCards => _allCards;
+  String get locale => _locale;
   List<Spread> get spreads => _spreads;
   Spread? get selectedSpread => _selectedSpread;
   List<CardResult> get drawnCards => _drawnCards;
@@ -29,9 +30,13 @@ class TarotProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   bool get hasDrawnCards => _drawnCards.isNotEmpty;
 
-  /// Initialize: load cards and spreads
-  Future<void> init({String locale = 'en'}) async {
-    _locale = locale;
+  /// Initialize: load cards and spreads.
+  ///
+  /// Note: TarotProvider is created WITHOUT an initial locale (defaults to 'en').
+  /// SettingsProvider (when present via ChangeNotifierProxyProvider) drives
+  /// the locale via [setLocale]. This keeps TarotProvider free of any
+  /// hard dependency on SettingsProvider.
+  Future<void> init() async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -47,8 +52,10 @@ class TarotProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Set locale for interpretations
+  /// Set locale for interpretations. Called by SettingsProvider proxy when
+  /// the app's UI language changes; idempotent if the locale is unchanged.
   void setLocale(String locale) {
+    if (_locale == locale) return;
     _locale = locale;
     notifyListeners();
   }

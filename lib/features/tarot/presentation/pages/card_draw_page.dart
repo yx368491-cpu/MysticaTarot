@@ -46,9 +46,8 @@ class _CardDrawPageState extends State<CardDrawPage> {
     if (_currentRevealIndex + 1 < _flipKeys.length) {
       setState(() => _currentRevealIndex++);
       final key = _flipKeys[_currentRevealIndex];
-      // Play reveal sound
-      SoundUtils.playReveal();
       Future.delayed(const Duration(milliseconds: 300), () {
+        SoundUtils.playReveal();
         key.currentState?.flip();
         if (mounted) {
           context.read<TarotProvider>().revealCard(_currentRevealIndex);

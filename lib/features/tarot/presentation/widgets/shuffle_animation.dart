@@ -40,9 +40,9 @@ class _ShuffleAnimationState extends State<ShuffleAnimation>
       }
     });
     _controller.forward();
-    // Play shuffle sound
+    // Play shuffle sound after widget is mounted
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      SoundUtils.playShuffle();
+      if (mounted) SoundUtils.playShuffle();
     });
   }
 

@@ -42,6 +42,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildBottomNav(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).brightness == Brightness.dark
@@ -62,19 +63,19 @@ class _HomePageState extends State<HomePage> {
             children: [
               _NavItem(
                 icon: Icons.home,
-                label: 'Home',
+                label: l10n.translate('navHome'),
                 isSelected: _currentIndex == 0,
                 onTap: () => setState(() => _currentIndex = 0),
               ),
               _NavItem(
                 icon: Icons.history,
-                label: 'History',
+                label: l10n.translate('navHistory'),
                 isSelected: _currentIndex == 1,
                 onTap: () => setState(() => _currentIndex = 1),
               ),
               _NavItem(
                 icon: Icons.settings,
-                label: 'Settings',
+                label: l10n.translate('navSettings'),
                 isSelected: _currentIndex == 2,
                 onTap: () => setState(() => _currentIndex = 2),
               ),

@@ -35,6 +35,7 @@ class AppLocalizationsEn {
     'tarotTitle': 'Tarot Reading',
     'selectSpread': 'Select Spread',
     'startReading': 'Start Reading',
+    'sectionMeaning': 'Meaning',
     'shuffling': 'Shuffling…',
     'cardMeaning': 'Card Meaning',
     'upright': 'Upright',

@@ -35,6 +35,7 @@ class AppLocalizationsZh {
     'tarotTitle': '塔罗占卜',
     'selectSpread': '选择牌阵',
     'startReading': '开始占卜',
+    'sectionMeaning': '正逆位解读',
     'shuffling': '洗牌中…',
     'cardMeaning': '牌义解读',
     'upright': '正位',
