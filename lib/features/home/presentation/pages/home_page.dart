@@ -4,6 +4,10 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/gradient_background.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../../tarot/presentation/pages/tarot_home_page.dart';
+import '../../../astrology/presentation/pages/astrology_page.dart';
+import '../../../numerology/presentation/pages/numerology_page.dart';
+import '../../../fortune_slip/presentation/pages/fortune_slip_page.dart';
+import '../../../oracle_cards/presentation/pages/oracle_cards_page.dart';
 import '../widgets/divination_card.dart';
 
 /// Home page - main entry point with divination method selection
@@ -73,28 +77,56 @@ class HomePage extends StatelessWidget {
                         title: l10n.translate('divAstrology'),
                         subtitle: l10n.translate('divAstrologyDesc'),
                         color: AppColors.softPurple,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const AstrologyPage(),
+                            ),
+                          );
+                        },
                       ),
                       DivinationCard(
                         icon: Icons.tag,
                         title: l10n.translate('divNumerology'),
                         subtitle: l10n.translate('divNumerologyDesc'),
                         color: AppColors.moonBlue,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const NumerologyPage(),
+                            ),
+                          );
+                        },
                       ),
                       DivinationCard(
                         icon: Icons.auto_awesome,
                         title: l10n.translate('divFortuneSlip'),
                         subtitle: l10n.translate('divFortuneSlipDesc'),
                         color: AppColors.gold,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const FortuneSlipPage(),
+                            ),
+                          );
+                        },
                       ),
                       DivinationCard(
                         icon: Icons.psychology,
                         title: l10n.translate('divOracle'),
                         subtitle: l10n.translate('divOracleDesc'),
                         color: AppColors.rosePinkDark,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const OracleCardsPage(),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -107,5 +139,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
-

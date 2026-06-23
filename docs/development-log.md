@@ -200,3 +200,90 @@
 - Flutter 动画: https://docs.flutter.dev/ui/animations
 - Provider: https://pub.dev/packages/provider
 - RWS 塔罗牌: https://en.wikipedia.org/wiki/Rider–Waite_Smith_tarot_deck
+
+---
+
+## Phase 3: 其他占卜方式
+
+**完成日期**: 2026-06-23  
+**耗时**: 1 天  
+**Git Commits**: `feat: phase 3 divination features (astrology, numerology, fortune slip, oracle)`
+
+### 完成的功能
+- [x] **占星/星座模块** — 12 星座网格选择 + 性格解读 + 日/周/月运势 + 三语内容
+- [x] **灵数学模块** — 生命路径数计算（出生日期）+ 命运数计算（姓名）+ 12 个数字深层解读
+- [x] **幸运签模块** — 20 签摇签动画（1500ms 弹性抖动）+ 6 等级签文 + 三语内容
+- [x] **Oracle 占卜卡模块** — 单张/三张模式选择 + 3D 翻转抽牌动画 + 40 张指引卡
+- [x] **HomePage 导航** — 5 个占卜方式入口全部导航到对应页面
+- [x] **app.dart Provider 注册** — 全部 6 个 Provider 通过 MultiProvider 管理
+- [x] flutter analyze — No issues found / flutter test — All tests passed
+
+### 各模块详情
+
+#### 占星/星座 (Astrology)
+| 组件 | 文件 | 说明 |
+|------|------|------|
+| ZodiacSign | `domain/entities/zodiac_sign.dart` | 23字段实体，含三语性格/运势 |
+| AstrologyService | `services/astrology_service.dart` | JSON 加载 + 日期→星座映射 + 元素图标 |
+| AstrologyProvider | `providers/astrology_provider.dart` | 状态管理 + 生日查询 |
+| AstrologyPage | `presentation/pages/astrology_page.dart` | 4列星座网格 + Daily/Weekly/Monthly 标签切换 |
+
+#### 灵数学 (Numerology)
+| 组件 | 文件 | 说明 |
+|------|------|------|
+| LifePathNumber | `domain/entities/life_path_number.dart` | 数字实体 + 三语含义/优势/挑战 |
+| NumerologyService | `services/numerology_service.dart` | 生日/姓名计算 + 12个预先定义的数字解读 |
+| NumerologyProvider | `providers/numerology_provider.dart` | 双输入模式状态管理 |
+| NumerologyPage | `presentation/pages/numerology_page.dart` | Birthday/Name 双标签切换 + 日期选择器 + 结果展示 |
+
+#### 幸运签 (Fortune Slip)
+| 组件 | 文件 | 说明 |
+|------|------|------|
+| FortuneSlip | `services/fortune_slip_service.dart` | 签文实体 + 等级排序 + JSON 加载 |
+| FortuneSlipProvider | `providers/fortune_slip_provider.dart` | 摇签动画状态管理 |
+| FortuneSlipPage | `presentation/pages/fortune_slip_page.dart` | 弹性抖动动画 + 等级彩色徽章 + 签文展示 |
+
+#### Oracle 占卜卡 (Oracle Cards)
+| 组件 | 文件 | 说明 |
+|------|------|------|
+| OracleCard / OracleReadingResult | `services/oracle_reading_service.dart` | 卡牌实体 + 单张/三张阅读结果 |
+| OracleProvider | `providers/oracle_provider.dart` | 模式选择 + 抽牌动画管理 |
+| OracleCardsPage | `presentation/pages/oracle_cards_page.dart` | 模式切换 + 3D 翻转动画 + 结果卡片列表 |
+
+### 文件结构变化
+- 新增: `lib/features/astrology/` — 5 个文件（entity/service/provider/page）
+- 新增: `lib/features/numerology/` — 5 个文件
+- 新增: `lib/features/fortune_slip/` — 3 个文件（service含entity/provider/page）
+- 新增: `lib/features/oracle_cards/` — 3 个文件
+- 修改: `lib/app.dart` — 注册 4 个新 Provider
+- 修改: `lib/features/home/presentation/pages/home_page.dart` — 4 个新导航入口
+
+### 关键技术决策
+- **决策**: FortuneSlip 和 OracleCard 实体放在 Service 文件中而非独立 Entity 文件
+  **理由**: 数据结构简单（6-8字段），无复杂继承关系，减少文件数量
+
+- **决策**: AstrologyService.getSignByDate() 使用静态方法而非实例方法
+  **理由**: 输入→输出纯函数，无需状态，方便从 Provider 直接调用
+
+- **决策**: 使用 `AnimatedBuilder` 而非 `AnimatedWidget`
+  **理由**: AnimatedBuilder 是 Flutter 3.x 的标准动画构建方式，builder 模式更灵活
+
+- **决策**: 摇签动画使用 `Curves.elasticIn`
+  **理由**: 弹性曲线模拟真实的签筒抖动感
+
+### 踩坑记录
+- `AppLocalizations.of(context).locale` 返回 `Locale` 而非 `String`，需加 `.languageCode`
+- `context.watch<T>()` 需要导入 `package:provider/provider.dart`
+- NumerologService 的 `_allNumbers` 列表需显式 import `LifePathNumber` 实体
+- 未使用的 `_locale` 字段在多个 Provider 中触发 unused_field 警告
+
+### 注意事项
+- 所有 4 个新功能已注册到 app.dart 的 MultiProvider，无需在页面级别单独创建 Provider
+- 占星模块的生日输入尚未接入 UI（selectSignByDate 已实现但页面仅提供网格选择）
+- 音效尚未接入（Phase 4）
+
+### 参考资源
+- 占星学: https://en.wikipedia.org/wiki/Zodiac
+- 灵数学: https://en.wikipedia.org/wiki/Numerology
+- 御神签: https://en.wikipedia.org/wiki/Omikuji
+- Flutter 动画: https://docs.flutter.dev/ui/animations

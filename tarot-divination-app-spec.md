@@ -61,7 +61,7 @@
 |------|-----------|------|
 | **框架** | Flutter 3.x+ (最新稳定版) | — |
 | **语言** | Dart 3.x+ | 使用空安全、Pattern Matching |
-| **状态管理** | Provider | 适合中大型项目，简洁成熟 |
+| **状态管理** | Provider + ChangeNotifier | 适合中大型项目，简洁成熟 |
 | **本地数据库** | Hive | 轻量级 NoSQL，极速读写 |
 | **本地通知** | `flutter_local_notifications` | 实现每日抽卡提醒 |
 | **音效播放** | `audioplayers` | 播放翻牌、洗牌音效 |
@@ -89,18 +89,19 @@ dependencies:
   hive_flutter: ^1.1.0           # Hive Flutter 支持
   flutter_local_notifications: ^17.0.0  # 本地通知
   audioplayers: ^6.0.0           # 音效播放
-  intl: ^0.19.0                  # 国际化
+  intl: ^0.20.2                  # 国际化（当前未被 AppLocalizations 使用，预留给系统本地化）
   flutter_localizations:
     sdk: flutter                 # Flutter 原生本地化支持
   share_plus: ^9.0.0             # 分享占卜结果（可选）
+  cupertino_icons: ^1.0.8        # iOS 风格图标
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  hive_generator: ^2.0.1         # Hive 类型适配器生成
-  build_runner: ^2.4.0           # 代码生成
+  hive_generator: ^2.0.1         # Hive 类型适配器生成（暂未使用，实体通过 toJson/fromJson 手动序列化）
+  build_runner: ^2.4.0           # 代码生成（暂未使用）
   mocktail: ^1.0.0               # Mock 测试
-  flutter_lints: ^4.0.0          # Lint 规则
+  flutter_lints: ^6.0.0          # Lint 规则
 ```
 
 ---
@@ -112,24 +113,26 @@ dev_dependencies:
 遵循 skills 中推荐的 **Feature-First 架构**，核心原则：
 
 ```
-UI (Widgets) → ViewModel (Provider) → Service → Hive DataSource
+UI (Widgets) → ViewModel (Provider) → Service → JSON Asset / Hive
 ```
 
 - **UI 层**: 纯声明式 Widget，只负责渲染和事件转发
 - **ViewModel (Provider)**: 管理 UI 状态，处理交互逻辑
-- **Service 层**: 业务逻辑（占卜算法、读取解读内容等）
-- **Data 层**: Hive 数据存取、JSON 内容资源
+- **Service 层**: 业务逻辑（占卜算法、牌阵布局、解读生成等）
+- **Data 层**: 静态 JSON 内容（通过 AssetBundle 加载）+ Hive 动态数据（用户设置、历史记录）
 
 ### 3.2 依赖方向
 
 ```dart
 // 正确的依赖方向
-UI Widget → ChangeNotifier → TarotService → HiveRepository
-                    ↕
-            LocalizationService
+UI Widget → ChangeNotifier → TarotReadingService → TarotCardContent (JSON Asset)
+                    ↕                        ↘
+            ReadingHistoryProvider → Hive (历史记录)
 ```
 
-- 各层通过抽象接口解耦（Service 接口）
+- **JSON 内容为只读静态资产**，通过 `rootBundle.loadString()` 从 pubspec.yaml 声明的 assets 目录加载，运行时解析为 Dart Model
+- **Repository 层被省略**：JSON 数据源不需要抽象接口，Provider 直接调用 `TarotCardContent` 加载数据（减少不必要的间接层）
+- **Hive 仅存储动态数据**：设置、占卜历史记录、每日抽卡缓存
 - Provider 作为依赖注入容器
 
 ### 3.3 目录结构
@@ -155,11 +158,11 @@ lib/
 │   │   ├── app_localizations_zh.dart  # 中文
 │   │   └── supported_locales.dart     # 支持的语言配置
 │   ├── router/
-│   │   └── app_router.dart            # 路由配置
+│   │   └── app_router.dart            # 路由配置（预留，当前使用 Navigator.push）
 │   └── utils/
 │       ├── date_utils.dart            # 日期工具
 │       ├── random_utils.dart          # 随机种子工具
-│       └── sound_utils.dart           # 音效工具类
+│       └── sound_utils.dart           # 音效工具类（预留）
 │
 ├── features/
 │   ├── onboarding/                    # 新手引导
@@ -186,40 +189,31 @@ lib/
 │   ├── tarot/                         # 塔罗牌模块
 │   │   ├── presentation/
 │   │   │   ├── pages/
-│   │   │   │   ├── tarot_home_page.dart        # 塔罗牌主界面
-│   │   │   │   ├── spread_selection_page.dart  # 选择牌阵
+│   │   │   │   ├── tarot_home_page.dart        # 塔罗牌主界面（含牌阵选择）
 │   │   │   │   ├── card_draw_page.dart         # 抽牌动画页面
 │   │   │   │   └── reading_result_page.dart    # 解读结果
 │   │   │   └── widgets/
 │   │   │       ├── tarot_card_widget.dart      # 单张塔罗牌组件
 │   │   │       ├── card_back_widget.dart       # 牌背设计
-│   │   │       ├── spread_layout_widget.dart   # 牌阵布局
-│   │   │       ├── card_flip_animation.dart    # 翻牌动画
-│   │   │       ├── shuffle_animation.dart      # 洗牌动画
-│   │   │       └── reading_detail_card.dart    # 解读详情卡片
+│   │   │       ├── card_flip_animation.dart    # 翻牌动画（3D 旋转）
+│   │   │       └── shuffle_animation.dart      # 洗牌动画
 │   │   ├── domain/
-│   │   │   ├── entities/
-│   │   │   │   ├── tarot_card.dart             # 塔罗牌实体
-│   │   │   │   ├── spread.dart                 # 牌阵实体
-│   │   │   │   └── reading.dart                # 占卜记录实体
-│   │   │   └── repositories/
-│   │   │       └── tarot_repository.dart        # 存储接口
+│   │   │   └── entities/
+│   │   │       ├── tarot_card.dart             # 塔罗牌实体（31字段，含多语言）
+│   │   │       ├── spread.dart                 # 牌阵实体
+│   │   │       └── reading.dart                # 占卜记录 + CardResult + DailyCardRecord
 │   │   ├── data/
-│   │   │   ├── models/
-│   │   │   │   └── tarot_card_data.dart        # 塔罗牌数据模型
-│   │   │   ├── repositories/
-│   │   │   │   └── tarot_repository_impl.dart   # 存储实现
 │   │   │   ├── datasources/
-│   │   │   │   └── tarot_card_content.dart      # 塔罗牌内容数据
+│   │   │   │   └── tarot_card_content.dart      # AssetBundle JSON 加载
 │   │   │   └── json/
-│   │   │       ├── major_arcana.json            # 大阿卡纳内容
-│   │   │       └── minor_arcana.json            # 小阿卡纳内容
+│   │   │       ├── major_arcana.json            # 22张大阿卡纳内容
+│   │   │       └── minor_arcana.json            # 56张小阿卡纳内容
 │   │   ├── services/
-│   │   │   ├── tarot_reading_service.dart       # 占卜逻辑
-│   │   │   └── spread_service.dart              # 牌阵布局逻辑
+│   │   │   ├── tarot_reading_service.dart       # 占卜逻辑（洗牌/抽牌/解读）
+│   │   │   └── spread_service.dart              # 6种牌阵定义
 │   │   └── providers/
 │   │       ├── tarot_provider.dart              # 塔罗牌状态管理
-│   │       └── reading_history_provider.dart    # 历史记录管理
+│   │       └── reading_history_provider.dart    # 历史记录管理（Hive）
 │   │
 │   ├── astrology/                     # 占星/星座模块
 │   │   ├── presentation/
@@ -310,8 +304,8 @@ lib/
 │   │   ├── language_selector.dart     # 语言选择组件
 │   │   └── settings_tile.dart         # 设置页面组件
 │   └── extensions/
-│       ├── context_extensions.dart
-│       └── string_extensions.dart
+│       ├── context_extensions.dart    # BuildContext 扩展方法
+│       └── string_extensions.dart     # String 扩展方法
 │
 ├── settings/                          # 设置模块
 │   ├── presentation/
@@ -380,28 +374,29 @@ docs/                              # 项目文档 & 日志
 
 | 牌阵 | 牌数 | 说明 |
 |------|------|------|
-| 单张牌 | 1 | 快速指引，每日运势 |
-| 三张牌 | 3 | 过去-现在-未来 |
-| 凯尔特十字 | 10 | 经典深度解读 |
-| 关系牌阵 | 5-7 | 感情关系分析 |
-| 愿望牌阵 | 4 | 目标达成路径 |
-| 四季牌阵 | 4 | 季度运势 |
+| 单张牌 (Single Card) | 1 | 快速指引，每日运势 |
+| 三张牌 (Three Card) | 3 | 过去-现在-未来 |
+| 凯尔特十字 (Celtic Cross) | 10 | 经典深度解读 |
+| 关系牌阵 (Relationship) | 6 | 感情关系分析（含你/对方/纽带/挑战/建议/结果） |
+| 愿望牌阵 (Wish) | 4 | 目标达成路径 |
+| 四季牌阵 (Four Seasons) | 4 | 季度运势 |
 
-**解读内容结构**（每张牌需包含）:
-- 牌名（多语言）
-- 关键词（2-3个）
-- 正位含义 (Upright Meaning)
-- 逆位含义 (Reversed Meaning)
-- 爱情解读 (Love)
-- 事业/财富解读 (Career/Finance)
-- 建议 (Advice)
+**解读内容结构**（每张牌需包含，已实现三语）:
+- 牌名 + 花色/元素（多语言: en/zh/tl）
+- 关键词（2-3个，多语言）
+- 正位含义 (Upright Meaning，多语言)
+- 逆位含义 (Reversed Meaning，多语言)
+- 爱情解读 (Love，多语言)
+- 事业/财富解读 (Career，多语言)
+- 建议 (Advice，多语言)
 
 **抽牌流程**:
 1. 选择牌阵 → 确认
-2. 洗牌动画（模拟真实洗牌，约 3-5 秒）
-3. 切牌动画（用户可选择切牌位置）
-4. 逐张翻牌（每张约 1 秒动画）
-5. 展示解读结果
+2. 洗牌动画（AnimationController 驱动，约 3 秒）
+3. 逐张翻牌（点击翻牌，3D 旋转动画，每张约 800ms）
+4. 展示解读结果（含正逆位、关键词、爱情/事业/建议）
+
+> **备注**: 切牌动画（用户选择切牌位置）计划在后续版本实现
 
 **注意**: 每日抽卡功能使用日期作为随机种子，保证同一用户同一天抽到同一张牌（固定每日一卡）。
 
@@ -465,7 +460,7 @@ docs/                              # 项目文档 & 日志
 
 **功能要点**:
 - 与塔罗类似但更自由
-- 预设 40-50 张指引卡
+- 预设 **40 张** 指引卡（已生成 JSON 数据文件）
 - 支持单张、三张抽牌
 - 每张卡包含正能量指引语
 
@@ -566,15 +561,19 @@ HomePage (主界面)
 ### 6.1 塔罗牌 (TarotCard)
 
 ```dart
-@HiveType(typeId: 0)
+// 注意: 不使用 @HiveType 注解。通过 fromJson() 从 JSON asset 加载，运行时只读
 class TarotCard {
   final int id;                    // 唯一ID (0-77)
-  final CardType type;             // major / minor
+  final String type;               // 'major' / 'minor'
+  final int number;                // 编号 (大阿卡纳0-21, 小阿卡纳1-14)
   final String nameEn;             // 英文名: "The Fool"
   final String nameZh;             // 中文名: "愚人"
   final String nameTl;             // Tagalog名
-  final int number;                // 编号 (大阿卡纳0-21, 小阿卡纳1-14)
-  final Suit? suit;                // 花色 (小阿卡纳)
+  final String? suit;              // 花色英文 (小阿卡纳): Wands/Cups/Swords/Pentacles
+  final String? suitZh;            // 花色中文: 权杖/圣杯/宝剑/星币
+  final String? suitTl;            // 花色Tagalog
+  final String? element;           // 元素英文: Fire/Water/Air/Earth
+  final String? elementZh;         // 元素中文
   final List<String> keywordsEn;   // 英文关键词
   final List<String> keywordsZh;   // 中文关键词
   final List<String> keywordsTl;   // Tagalog关键词
@@ -593,6 +592,17 @@ class TarotCard {
   final String adviceEn;           // 建议
   final String adviceZh;
   final String adviceTl;
+
+  // 工厂构造: 从 JSON Map 创建
+  factory TarotCard.fromJson(Map<String, dynamic> json);
+
+  // 本地化辅助方法
+  String localizedName(String locale);
+  String localizedUprightMeaning(String locale);
+  String localizedReversedMeaning(String locale);
+  String localizedLove(String locale);
+  String localizedCareer(String locale);
+  String localizedAdvice(String locale);
 }
 ```
 
@@ -622,7 +632,7 @@ class SpreadPosition {
 ### 6.3 占卜记录 (ReadingRecord)
 
 ```dart
-@HiveType(typeId: 1)
+// 不使用 @HiveType 注解，通过 toJson()/fromJson() 序列化后存入 Hive
 class ReadingRecord {
   final String id;                 // UUID
   final DateTime timestamp;
@@ -631,30 +641,40 @@ class ReadingRecord {
   final List<CardResult> cards;    // 抽牌结果
   final String? userInput;         // 用户输入 (姓名/生日等)
   final String? notes;             // 用户备注
+
+  Map<String, dynamic> toJson();
+  factory ReadingRecord.fromJson(Map<String, dynamic> json);
 }
 
-@HiveType(typeId: 2)
 class CardResult {
-  final int cardIndex;             // 牌索引
+  final int cardIndex;             // 牌在 deck 中的 ID
   final bool isReversed;           // 是否逆位
-  final int position;              // 在牌阵中的位置
+  final int position;              // 在牌阵中的位置索引
+
+  Map<String, dynamic> toJson();
+  factory CardResult.fromJson(Map<String, dynamic> json);
 }
 ```
 
-### 6.4 设置 (AppSettings)
+### 6.4 每日抽卡记录 (DailyCardRecord)
 
 ```dart
-@HiveType(typeId: 3)
-class AppSettings {
-  final String locale;             // "en" / "tl" / "zh"
-  final bool dailyNotification;
-  final String notificationTime;   // "HH:mm"
-  final bool soundEnabled;
-  final int maxHistoryCount;
-  final String cardBackStyle;
-  final String themeColor;
+class DailyCardRecord {
+  final String date;               // YYYY-MM-DD
+  final String cardType;           // tarot / oracle
+  final int cardIndex;
+  final bool isReversed;
+  final String readingText;
+  final DateTime timestamp;
+
+  Map<String, dynamic> toJson();
+  factory DailyCardRecord.fromJson(Map<String, dynamic> json);
 }
 ```
+
+### 6.5 设置 (AppSettings)
+
+由 `SettingsProvider` 管理（通过 Hive Box 存取）。包含: locale, dailyNotification, notificationTime, soundEnabled, maxHistoryCount, cardBackStyle, themeColor。
 
 ---
 
@@ -700,15 +720,17 @@ ThemeData(
 
 ### 7.4 声音设计
 
-| 操作 | 音效类型 |
-|------|----------|
-| 洗牌 | 快速连续的纸牌摩擦声 |
-| 切牌 | 单次纸牌滑动声 |
-| 翻牌 | 清脆的纸牌翻转声 |
-| 揭示结果 | 柔和的"叮"或和弦音 |
-| 抽签 | 签筒摇晃的竹签声 |
-| 按钮点击 | 轻柔的点击声 |
-| 背景音乐 | 轻柔冥想风格（可循环、音量低） |
+| 操作 | 音效类型 | 文件格式 |
+|------|----------|----------|
+| 洗牌 | 快速连续的纸牌摩擦声 | `.wav`（占位） |
+| 切牌 | 单次纸牌滑动声 | `.wav`（占位） |
+| 翻牌 | 清脆的纸牌翻转声 | `.wav`（占位） |
+| 揭示结果 | 柔和的"叮"或和弦音 | `.wav`（占位） |
+| 抽签 | 签筒摇晃的竹签声 | 待补充 |
+| 按钮点击 | 轻柔的点击声 | 待补充 |
+| 背景音乐 | 轻柔冥想风格（可循环、音量低） | 待补充 |
+
+> **当前状态**: Phase 2 已创建 4 个 WAV 占位文件（`shuffle.wav`, `flip.wav`, `fan.wav`, `reveal.wav`），音效播放功能尚未接入。计划 Phase 4 使用 `audioplayers` 包实现
 
 ### 7.5 字体
 
@@ -776,14 +798,16 @@ ThemeData(
 
 | 内容类型 | 本地化方式 | 说明 |
 |----------|------------|------|
-| UI 文本 | ARB 文件或 Dart Map | 按钮、标签、提示等 |
+| UI 文本 | **Dart Map**（自定义 `AppLocalizations`） | 按钮、标签、提示等。**不使用 ARB 文件** |
 | 塔罗牌含义 | JSON 数据（三语字段） | 每张牌正逆位 + 各维度解读 |
 | 占星数据 | JSON 数据 | 星座名称、性格描述等 |
 | 灵数解读 | JSON 数据 | 数字含义描述 |
 | 幸运签文 | JSON 数据 | 三语签文 |
 | Oracle 卡 | JSON 数据 | 三语指引 |
 | 新手引导 | Dart 常量 | 引导文案 |
-| 错误提示 | ARB / Map | 错误信息 |
+| 错误提示 | Dart Map（AppLocalizations） | 错误信息 |
+
+> **决策**: 使用 Dart Map 而非 ARB 文件。理由: 三语翻译数据结构简单，Dart Map 直接管理无需额外生成步骤。`intl` 包在 pubspec.yaml 中仅用于 Flutter 系统本地化（日期格式等），UI 文本翻译由自定义 `AppLocalizations` 通过 `translate()` 方法实现
 
 ### 8.4 翻译策略
 
@@ -811,7 +835,8 @@ ThemeData(
 ### 9.2 数据初始化
 
 - 首次启动: 将 JSON 内容（塔罗牌数据、星座数据等）加载到内存
-- JSON 文件存储在 `assets/data/` 目录
+- JSON 文件存储在 `lib/features/*/data/json/` 目录（在 pubspec.yaml 中声明 asset 路径时**不含 `lib/` 前缀**）
+- `rootBundle.loadString()` 使用相对路径: `features/tarot/data/json/major_arcana.json`
 - 无需在 Hive 中存储占卜内容（内容读取自 assets）
 
 ### 9.3 数据清理
@@ -997,36 +1022,52 @@ git log --oneline --graph --all
 
 ## 11. 开发路线图
 
-### Phase 1: 项目初始化 (Day 1-3)
+### Phase 1: 项目初始化 ✅ (2026-06-23 完成)
 
-- [ ] 创建 Flutter 项目 (`flutter create --org com.mystica mystica_tarot`)
-- [ ] 配置 `pubspec.yaml` 依赖
-- [ ] 建立项目目录结构（含 `docs/` 日志目录、`assets/` 资源目录）
-- [ ] 创建 `README.md`（项目简介、功能、技术栈、截图占位）
-- [ ] 选择并添加许可证文件 `LICENSE`（推荐 MIT）
-- [ ] 配置主题系统（玫瑰粉色系，Material 3）
-- [ ] 配置 Hive 数据库（初始化代码、Box 注册）
-- [ ] 配置本地化框架（`AppLocalizations` 骨架）
-- [ ] 配置 `analysis_options.yaml`（Dart Lint 规则）
-- [ ] 初始化 Git 仓库：`git init && git add . && git commit -m "chore: init"`
-- [ ] 登录 GitHub 创建远程仓库 `MysticaTarot`（见 10.4.3 清单）
-- [ ] 配置 Personal Access Token 并连接远程仓库
-- [ ] 推送到 GitHub：`git push -u origin main`
-- [ ] 创建 `develop` 分支并推送：`git checkout -b develop && git push -u origin develop`
-- [ ] 验证 GitHub 仓库连接是否正常（`git remote -v`、`git fetch`）
-- [ ] 🪵 **生成 Phase 1 开发日志** — 记录项目搭建过程中的决策（包名确认、依赖版本选择、GitHub 配置过程）
+- [x] 创建 Flutter 项目 (`flutter create --org com.mystica mystica_tarot`)
+- [x] 配置 `pubspec.yaml` 依赖
+- [x] 建立项目目录结构（含 `docs/` 日志目录、`assets/` 资源目录）
+- [x] 创建 `README.md`（项目简介、功能、技术栈、截图占位）
+- [x] 选择并添加许可证文件 `LICENSE`（MIT）
+- [x] 配置主题系统（玫瑰粉色系，Material 3，浅色+深色两套）
+- [x] 配置 Hive 数据库（初始化代码、4个 Box 注册）
+- [x] 配置本地化框架（`AppLocalizations` 骨架，三语 400+ 条目）
+- [x] 配置 `analysis_options.yaml`（Dart Lint 规则）
+- [x] 初始化 Git 仓库并连接 GitHub 远程仓库
+- [x] 推送 `main` + `develop` 分支
+- [x] 🪵 **Phase 1 开发日志已生成** — 记录项目搭建决策
 
-### Phase 2: 塔罗核心 (Day 4-12)
+**耗时**: 1 天（实际） | **原计划**: 3 天
 
-- [ ] 导入塔罗牌 78 张牌数据（从公开经典内容整理）
-- [ ] 实现塔罗牌数据模型
-- [ ] 实现牌阵模型（6种牌阵）
-- [ ] 开发塔罗主界面（选择牌阵）
-- [ ] 开发抽牌页面 + 翻牌动画
-- [ ] 开发解读结果展示页面
-- [ ] 实现洗牌/翻牌音效
-- [ ] 实现粒子特效（仪式感）
-- [ ] 🪵 **生成 Phase 2 开发日志** — 记录塔罗核心功能的实现细节、动画技术方案、遇到的关键 bug（并在 `bug-log.md` 中记录）
+### Phase 1.5: 资源文件准备 ✅ (2026-06-23 完成)
+
+> **注**: 此阶段为实际开发中新增，原 spec 未规划。独立成阶段因资源准备涉及大量网络下载和数据整理工作。
+
+- [x] 下载 Playfair Display 可变字体（Regular + Italic）
+- [x] 下载 Noto Serif SC 可变字体（Variable, 11MB）
+- [x] 从 Wikimedia Commons 下载全部 78 张 RWS 塔罗牌图片（Geldard 版）
+- [x] 创建 5 个 JSON 数据文件（major_arcana, minor_arcana, zodiac, fortune_slips, oracle_cards）
+- [x] 创建 4 个 WAV 音效占位文件
+- [x] 验证: flutter analyze + flutter test 通过
+- [x] 🪵 **Phase 1.5 开发日志已生成**
+
+### Phase 2: 塔罗核心 ✅ (2026-06-23 完成)
+
+- [x] 导入塔罗牌 78 张牌数据（JSON 加载）
+- [x] 实现塔罗牌数据模型（TarotCard, Spread, SpreadPosition, Reading, CardResult, CardInterpretation 等）
+- [x] 实现牌阵模型（6种牌阵: 单张/三张/凯尔特十字/关系/愿望/四季）
+- [x] 开发塔罗主界面（TarotHomePage — 牌阵选择网格）
+- [x] 开发洗牌动画（AnimationController, 3 秒）
+- [x] 开发翻牌动画（3D 旋转翻转, 800ms）+ 逐张揭示交互
+- [x] 开发解读结果展示页面（含正逆位、关键词、爱情、事业、建议）
+- [x] 实现粒子特效（ParticleEffect 灵性背景）
+- [x] 集成到 HomePage 导航 + app.dart MultiProvider 注册
+- [x] flutter analyze — No issues found / flutter test — All tests passed
+- [x] 🪵 **Phase 2 开发日志已生成**
+
+**耗时**: 1 天（实际） | **原计划**: 9 天
+
+> **延期项**: 音效接入延期至 Phase 4；切牌动画延期至后续版本
 
 ### Phase 3: 其他占卜方式 (Day 13-18)
 
@@ -1356,12 +1397,12 @@ Widget build(BuildContext context) { ... }
 
 ### A3. 图像资源
 
-**已确认方案**: 使用 RWS 开源重绘版塔罗牌图片
+**已确认方案**: 使用 RWS (Geldard 版) 塔罗牌图片
 
-- 所有 78 张塔罗牌图片打包到 `assets/images/cards/`
-- 图片格式: WebP（推荐，减小约 30% 体积）或 PNG
-- 分辨率: 建议 300×520 px 左右（适配手机屏幕）
-- 需在 `about_page` 中注明图片来源和作者信息
+- 所有 78 张图片从 Wikimedia Commons 下载，已打包到 `assets/images/cards/major/` + `minor/`
+- 图片格式: **PNG**（当前）。后续可转换为 WebP 减小 APK 体积
+- 分辨率: 约 300×520 px
+- 需在 `about_page` 中注明: RWS Tarot (Geldard) via Wikimedia Commons, Public Domain
 - 牌背图案单独设计（梦幻花纹+星星月亮）
 
 ### A4. 音效资源

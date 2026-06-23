@@ -7,6 +7,10 @@ import 'core/theme/app_theme.dart';
 import 'features/home/presentation/pages/home_page.dart';
 import 'features/tarot/providers/tarot_provider.dart';
 import 'features/tarot/providers/reading_history_provider.dart';
+import 'features/astrology/providers/astrology_provider.dart';
+import 'features/numerology/providers/numerology_provider.dart';
+import 'features/fortune_slip/providers/fortune_slip_provider.dart';
+import 'features/oracle_cards/providers/oracle_provider.dart';
 import 'settings/providers/settings_provider.dart';
 
 class MysticaTarotApp extends StatelessWidget {
@@ -18,6 +22,10 @@ class MysticaTarotApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => TarotProvider()..init()),
         ChangeNotifierProvider(create: (_) => ReadingHistoryProvider()..init()),
+        ChangeNotifierProvider(create: (_) => AstrologyProvider()..init()),
+        ChangeNotifierProvider(create: (_) => NumerologyProvider()),
+        ChangeNotifierProvider(create: (_) => FortuneSlipProvider()..init()),
+        ChangeNotifierProvider(create: (_) => OracleProvider()..init()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()..init()),
       ],
       child: MaterialApp(
