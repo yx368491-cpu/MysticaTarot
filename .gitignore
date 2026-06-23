@@ -44,3 +44,7 @@ app.*.map.json
 /android/app/release
 
 # Do NOT ignore docs/*.log - dev logs and bug logs need version control
+
+# Sensitive files
+Github API.txt
+install-skills-spec.md
