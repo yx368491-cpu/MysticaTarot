@@ -3,6 +3,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/gradient_background.dart';
 import '../../../../core/localization/app_localizations.dart';
+import '../../../tarot/presentation/pages/tarot_home_page.dart';
 import '../widgets/divination_card.dart';
 
 /// Home page - main entry point with divination method selection
@@ -58,7 +59,14 @@ class HomePage extends StatelessWidget {
                         title: l10n.translate('divTarot'),
                         subtitle: l10n.translate('divTarotDesc'),
                         color: AppColors.rosePink,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const TarotHomePage(),
+                            ),
+                          );
+                        },
                       ),
                       DivinationCard(
                         icon: Icons.star,

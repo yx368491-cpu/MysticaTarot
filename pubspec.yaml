@@ -60,6 +60,10 @@ flutter:
     - assets/images/onboarding/
     - assets/sounds/
     - resources/l10n/
+    - lib/features/tarot/data/json/
+    - lib/features/astrology/data/json/
+    - lib/features/fortune_slip/data/json/
+    - lib/features/oracle_cards/data/json/
 
   fonts:
     - family: PlayfairDisplay

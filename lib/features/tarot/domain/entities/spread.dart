@@ -1,0 +1,77 @@
+/// Position within a spread layout
+class SpreadPosition {
+  final int index;
+  final String nameEn;
+  final String nameZh;
+  final String nameTl;
+  final String descriptionEn;
+  final String descriptionZh;
+  final String descriptionTl;
+
+  const SpreadPosition({
+    required this.index,
+    required this.nameEn,
+    required this.nameZh,
+    required this.nameTl,
+    this.descriptionEn = '',
+    this.descriptionZh = '',
+    this.descriptionTl = '',
+  });
+
+  String localizedName(String locale) {
+    switch (locale) {
+      case 'zh': return nameZh;
+      case 'tl': return nameTl;
+      default: return nameEn;
+    }
+  }
+
+  String localizedDescription(String locale) {
+    switch (locale) {
+      case 'zh': return descriptionZh;
+      case 'tl': return descriptionTl;
+      default: return descriptionEn;
+    }
+  }
+}
+
+/// Spread (牌阵) definition
+class Spread {
+  final String id;
+  final String nameEn;
+  final String nameZh;
+  final String nameTl;
+  final int cardCount;
+  final String descriptionEn;
+  final String descriptionZh;
+  final String descriptionTl;
+  final List<SpreadPosition> positions;
+
+  const Spread({
+    required this.id,
+    required this.nameEn,
+    required this.nameZh,
+    required this.nameTl,
+    required this.cardCount,
+    required this.descriptionEn,
+    required this.descriptionZh,
+    required this.descriptionTl,
+    required this.positions,
+  });
+
+  String localizedName(String locale) {
+    switch (locale) {
+      case 'zh': return nameZh;
+      case 'tl': return nameTl;
+      default: return nameEn;
+    }
+  }
+
+  String localizedDescription(String locale) {
+    switch (locale) {
+      case 'zh': return descriptionZh;
+      case 'tl': return descriptionTl;
+      default: return descriptionEn;
+    }
+  }
+}
