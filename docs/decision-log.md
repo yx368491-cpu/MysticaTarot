@@ -7,8 +7,8 @@
 
 ## Decision #1: RWS 塔罗牌图片来源选型
 
-**日期**: 2026-06-23  
-**决策者**: AI Agent  
+**日期**: 2026-06-23
+**决策者**: AI Agent
 
 ### 背景
 需要为 78 张塔罗牌选择开源、高质量的图片来源。
@@ -36,8 +36,8 @@
 
 ## Decision #2: 字体渲染策略
 
-**日期**: 2026-06-23  
-**决策者**: AI Agent  
+**日期**: 2026-06-23
+**决策者**: AI Agent
 
 ### 背景
 需要使用 Playfair Display（英/Tagalog）和 Noto Serif SC（中文）两种字体。
@@ -61,8 +61,8 @@
 
 ## Decision #3: JSON 数据本地路径
 
-**日期**: 2026-06-23  
-**决策者**: AI Agent  
+**日期**: 2026-06-23
+**决策者**: AI Agent
 
 ### 背景
 塔罗牌内容、占星数据等需要存储在项目中并加载到内存。
@@ -83,3 +83,38 @@ JSON 文件通过 AssetBundle 加载，运行时解析到内存 Model。
 3. AssetBundle 加载是 Flutter 标准做法
 
 ---
+
+## Decision #4: 占位音效文件的合成方式
+
+**日期**: 2026-06-23
+**决策者**: AI Agent
+
+### 背景
+`assets/sounds/*.wav` 是上一阶段留下的 44 字节 RIFF 头占位文件。用户验证时听不到任何实际音效。本决策解决"用什么内容填充这 4 个文件"——是关于资产 supply 的决策，不是实现细节。
+
+### 可选方案
+| 方案 | 优点 | 缺点 |
+|------|------|------|
+| **A. Freesound CC0 下载** | 现场实录音，声音自然 | 依赖代理、不易复现、license 库维护费时、跨机器字节不一致（git diff 噪音）|
+| **B. Flutter SystemSound / HapticFeedback** | 零设置、原生低沉 | 仅 click，不能满足"洗牌、翻牌、扇牌、和弦警"的 4 种语义区分 |
+| **C. 仅移除（disable 音效调用点）** | 简单 | spec §7.4 明列音效是必要的、动效同步需要，声音能提升 APP 体感，为了节省资产质量而割裂产品定位得不偿失 |
+| **D. Python stdlib 程序化合成 + 提交产物** | 纯数学、跨机一致、可 git diff、零网络依赖、无 license 问题 | 声音偏合成质感，需调参；高频泛音可能不如真实录音 |
+| **E. 自己录音（audacity + 手机麦）** | 调性最贴自定义产品气质 | 个人项目、迭代成本高于方案 D、录音环境难控制、跨机器不可复现 |
+
+### 最终选择
+选择 **方案 D**。
+
+### 理由
+1. **可复现性**：项目一贯偏好"脚本生成 + 产物提交"模式（参 Phase 1.5 `tools/generate_json_data.py`）。Freesound 不同机器、不同 time-of-day 取到的 bytes 会不同，产生 git diff 噪音。
+2. **代理/网络安全**：上一阶段执行 Clash Verge TUN 代理才能拉到 FreeSound。Phase 1.5 GitHub Push Protection 教训为鉴，重复出现网络依赖代理的不愉快想避免。
+3. **license 清晰**：所有产物均在仓库主仓版本控制下，无第三方 license 追踪负担。
+4. **调参可执行**：听感不佳只需改包络参数（`sin^2`、`exp(-30t)` 等），不必重新下载。
+5. **零 Dart 变动**：本次只换资产文件，`SoundUtils.playXxx()` API 与 `pubspec.yaml` `assets/sounds/` 声明都不动，避免 Dart 代码回归风险。
+
+### 影响范围
+- `tools/generate_sounds.py` 是一键服务：`_SEED = 20260623` 为 module-level 常数，重新运行产出字节级一致的 WAV（git 二次 diff 不会有噪音）。
+- 4 个 `assets/sounds/*.wav` 是中段原料，未来 Phase 9 调参只需重跑脚本。
+
+### 后续验证
+- [ ] Phase 9 手机上跑 `flutter run -d <device>`：原生听感是否贴合产品"梦幻魔法"调性。如不满意用 `math.exp` / `math.sin^2` 参数调校，不会动 Dart 代码。
+- [ ] 如未来需要高保真实录音频，可重启"方案 E"流程录制并替换 4 个 WAV 文件，本决策可平替反转。

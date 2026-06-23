@@ -816,3 +816,64 @@ Error: Gradle task assembleProfile failed with exit code 1
 - Android Java 8+ desugaring: https://developer.android.com/studio/write/java8-support
 - AGP 9 desugar_jdk_libs 版本掠过：https://developer.android.com/build/releases/gradle-plugin
 - docs/bug-log.md#006：完整复现与根因
+
+---
+
+## Phase 8c: 音频资产生成 — 从静默占位替换为程序化合成音效
+
+**完成日期**: 2026-06-23
+**耗时**: 同会话内 ~10 min
+**Git Commit**: 本节未提交（待用户手动 `git add` + 提交时一起打包）
+
+### 问题发现
+前期 `assets/sounds/*.wav` 是仅含 RIFF 头部的 44 字节占位文件，运行后静默无声。用户报告音效问题后走查：
+
+```bash
+$ ls -la assets/sounds/ ; file assets/sounds/*.wav
+fan.wav      44 B   RIFF (little-endian) WAVE, Microsoft PCM, 16-bit, mono 44100 Hz
+flip.wav     44 B   RIFF (little-endian) WAVE, Microsoft PCM, 16-bit, mono 44100 Hz
+reveal.wav   44 B   RIFF (little-endian) WAVE, Microsoft PCM, 16-bit, mono 44100 Hz
+shuffle.wav  44 B   RIFF (little-endian) WAVE, Microsoft PCM, 16-bit, mono 44100 Hz
+```
+
+标准 44 B 头后零 PCM 数据 → SoundUtils.playXxx() 实际不报错的静默运行。
+
+### 完成的功能
+- [x] `tools/generate_sounds.py` 新增 (~120 行) — 纯 Python stdlib WAV 生成器：
+  - `_SEED = 20260623` 为 module-level 常数，跨机器重跑产出**字节级一致** WAV（git re-diff 不产生噪音）
+  - 22050 Hz × 16-bit × mono 编码 (符合 spec §7.4 要求)
+  - 4 个函数：
+    - `generate_shuffle()` 0.8s：白噪声 × `sin²(t · 8π)` 爆发包络 × `exp(-2t)` 衰减 → ~6 个节奏性“ch-ch-ch”循环
+    - `generate_flip()` 0.25s：白噪声 × `exp(-30t)` 极锐衰减 → 0.15s 内完全静默的纸牌“弹击”声
+    - `generate_fan()` 0.4s：白噪声 × `sin²(t/0.4 · π)` 拱形包络 → 0 → 1 → 0 平滑会拉
+    - `generate_reveal()` 1.5s：C 大三和弦 (C5+E5+G5 = 523.25+659.25+783.99 Hz) 加性合成 × `exp(-2.5t)` 衰减，30 ms 渐震入避免 pop-click
+  - 所有样本 clip 到 `[-1.0, 1.0]` → × 32767 安全映射 int16，不溢出
+- [x] 重写 4 个 `assets/sounds/*.wav`：从 44 B RIFF 占位 → 实际 PCM 数据
+  - shuffle.wav: 35 324 B
+  - flip.wav: 11 068 B
+  - fan.wav: 17 684 B
+  - reveal.wav: 66 194 B
+- [x] `random.seed(_SEED)` 提升到 module-level、保证 `from tools.generate_sounds import generate_X` 路径下也字节一致
+
+### 关键技术决策
+选型详见 `docs/decision-log.md` **Decision #4**：Python stdlib 程序化合成 + 提交生成产物，**不**走外部 CC0 下载路线。本决策文档了为什么不起方案 A/B/C/E，是单一权威记录点。
+
+### 文件结构变化
+- 新增: `tools/generate_sounds.py` (~120 行) — Python 仅 stdlib、可跨平台字节稳定重跑
+- 重写: `assets/sounds/{shuffle,flip,fan,reveal}.wav` (4 个文件)
+- 未变: `lib/core/utils/sound_utils.dart`、`pubspec.yaml`(`assets/sounds/` 已全目录声明)、全部 widget 调用点("SoundUtils.playShuffle/Flip/Flip/Реveal") → Dart 代码零改动
+
+### 验证
+- [x] `python tools/generate_sounds.py` → 输出 4 个 WAV，_SEED=20260623 时字节级别一致
+- [x] `file(1)` 验证：所有 4 个文件 valid 22050 Hz, 16-bit, mono RIFF/WAVE
+- [x] `flutter analyze` → No issues found (Dart 代码未变)
+- [x] `flutter test --exclude-tags=slow` → 183 tests passed
+
+### 遗留问题/TODO
+- **运行时物理验证**：需用户在手机上 `flutter run -d <device>` 原生听感是否贴合“梦幻魔法”调性
+- **fan.wav 未被调用**：spec §7.4 列入表中, 业务调用尚未接入。保留是为未来 Phase 9 fan layout 预留
+- **调参执行**：如听感不合, 只需重跑脚本并调 `sin²`、`exp(-30t)` 等包络参数, 不需任何 Dart 代码改动
+
+### 参考资源
+- Python `wave` module: https://docs.python.org/3/library/wave.html
+- 项目已使用中的 `tools/generate_json_data.py` — 同样的“脚本 + 产物提交”模式参考

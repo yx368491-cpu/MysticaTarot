@@ -1109,11 +1109,11 @@ git log --oneline --graph --all
 
 - [ ] 生成签名密钥 (Keystore)
 - [ ] 配置签名
-- [ ] 构建 Release APK / AAB
-- [ ] 准备应用截图和描述
-- [ ] Google Play 发布准备
-- [ ] 🪵 **生成 Phase 7 开发日志** — 记录打包过程中的坑（签名问题、ProGuard 混淆规则、权限声明等）& 发布 checklist
+- [ ] 构建 Release APK / AAB（本地装机 / 侧载）
+- [ ] 🪵 **生成 Phase 7 开发日志** — 记录打包过程中的坑（签名问题、ProGuard 混淆规则、权限声明等）& 本地装机 checklist
 - [ ] 📊 **回顾与总结** — 浏览整个 `bug-log.md`，总结高频错误模式，完善开发规范
+
+> **说明**: 本项目不发布到 Google Play 商店。已移除原计划的"准备应用截图和描述"、"Google Play 发布准备"步骤。
 
 ---
 
