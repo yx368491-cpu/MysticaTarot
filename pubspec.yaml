@@ -61,4 +61,12 @@ flutter:
     - assets/sounds/
     - resources/l10n/
 
-  # fonts: (to be added after downloading PlayfairDisplay and NotoSerifSC)
+  fonts:
+    - family: PlayfairDisplay
+      fonts:
+        - asset: assets/fonts/PlayfairDisplay-Regular.ttf
+        - asset: assets/fonts/PlayfairDisplay-Italic.ttf
+          style: italic
+    - family: NotoSerifSC
+      fonts:
+        - asset: assets/fonts/NotoSerifSC-Variable.ttf
