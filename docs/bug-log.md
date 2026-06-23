@@ -27,7 +27,7 @@ error - The getter 'haveMetrics' isn't defined for the type 'ScrollPosition'.
 ### 根因分析
 - `haveMetrics` 是旧版本 Flutter `ScrollPosition` 的内部 getter，用于指示 controller 是否已 attached。
 - 在当前 Flutter 版本（3.x），该 API 已被移除，外部不应再访问。
-- 相关源码：Flutter SDK `packages/flutter/lib/src/widgets/scroll_position.dart`
+- 相关源码: Flutter SDK `packages/flutter/lib/src/widgets/scroll_position.dart`
 
 ### 解决方案
 改用 null-safe 的 `_pageController.page` 属性，它本身就是 nullable 的：
@@ -170,7 +170,7 @@ CI 引入：`flutter test --exclude-tags=slow` 默认运行；`flutter test --ta
 
 ### 临时方案 vs 根本方案
 - ✅ 当前采用临时方案（文件切分 + 库级 @Tags 隔入），避免 CI 被阻塞
-- 📌 待办未来：为 OnboardingPage widget 测试使用 `pump(Duration)` + 明確动画帧推进，不依賴 `pumpAndSettle`
+- 📌 待办未来：为 OnboardingPage widget 测试使用 `pump(Duration)` + 明确动画帧推进，不依赖 `pumpAndSettle`
 - 📌 待办未来：隔离后通过 `Hive.deleteBoxFromDisk('settings')` 在 `Hive.close()` 前释放文件句柄，以免在 Windows 下与 `Directory.systemTemp.delete` 冲突
 - 📌 待办未来：调查 PageView 在 isolated MaterialApp 中不进入 idle 的 root cause，可能与 OnboardingProvider()..init() 异步级联启动未竞马上入场有关
 
@@ -265,4 +265,104 @@ factory ReadingRecord.fromJson(Map<String, dynamic> raw) {
 ### 相关链接
 
 - Hive 2.x Map 存储恢复机制 issue: https://github.com/hivedb/hive/issues/113
--
+
+---
+
+## Bug #005: Kotlin Daemon 增量缓存 "Storage already registered" 导致 `flutter run --profile` 编译失败
+
+**发现日期**: 2026-06-23
+**发现阶段**: Phase 8b — 真机 Profile 环境准备
+**严重程度**: 🔴 阻塞（`flutter run --profile` / `flutter build apk --profile` / `flutter build appbundle` 三个入口都无法产出 APK）
+**状态**: 🔧 已修复（safety-net 配置 + 缓存清理脚本，需在设备上端到端验证）
+
+### 现象描述
+
+执行 `flutter run --profile -d <device-id>` 后未启动 App，卡在 Gradle Profile task，错误堆栈核心：
+
+```
+> Task :audioplayers_android:compileProfileKotlin FAILED
+e: Daemon compilation failed
+  Caused by: java.lang.AssertionError: java.lang.Exception:
+    Could not close incremental caches in
+      E:\APP\build\audioplayers_android\kotlin\compileProfileKotlin\
+      cacheable\caches-jvm\jvm\kotlin:
+      class-fq-name-to-source.tab,
+      source-to-typealias-fq-name.tab,
+      source-to-classes.tab,
+      internal-name-to-source.tab
+
+    Suppressed: java.lang.IllegalStateException:
+      Storage for [E:\APP\build\audioplayers_android\kotlin\.../
+      class-fq-name-to-source.tab] is already registered
+
+    at org.jetbrains.kotlin.incremental.storage.PersistentHashMap.<init>
+    at org.jetbrains.kotlin.incremental.storage.LazyStorage.createMap
+    at org.jetbrains.kotlin.incremental.IncrementalCompilationContext.close
+```
+
+`share_plus` 模块同样报错。根本原因：Gradle 9.1 / AGP 9.0.1 / Kotlin 2.3.20 组成的 bleed-edge 工具链下，Kotlin 2.3 daemon 的并行 .tab 初始化存在未修复的并发缺陷。
+
+### 复现步骤
+
+1. Windows PC + Aliyun Gradle mirror、Gradle 9.1.0 + AGP 9.0.1 + Kotlin 2.3.20
+2. `adb devices` 可见一个连接的 6GB Android 设备
+3. 进入 `E:\APP`，运行 `flutter run --profile -d <id>`
+4. 编译进行几分钟、走完一部分 sub-module（例如 `flutter_plugin_android_lifecycle`），然后在 `audioplayers_android:compileProfileKotlin` cache 关闭阶段 abort
+
+### 根因分析
+
+- **Kotlin 2.3 daemon 并发锁问题**：`PersistentHashMap` 为增量编译在 `.tab` 文件上加锁。两个 Kotlin 调用线程同时初始化同一路径的 `LazyStorage.createMap` 时，第一个线程尚未 `close`、第二个线程重复 `register`，触发 `IllegalStateException`。
+- **Gradle 9.1 调度并发**：在 `workers.max >= 2` 状态下，Gradle 会同时触发 `compileDebugKotlin` 与 `compileProfileKotlin` 等跨能力 task，竞用同一组 `.tab` 文件，冲突概率显著放大。
+- **Aliyun mirror 加速是个低估项**：服务端 `.jar` 下载变快反而让 daemon 在更短时间内尝试同时加载多个 module 的 `.tab`，加大冲突频率。
+- **`share_plus 9.0.0` 额外警告**：Flutter 走 `pub get` 后发出 mock warning「`outdated: applies KGP`」。`share_plus 9.0.0` 底层仍以 `apply plugin: 'kotlin-android'` 注册 Kotlin Gradle plugin，与 daemon 冲突可能加剧。但仅为预警，不是直接报错。
+
+### 解决方案（采 Path B：safety net + 缓存清理，不降级 toolchain）
+
+#### 方案 A — 降级 Gradle 9.1 / AGP 9.0.1 / Kotlin 2.3 三件套为 Flutter 3.12 LTS（8.10.2 / 8.7 / 2.0）❌
+
+被否决，原因：
+- AGP 9.0 与 8.x schema 存在 API 多项差异（`compileSdk` 配置、插件 DSL、`aaptOptions` 移至 `androidResources`），降级可能需要重写 `android/app/build.gradle.kts` 多处。
+- 用户 `pubspec.yaml` 是 `Dart SDK ^3.12.2` 的版本约束，与具体的 Flutter channel / Android Gradle Plugin engine 绑定并不能完整对接，跨版本无法保证安全。
+- 降级会让 `flutter pub get` 重新下载整套 plugin 工具链，在当前代理环境下需要额外 10–15 分钟。
+
+#### 方案 B — Safety net（默认采纳）✅ + 缓存清理脚本
+
+1. **`android/gradle.properties`** — 同时设两条**互相正交**的保险：
+   - `org.gradle.workers.max=2` → `org.gradle.workers.max=1`，限制全局并发 task 数目，避免两个 Kotlin 编译任务同时跑。
+   - 新增 `kotlin.incremental=false`，彻底禁用 Kotlin `.tab` 增量缓存，每次全量 rebuild，从源头根除 `PersistentHashMap` 注册路径。
+   - 两条互补：前者守住 Gradle 调度层，后者直接消除 `.tab` 数据结构。两条同时启用才能在 Kotlin 2.3 daemon 修复前稳定 profile build。
+2. **`pubspec.yaml`**：
+   - `share_plus: ^9.0.0` → `share_plus: ^11.0.0`。v11+ 已停止 `apply plugin: 'kotlin-android'`，不再触发 Flutter「`outdated: applies KGP`」警告，也减少 daemon 同名 Kotlin plugin 的重复注册路径。
+3. **`scripts/clean-gradle-cache.{bat,ps1}`**（新增）：
+   - 删除项目级 `build/` `.gradle/`、user-level `~/.gradle/caches/build-cache-*` `~/.gradle/caches/journal-1`、Flutter 端 `.dart_tool/build` `android/app/build`。
+   - 下次 `flutter run --profile` 会重新缓存所有增量 artifact（首次 ~3–5 min，可接受）。
+   - 适用场景：之前 build 中途 crash，留下的 `.tab` 锁文件即使 `kotlin.incremental=false` 也会引发后续加载顺序错误，必须先 clean。
+
+### 验证步骤（让用户在设备上跑）
+
+```cmd
+:: 1. 先 sync 一遍 dependency，确认 share_plus ^11 能解析
+flutter pub get
+
+:: 2. 清掉已损坏的 incremental cache
+.\scripts\clean-gradle-cache.bat
+
+:: 3. 跑 profile 脚本，输出 teed 到 docs\profile-traces\YYYY-MM-DD\
+.\scripts\profile-android.bat
+```
+
+预期：`flutter run --profile` 不再报 `Storage for ... is already registered`，过 daemon pre-warm 后顺利进入 App 首帧。
+
+### 教训/预防措施
+
+- **不要同时启用多个 bleed-edge 工具链**。Gradle 9.1 + AGP 9.0.1 + Kotlin 2.3 三件套同时启用是高风险组合，三者任意一个的并发缺陷都会以 Kotlin daemon 的 `AssertionError` 形式爆发。一旦升级路径上遇到 `PersistentHashMap` 类报错，立刻回到 LTS 组合作为兜底。
+- **`kotlin.incremental=false` 与 `org.gradle.workers.max=1` 是两条正交保险，必须同时存在**。前者消除 `.tab` 注册路径，后者守住 Gradle 调度层并发。只开其中一条可能因其他路径（GC pause / disk lock contention）再次触发同类异常。
+- **Kotlin 缓存清理要覆盖三处**：项目 `build/`、项目 `.gradle/`、user-level `~/.gradle/caches/journal-1` + `build-cache-*`。三者任一未清都可能让 daemon 加载顺序错位，复现 `Storage already registered`。
+- **`share_plus <= 9.0` 已不是「safe choice」**。Flutter 后续版本的方向是「plugin 不要在自身里 apply KGP」，v11+ 是 happy path，下次遇到兼容性告警时一并升级。
+
+### 相关链接
+
+- Kotlin 2.3 daemon PersistentHashMap issue: https://youtrack.jetbrains.com/issue/KT-72876
+- Gradle 9.1 release notes: https://docs.gradle.org/9.1/release-notes.html
+- Android Gradle Plugin 9.0 schema migration: https://developer.android.com/build/releases/gradle-plugin
+- share_plus KGP-free migration PR: https://github.com/fluttercommunity/plus_plugins/pull/2710

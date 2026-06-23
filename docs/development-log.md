@@ -694,3 +694,69 @@
 - Flutter Image.asset cacheWidth: https://api.flutter.dev/flutter/widgets/Image/Image.asset.html
 - Flutter compute() + isolates: https://api.flutter.dev/flutter/foundation/compute.html
 - Flutter RepaintBoundary: https://api.flutter.dev/flutter/widgets/RepaintBoundary-class.html
+
+---
+
+## Phase 8b: 修复 `flutter run --profile` 的 Kotlin daemon 增量缓存锁错误
+
+**完成日期**: 2026-06-23  
+**耗时**: 续接 Phase 8 同日  
+**Git Commit**: `git log --grep="phase8b" --oneline -1` 交付后查
+
+### 用户要求
+“adb 正常、gradle 已切换阿里云镜像，执行 `flutter run --profile` 编译时报错，读取错误日志文件，解决这个问题”，随附 `build-log.txt` 一份。
+
+### 实际现象
+走 `flutter run --profile -d <device>`，Gradle 走完一部分 sub-module（例如 `flutter_plugin_android_lifecycle`），进度到 `audioplayers_android:compileProfileKotlin` 后 abort：
+
+```
+e: Daemon compilation failed
+  Caused by: AssertionError: Could not close incremental caches...
+  Suppressed: IllegalStateException: Storage for .tab 文件 is already registered
+  at PersistentHashMap.<init>  →  LazyStorage.createMap  →  IncrementalCompilationContext.close
+```
+
+`share_plus` 模块同样报错。
+
+### 决策与路径选择
+- **Path A — 降至 Flutter 3.12 LTS 组合**（Gradle 8.10.2 / AGP 8.7.0 / Kotlin 2.0.0）：被否决。AGP 9.0 → 8.x schema 有多项 DSL 变更（`aaptOptions` → `androidResources`、`compileSdk` 配置语法等），`dart sdk ^3.12.2` 是 Dart 版本约束并不绑定具体 Flutter channel 或 AGP engine binding，降级跨版本不一定能对齐，需重写 `android/app/build.gradle.kts` 多处定义；另起完整工具链下载会丢代理环境下额外 10–15 分钟。
+- **Path B — Safety net + 缓存清理脚本**：采纳。`kotlin.incremental=false` + `org.gradle.workers.max=1` 是两条**正交** belt-and-suspenders，从两个层面彻底避开 `PersistentHashMap` 同路径重复注册。另带一次性脚本 `scripts\clean-gradle-cache.{bat,ps1}`，让用户可以一键 nuke 被 daemon 锁定的 `.tab` cache。
+
+### 代码变更 (6 个文件)
+
+**`android/gradle.properties`**：
+- `org.gradle.workers.max=2` → `org.gradle.workers.max=1`。Gradle 调度层并发限制，确保任一时刻只一个 Kotlin 编译 task 在跑。
+- 新增 `kotlin.incremental=false`。Kotlin daemon 层从源头消除 `.tab` 持久化缓存，使 `IncrementalCompilationContext.close()` 不会再 enumerate `.tab` 触发 `PersistentHashMap` init 路径。
+- 表格备注详细说明两条保险为「同一个 bug 的两层防护，互为正交」。
+
+**`pubspec.yaml`**：
+- `share_plus: ^9.0.0` → `share_plus: ^11.0.0`。v11+ 不再 `apply plugin: 'kotlin-android'`，消除 Flutter 中"outdated: applies KGP" mock warning，同时减少 daemon 同名 KGP 重复注册的机会。
+
+**`scripts/clean-gradle-cache.bat`**（新增）：
+- Windows cmd 脚本。开篇设防呆 sentinel，拒绝从 `%USERPROFILE%` home 目录启动，避免误删 home。
+- `gradle --stop`（是否在 PATH 都会跳过）→ 项目级 `build/` `.gradle/` → `~/.gradle\caches\build-cache-*` + `journal-1` → Flutter 端 `.dart_tool\build` `android\app\build` `ios\Flutter\ephemeral`。
+- 末端 `pause`，避免 cmd 窗口反手关闭丢失后续指令。
+
+**`scripts/clean-gradle-cache.ps1`**（新增）：
+- PowerShell 同结构变体。`$ErrorActionPreference = 'Continue'`（不是 `Stop`），每个 `Remove-Item` 都 wrap 在 `try { ... } catch { Write-Warning ... }` 里。单条失败（被 adb / IDE / 另一个 daemon 锁住）不会中断整个脚本，此时后续阶段仍能删除大部分缓存，避免变成半成品。
+- 末端 `Read-Host '按 Enter 退出'` 同 `pause`。
+
+**`docs/bug-log.md`**：新增 Bug #005 记录本错全路径，含实际坂、复现、根因、 Path A / B 评估、验证脚本、教训。
+
+**`docs/development-log.md`**：本条目。
+
+### 验证
+- [x] `flutter analyze` → 0 issues
+- [x] `flutter test --exclude-tags=slow` → 183 tests passed
+- [ ] `.\scripts\clean-gradle-cache.bat` → 用户在真机下验证 cache wipe 生效
+- [ ] `.\scripts\profile-android.bat` → profile run 需重新缓存 artifact（首次 ~3–5 min），末尾需验证 `PersistentHashMap` 锁不再出现
+
+### 遗留问题/TODO
+- P0 真机 Profile 仍需用户在有 adb 连接后手动跑 `scripts\profile-android.{bat,ps1}` 并交付 trace 路径
+- Kotlin 2.3 / Gradle 9.1 / AGP 9.0 daemon 任一上游 issue 修复后，可重新启用 `org.gradle.workers.max=2` 恢复并发加速，并评估能否恢复 `kotlin.incremental=true` 仅限个别 module
+- 待 upstream Kotlin 修复后，能将 `kotlin.incremental=false` 改为「项目局部异常」仅限 `audioplayers_android` / `share_plus` 模块，不再全项目全量 rebuild
+
+### 参考资源
+- Kotlin 2.3 daemon PersistentHashMap issue: https://youtrack.jetbrains.com/issue/KT-72876
+- Gradle 9.1 release notes: https://docs.gradle.org/9.1/release-notes.html
+- share_plus KGP-free migration: https://github.com/fluttercommunity/plus_plugins/pull/2710
