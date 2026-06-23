@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import '../../../../core/util/json_normalize.dart';
 
 /// Tarot card entity representing a single card in the deck
 class TarotCard {
@@ -134,10 +135,12 @@ class TarotCard {
     }
   }
 
-  /// Create from JSON map
-  factory TarotCard.fromJson(Map<String, dynamic> json) {
+  /// Accepts any Map-like input (including Hive's dynamic-keyed read-back);
+  /// see docs/bug-log.md entry 004.
+  factory TarotCard.fromJson(dynamic raw) {
+    final json = normalizeJsonMap(raw);
     return TarotCard(
-      id: json['id'] as int,
+      id: json['id'] as int? ?? 0,
       type: json['type'] as String? ?? 'major',
       number: json['number'] as int? ?? 0,
       nameEn: json['nameEn'] as String? ?? '',

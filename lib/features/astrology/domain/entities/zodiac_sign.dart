@@ -1,3 +1,5 @@
+import '../../../../core/util/json_normalize.dart';
+
 /// Zodiac sign entity with multi-language content
 class ZodiacSign {
   final String nameEn;
@@ -97,7 +99,10 @@ class ZodiacSign {
     }
   }
 
-  factory ZodiacSign.fromJson(Map<String, dynamic> json) {
+  /// Accepts any Map-like input (including Hive's dynamic-keyed read-back);
+  /// see docs/bug-log.md entry 004.
+  factory ZodiacSign.fromJson(dynamic raw) {
+    final json = normalizeJsonMap(raw);
     return ZodiacSign(
       nameEn: json['nameEn'] as String? ?? '',
       nameZh: json['nameZh'] as String? ?? '',

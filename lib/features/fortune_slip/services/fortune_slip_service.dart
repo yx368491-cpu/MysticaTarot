@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import '../../../core/util/json_normalize.dart';
 
 /// Fortune slip entity
 class FortuneSlip {
@@ -53,7 +54,10 @@ class FortuneSlip {
     }
   }
 
-  factory FortuneSlip.fromJson(Map<String, dynamic> json) {
+  /// Accepts any Map-like input (including Hive's dynamic-keyed read-back);
+  /// see docs/bug-log.md entry 004.
+  factory FortuneSlip.fromJson(dynamic raw) {
+    final json = normalizeJsonMap(raw);
     return FortuneSlip(
       id: json['id'] as int? ?? 0,
       grade: json['grade'] as String? ?? '',

@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import '../../../core/util/json_normalize.dart';
 
 /// Oracle card entity
 class OracleCard {
@@ -38,7 +39,10 @@ class OracleCard {
     }
   }
 
-  factory OracleCard.fromJson(Map<String, dynamic> json) {
+  /// Accepts any Map-like input (including Hive's dynamic-keyed read-back);
+  /// see docs/bug-log.md entry 004.
+  factory OracleCard.fromJson(dynamic raw) {
+    final json = normalizeJsonMap(raw);
     return OracleCard(
       id: json['id'] as int? ?? 0,
       nameEn: json['nameEn'] as String? ?? '',

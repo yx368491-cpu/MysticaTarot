@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import '../../../../core/util/json_normalize.dart';
 
 /// Result of a single card in a reading
 class CardResult {
@@ -18,11 +19,16 @@ class CardResult {
     'position': position,
   };
 
-  factory CardResult.fromJson(Map<String, dynamic> json) => CardResult(
-    cardIndex: json['cardIndex'] as int,
-    isReversed: json['isReversed'] as bool? ?? false,
-    position: json['position'] as int? ?? 0,
-  );
+  /// Accepts any Map-like input (including Hive's dynamic-keyed read-back);
+  /// see docs/bug-log.md entry 004.
+  factory CardResult.fromJson(dynamic raw) {
+    final json = normalizeJsonMap(raw);
+    return CardResult(
+      cardIndex: json['cardIndex'] as int? ?? 0,
+      isReversed: json['isReversed'] as bool? ?? false,
+      position: json['position'] as int? ?? 0,
+    );
+  }
 
   @override
   bool operator ==(Object other) =>
@@ -99,9 +105,13 @@ class ReadingRecord {
     'notes': notes,
   };
 
-  factory ReadingRecord.fromJson(Map<String, dynamic> json) {
+  /// Accepts any Map-like input (including Hive's dynamic-keyed read-back);
+  /// [normalizeJsonMap] recursively coerces keys so nested `cards` survive.
+  /// Throws on non-Map input; see docs/bug-log.md entry 004.
+  factory ReadingRecord.fromJson(dynamic raw) {
+    final json = normalizeJsonMap(raw);
     final cardList = (json['cards'] as List<dynamic>?)
-        ?.map((c) => CardResult.fromJson(c as Map<String, dynamic>))
+        ?.map((c) => CardResult.fromJson(c))
         .toList() ?? [];
     return ReadingRecord(
       id: json['id'] as String? ?? '',
@@ -166,14 +176,20 @@ class DailyCardRecord {
     'timestamp': timestamp.toIso8601String(),
   };
 
-  factory DailyCardRecord.fromJson(Map<String, dynamic> json) => DailyCardRecord(
-    date: json['date'] as String? ?? '',
-    cardType: json['cardType'] as String? ?? 'tarot',
-    cardIndex: json['cardIndex'] as int? ?? 0,
-    isReversed: json['isReversed'] as bool? ?? false,
-    readingText: json['readingText'] as String? ?? '',
-    timestamp: DateTime.tryParse(json['timestamp'] as String? ?? '') ?? DateTime.now(),
-  );
+  /// Accepts any Map-like input (including Hive's dynamic-keyed read-back);
+  /// see docs/bug-log.md entry 004.
+  factory DailyCardRecord.fromJson(dynamic raw) {
+    final json = normalizeJsonMap(raw);
+    return DailyCardRecord(
+      date: json['date'] as String? ?? '',
+      cardType: json['cardType'] as String? ?? 'tarot',
+      cardIndex: json['cardIndex'] as int? ?? 0,
+      isReversed: json['isReversed'] as bool? ?? false,
+      readingText: json['readingText'] as String? ?? '',
+      timestamp:
+          DateTime.tryParse(json['timestamp'] as String? ?? '') ?? DateTime.now(),
+    );
+  }
 
   @override
   bool operator ==(Object other) =>

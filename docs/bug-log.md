@@ -185,3 +185,84 @@ CI 引入：`flutter test --exclude-tags=slow` 默认运行；`flutter test --ta
 - Flutter widget testing best practices: https://docs.flutter.dev/cookbook/testing/widget/introduction
 
 ---
+
+## Bug #004: Hive 还原的 Map 是 `Map<dynamic, dynamic>`，直接 cast 到 `Map<String, dynamic>` 会 crash
+
+**发现日期**: 2026-06-23
+**发现阶段**: Phase 7 — Step 2 进程重启测试
+**严重程度**: 🟠 高（生产代码读取已存的读占记录时 100% 报 TypeError）
+**状态**: ✅ 已修复
+
+### 现象描述
+
+`ReadingRecord.fromJson(Map<String, dynamic> raw)` 在生产环境中读取已存 Hive `reading_records` box 里的记录时，报以下错：
+
+```
+type '_Map<dynamic, dynamic>' is not a subtype of type 'Map<String, dynamic>'
+  in type cast
+  at lib/features/tarot/domain/entities/reading.dart:104
+      (ReadingRecord.fromJson)
+```
+
+### 复现步骤
+
+1. 运行 APP → 占卜一次 → 表中插入一条 ReadingRecord via `ReadingRecord.toJson()`
+2. APP 关闭 / 重启 → 在重启逻辑中 `Hive.openBox<Map>('reading_records')` 读取
+3. 对读出的 map 调用 `ReadingRecord.fromJson(...)` ← 这里报
+4. `box.get(id)` 返回的 Map 运行类型是 `Map<dynamic, dynamic>`，外部怎么 `Map<String, dynamic>.from(map)` 都只能修顶层 key，不能修复嵌套 map
+
+### 根因分析
+
+- Hive 以二进制定长存 `Map<String, dynamic>`，但 Dart runtime 还原时丢失类型信息，所有 map 实例以 `LinkedHashMap<dynamic, dynamic>` 类型还原
+- 顶层 `Map<String, dynamic>.from(raw)` 只能重整顶层 key 类型，嵌套 `cards: [...]` 中的 `cropped_map` 仍是 `Map<dynamic, dynamic>`
+- 当 `ReadingRecord.fromJson` 内部调用 `c as Map<String, dynamic>` 检查嵌套 card 时，被运行时拒绝
+
+### 解决方案
+
+创建共享标准化器 `lib/core/util/json_normalize.dart`：
+
+```dart
+Map<String, dynamic> normalizeJsonMap(dynamic raw) {
+  if (raw is Map<String, dynamic>) return raw;
+  if (raw is Map) {
+    return raw.map<String, dynamic>(
+      (k, v) => MapEntry(
+        k.toString(),
+        v is Map ? normalizeJsonMap(v) : v,
+      ),
+    );
+  }
+  throw ArgumentError(
+    'normalizeJsonMap expected a Map, got ${raw.runtimeType}',
+  );
+}
+```
+
+在 `ReadingRecord.fromJson` 和 `DailyCardRecord.fromJson` 顶部插入一行：
+
+```dart
+factory ReadingRecord.fromJson(Map<String, dynamic> raw) {
+  final json = normalizeJsonMap(raw); // 递归还原动态 key 嵌套 map
+  // ... 原有逻辑不变 ...
+}
+```
+
+### 验证
+
+- `test/core/storage/hive_restart_test.dart` 中的 `'ReadingRecord serialization survives Hive boundary'` 测试:
+  - session 1 序列化写入 → 关闭 box
+  - session 2 重启 box → 读取 → 直接传递给 `ReadingRecord.fromJson`（不再需要 `jsonEncode / jsonDecode` hack）
+  - `expect(restored, equals(original))` 与 `expect(restored.hashCode, original.hashCode)` 都通过
+- `flutter analyze` → 0 issues
+- `flutter test --exclude-tags=slow` → 全量 174 tests pass
+
+### 教训/预防措施
+
+- 所有接 Hive / SharedPreferences / 其他运行时类型擦除源的 `*.fromJson` 都需要在入口对原始动态类型调 `normalizeJsonMap`
+- 不要再用 `jsonEncode(jsonDecode(...))` 这种依赖库内不对外的 Map 装换机制作为 workaround；明确修在生产代码
+- 考量提供一个 base `JsonEntity.fromMap(Map<String, dynamic>)` 默认实现子类化集中这一调漏点
+
+### 相关链接
+
+- Hive 2.x Map 存储恢复机制 issue: https://github.com/hivedb/hive/issues/113
+-
