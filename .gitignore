@@ -48,3 +48,7 @@ app.*.map.json
 # Sensitive files
 Github API.txt
 install-skills-spec.md
+
+# Build-debug logs (uploaded during triage, doc a temporary artifact)
+/build-log.txt
+/build-debug*.txt
