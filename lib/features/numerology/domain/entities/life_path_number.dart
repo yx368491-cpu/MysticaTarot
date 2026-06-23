@@ -63,4 +63,42 @@ class LifePathNumber {
       default: return challengeEn;
     }
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LifePathNumber &&
+          runtimeType == other.runtimeType &&
+          number == other.number &&
+          isMasterNumber == other.isMasterNumber &&
+          nameEn == other.nameEn &&
+          nameZh == other.nameZh &&
+          nameTl == other.nameTl &&
+          meaningEn == other.meaningEn &&
+          meaningZh == other.meaningZh &&
+          meaningTl == other.meaningTl &&
+          strengthEn == other.strengthEn &&
+          strengthZh == other.strengthZh &&
+          strengthTl == other.strengthTl &&
+          challengeEn == other.challengeEn &&
+          challengeZh == other.challengeZh &&
+          challengeTl == other.challengeTl;
+
+  @override
+  int get hashCode => Object.hash(
+        number,
+        isMasterNumber,
+        nameEn,
+        nameZh,
+        nameTl,
+        meaningEn,
+        meaningZh,
+        meaningTl,
+        strengthEn,
+        strengthZh,
+        strengthTl,
+        challengeEn,
+        challengeZh,
+        challengeTl,
+      );
 }

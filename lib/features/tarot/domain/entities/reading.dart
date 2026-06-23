@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 /// Result of a single card in a reading
 class CardResult {
   final int cardIndex; // Card ID in TarotCard
@@ -21,6 +23,18 @@ class CardResult {
     isReversed: json['isReversed'] as bool? ?? false,
     position: json['position'] as int? ?? 0,
   );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CardResult &&
+          runtimeType == other.runtimeType &&
+          cardIndex == other.cardIndex &&
+          isReversed == other.isReversed &&
+          position == other.position;
+
+  @override
+  int get hashCode => Object.hash(cardIndex, isReversed, position);
 }
 
 /// Divination type enum
@@ -99,6 +113,30 @@ class ReadingRecord {
       notes: json['notes'] as String?,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ReadingRecord &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          timestamp == other.timestamp &&
+          type == other.type &&
+          spreadId == other.spreadId &&
+          listEquals(cards, other.cards) &&
+          userInput == other.userInput &&
+          notes == other.notes;
+
+  @override
+  int get hashCode => Object.hash(
+        id,
+        timestamp,
+        type,
+        spreadId,
+        Object.hashAll(cards),
+        userInput,
+        notes,
+      );
 }
 
 /// Daily card record
@@ -136,4 +174,26 @@ class DailyCardRecord {
     readingText: json['readingText'] as String? ?? '',
     timestamp: DateTime.tryParse(json['timestamp'] as String? ?? '') ?? DateTime.now(),
   );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DailyCardRecord &&
+          runtimeType == other.runtimeType &&
+          date == other.date &&
+          cardType == other.cardType &&
+          cardIndex == other.cardIndex &&
+          isReversed == other.isReversed &&
+          readingText == other.readingText &&
+          timestamp == other.timestamp;
+
+  @override
+  int get hashCode => Object.hash(
+        date,
+        cardType,
+        cardIndex,
+        isReversed,
+        readingText,
+        timestamp,
+      );
 }

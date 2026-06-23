@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 /// Tarot card entity representing a single card in the deck
 class TarotCard {
   final int id;
@@ -164,6 +166,65 @@ class TarotCard {
       adviceEn: json['adviceEn'] as String? ?? '',
       adviceZh: json['adviceZh'] as String? ?? '',
       adviceTl: json['adviceTl'] as String? ?? '',
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TarotCard &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          type == other.type &&
+          number == other.number &&
+          nameEn == other.nameEn &&
+          nameZh == other.nameZh &&
+          nameTl == other.nameTl &&
+          suit == other.suit &&
+          suitZh == other.suitZh &&
+          suitTl == other.suitTl &&
+          element == other.element &&
+          elementZh == other.elementZh &&
+          listEquals(keywordsEn, other.keywordsEn) &&
+          listEquals(keywordsZh, other.keywordsZh) &&
+          listEquals(keywordsTl, other.keywordsTl) &&
+          meaningUprightEn == other.meaningUprightEn &&
+          meaningUprightZh == other.meaningUprightZh &&
+          meaningUprightTl == other.meaningUprightTl &&
+          meaningReversedEn == other.meaningReversedEn &&
+          meaningReversedZh == other.meaningReversedZh &&
+          meaningReversedTl == other.meaningReversedTl &&
+          loveEn == other.loveEn &&
+          loveZh == other.loveZh &&
+          loveTl == other.loveTl &&
+          careerEn == other.careerEn &&
+          careerZh == other.careerZh &&
+          careerTl == other.careerTl &&
+          adviceEn == other.adviceEn &&
+          adviceZh == other.adviceZh &&
+          adviceTl == other.adviceTl;
+
+  @override
+  int get hashCode {
+    // Object.hash accepts up to 20 positional args; precompute sub-hashes
+    // for the long 3-tuple blocks so each block collapses into one slot.
+    final name = Object.hash(nameEn, nameZh, nameTl);
+    final suitT = Object.hash(suit, suitZh, suitTl);
+    final elementT = Object.hash(element, elementZh);
+    final upMeaning = Object.hash(
+        meaningUprightEn, meaningUprightZh, meaningUprightTl);
+    final revMeaning = Object.hash(
+        meaningReversedEn, meaningReversedZh, meaningReversedTl);
+    final loveT = Object.hash(loveEn, loveZh, loveTl);
+    final careerT = Object.hash(careerEn, careerZh, careerTl);
+    final adviceT = Object.hash(adviceEn, adviceZh, adviceTl);
+    return Object.hash(
+      id, type, number,
+      name, suitT, elementT,
+      Object.hashAll(keywordsEn),
+      Object.hashAll(keywordsZh),
+      Object.hashAll(keywordsTl),
+      upMeaning, revMeaning, loveT, careerT, adviceT,
     );
   }
 }

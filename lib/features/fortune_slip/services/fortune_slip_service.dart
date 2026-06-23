@@ -65,6 +65,24 @@ class FortuneSlip {
       textTl: json['textTl'] as String? ?? '',
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FortuneSlip &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          grade == other.grade &&
+          gradeEn == other.gradeEn &&
+          gradeZh == other.gradeZh &&
+          gradeTl == other.gradeTl &&
+          textEn == other.textEn &&
+          textZh == other.textZh &&
+          textTl == other.textTl;
+
+  @override
+  int get hashCode =>
+      Object.hash(id, grade, gradeEn, gradeZh, gradeTl, textEn, textZh, textTl);
 }
 
 /// Service for fortune slip functionality

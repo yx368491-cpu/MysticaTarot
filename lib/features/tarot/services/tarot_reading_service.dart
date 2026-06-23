@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import '../domain/entities/tarot_card.dart';
 import '../domain/entities/reading.dart';
 
@@ -94,4 +95,30 @@ class CardInterpretation {
     required this.career,
     required this.advice,
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CardInterpretation &&
+          runtimeType == other.runtimeType &&
+          card == other.card &&
+          isReversed == other.isReversed &&
+          name == other.name &&
+          listEquals(keywords, other.keywords) &&
+          meaning == other.meaning &&
+          love == other.love &&
+          career == other.career &&
+          advice == other.advice;
+
+  @override
+  int get hashCode => Object.hash(
+        card,
+        isReversed,
+        name,
+        Object.hashAll(keywords),
+        meaning,
+        love,
+        career,
+        advice,
+      );
 }

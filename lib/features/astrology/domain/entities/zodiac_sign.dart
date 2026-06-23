@@ -124,4 +124,53 @@ class ZodiacSign {
       monthlyTl: json['monthlyTl'] as String? ?? '',
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ZodiacSign &&
+          runtimeType == other.runtimeType &&
+          nameEn == other.nameEn &&
+          nameZh == other.nameZh &&
+          nameTl == other.nameTl &&
+          dates == other.dates &&
+          element == other.element &&
+          elementZh == other.elementZh &&
+          ruler == other.ruler &&
+          rulerZh == other.rulerZh &&
+          luckyColor == other.luckyColor &&
+          luckyColorZh == other.luckyColorZh &&
+          luckyNumber == other.luckyNumber &&
+          personalityEn == other.personalityEn &&
+          personalityZh == other.personalityZh &&
+          personalityTl == other.personalityTl &&
+          dailyEn == other.dailyEn &&
+          dailyZh == other.dailyZh &&
+          dailyTl == other.dailyTl &&
+          weeklyEn == other.weeklyEn &&
+          weeklyZh == other.weeklyZh &&
+          weeklyTl == other.weeklyTl &&
+          monthlyEn == other.monthlyEn &&
+          monthlyZh == other.monthlyZh &&
+          monthlyTl == other.monthlyTl;
+
+  @override
+  int get hashCode {
+    // Object.hash accepts up to 20 positional args; precompute sub-hashes
+    // so the 3-tuples each collapse into one slot.
+    final monthly = Object.hash(monthlyEn, monthlyZh, monthlyTl);
+    final weekAndMonthly = Object.hash(
+      Object.hash(weeklyEn, weeklyZh, weeklyTl),
+      monthly,
+    );
+    return Object.hash(
+      nameEn, nameZh, nameTl,
+      dates, element, elementZh,
+      ruler, rulerZh,
+      luckyColor, luckyColorZh, luckyNumber,
+      personalityEn, personalityZh, personalityTl,
+      dailyEn, dailyZh, dailyTl,
+      weekAndMonthly,
+    );
+  }
 }

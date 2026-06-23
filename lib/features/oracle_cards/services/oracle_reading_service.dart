@@ -49,6 +49,30 @@ class OracleCard {
       messageTl: json['messageTl'] as String? ?? '',
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is OracleCard &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          nameEn == other.nameEn &&
+          nameZh == other.nameZh &&
+          nameTl == other.nameTl &&
+          messageEn == other.messageEn &&
+          messageZh == other.messageZh &&
+          messageTl == other.messageTl;
+
+  @override
+  int get hashCode => Object.hash(
+        id,
+        nameEn,
+        nameZh,
+        nameTl,
+        messageEn,
+        messageZh,
+        messageTl,
+      );
 }
 
 /// Oracle reading result
@@ -57,6 +81,17 @@ class OracleReadingResult {
   final int position; // 0, 1, 2 for multi-card readings
 
   const OracleReadingResult({required this.card, required this.position});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is OracleReadingResult &&
+          runtimeType == other.runtimeType &&
+          card == other.card &&
+          position == other.position;
+
+  @override
+  int get hashCode => Object.hash(card, position);
 }
 
 /// Service for oracle card readings
@@ -110,6 +145,18 @@ class OraclePosition {
       default: return nameEn;
     }
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is OraclePosition &&
+          runtimeType == other.runtimeType &&
+          nameEn == other.nameEn &&
+          nameZh == other.nameZh &&
+          nameTl == other.nameTl;
+
+  @override
+  int get hashCode => Object.hash(nameEn, nameZh, nameTl);
 
   static const List<OraclePosition> singlePositions = [
     OraclePosition(nameEn: 'Guidance', nameZh: '指引', nameTl: 'Gabay'),
