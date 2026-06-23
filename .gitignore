@@ -49,6 +49,5 @@ app.*.map.json
 Github API.txt
 install-skills-spec.md
 
-# Build-debug logs (uploaded during triage, doc a temporary artifact)
+# Manual build-debug log (one-off artifact uploaded during Phase 8b triage)
 /build-log.txt
-/build-debug*.txt
