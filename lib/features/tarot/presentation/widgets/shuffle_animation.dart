@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/sound_utils.dart';
 
 /// Shuffle animation simulating cards being shuffled
 class ShuffleAnimation extends StatefulWidget {
@@ -39,6 +40,10 @@ class _ShuffleAnimationState extends State<ShuffleAnimation>
       }
     });
     _controller.forward();
+    // Play shuffle sound
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      SoundUtils.playShuffle();
+    });
   }
 
   @override

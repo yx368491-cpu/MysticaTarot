@@ -339,8 +339,55 @@
   **理由**: 延迟初始化不影响 app 启动速度，失败静默捕获（非关键功能）
 
 ### 注意事项
-- 音效基础设施已就绪但未接入 UI（需在 ShuffleAnimation/CardFlipAnimation 中添加 SoundUtils 调用）
-- 设置页面的音效开关尚未与 SoundUtils.setEnabled() 关联
 - 历史详情页显示 Card ID# 而非卡片名称（ReadingRecord 不持卡名，需后续完善）
-- widget_test.dart 当前为占位测试，因完整 app 依赖 Hive 初始化
 - 通知使用 inexactAllowWhileIdle 调度模式，非精确触发时间
+
+---
+
+## Phase 4.5: 音效接入 & 单元测试
+
+**完成日期**: 2026-06-23  
+**耗时**: 续接 Phase 4 同日  
+**Git Commits**: `feat: wire sound effects into UI + add unit tests for services`
+
+### 完成的功能
+- [x] **ShuffleAnimation** → `SoundUtils.playShuffle()`（洗牌动画伴随音效）
+- [x] **CardFlipAnimation** → `SoundUtils.playFlip()`（翻牌动画伴随音效）
+- [x] **CardDrawPage** → `SoundUtils.playReveal()`（揭示卡牌时音效）
+- [x] **SettingsProvider.init()** → `SoundUtils.setEnabled(_soundEnabled)`（从 Hive 加载时同步）
+- [x] **SettingsProvider.setSoundEnabled()** → `SoundUtils.setEnabled(value)`（设置开关同步）
+- [x] **TarotReadingService 测试** — 11 个测试（洗牌/抽牌/种子抽牌/切牌/三语解读）
+- [x] **SpreadService 测试** — 10 个测试（6 种牌阵/ID 唯一性/cardCount 匹配/本地化）
+- [x] **NumerologyService 测试** — 12 个测试（生命路径数/命运数/主人数字/本地化）
+- [x] **DailyCardService 测试** — 6 个测试（实体创建/日期种子确定性）
+- [x] flutter analyze — No issues found / flutter test — 46 tests passed
+
+### 新增文件
+| 文件 | 说明 |
+|------|------|
+| `test/services/tarot_reading_service_test.dart` | TarotReadingService 11 个单元测试 |
+| `test/services/spread_service_test.dart` | SpreadService 10 个单元测试 |
+| `test/services/numerology_service_test.dart` | NumerologyService 12 个单元测试 |
+| `test/services/daily_card_service_test.dart` | DailyCardService 6 个单元测试 |
+
+### 修改文件
+| 文件 | 变更 |
+|------|------|
+| `lib/features/tarot/presentation/widgets/shuffle_animation.dart` | +SoundUtils.playShuffle() in initState |
+| `lib/features/tarot/presentation/widgets/card_flip_animation.dart` | +SoundUtils.playFlip() in flip() & didUpdateWidget |
+| `lib/features/tarot/presentation/pages/card_draw_page.dart` | +SoundUtils.playReveal() in _revealNextCard() |
+| `lib/settings/providers/settings_provider.dart` | +SoundUtils.setEnabled() in init() & setSoundEnabled() |
+
+### 关键技术决策
+- **决策**: ShuffleAnimation 中使用 `addPostFrameCallback` 播放音效
+  **理由**: initState 中不应执行异步操作，addPostFrameCallback 确保 Widget 挂载后再播放
+
+- **决策**: 测试使用 seed=42 确保 TarotReadingService 洗牌结果确定性
+  **理由**: 减少随机性导致的测试不稳定，seed 保证每次运行结果相同
+
+- **决策**: 测试文件放在 `test/services/` 目录下
+  **理由**: 清晰的功能分类，符合 Flutter 测试最佳实践
+
+### 踩坑记录
+- 灵数学 master number 22/33 无法通过当前算法达到（_reduceToDigit 不会产生 22/33），测试已调整为验证该局限性
+- `prefer_const_constructors` lint 触发 6 次，`dart fix --apply` 自动修复

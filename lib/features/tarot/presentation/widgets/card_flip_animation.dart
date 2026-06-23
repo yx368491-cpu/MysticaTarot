@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/utils/sound_utils.dart';
 
 /// 3D card flip animation widget
 class CardFlipAnimation extends StatefulWidget {
@@ -46,6 +47,7 @@ class CardFlipAnimationState extends State<CardFlipAnimation>
   void didUpdateWidget(CardFlipAnimation oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.isFlipped != oldWidget.isFlipped && widget.isFlipped) {
+      SoundUtils.playFlip();
       _controller.forward().then((_) {
         widget.onFlipComplete?.call();
       });
@@ -60,6 +62,7 @@ class CardFlipAnimationState extends State<CardFlipAnimation>
 
   /// Programmatically trigger flip
   void flip() {
+    SoundUtils.playFlip();
     _controller.forward().then((_) {
       widget.onFlipComplete?.call();
     });

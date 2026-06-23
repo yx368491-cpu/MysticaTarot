@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/utils/sound_utils.dart';
 
 /// Settings provider for managing app preferences
 class SettingsProvider extends ChangeNotifier {
@@ -41,6 +42,9 @@ class SettingsProvider extends ChangeNotifier {
     final themeModeStr = _settingsBox.get('themeMode', defaultValue: 'system');
     _themeMode = _parseThemeMode(themeModeStr);
 
+    // Sync sound enabled state to SoundUtils
+    SoundUtils.setEnabled(_soundEnabled);
+
     notifyListeners();
   }
 
@@ -69,6 +73,7 @@ class SettingsProvider extends ChangeNotifier {
   Future<void> setSoundEnabled(bool value) async {
     _soundEnabled = value;
     await _settingsBox.put('soundEnabled', value);
+    SoundUtils.setEnabled(value);
     notifyListeners();
   }
 
