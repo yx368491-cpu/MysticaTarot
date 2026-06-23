@@ -401,10 +401,11 @@ BUILD FAILED in 24s
 5. 2️⃣ 接着到 `:app:checkProfileAarMetadata` — AAR 元数据检查要求 desugaring，脚本 abort。
 
 ### 根因分析
-- `flutter_local_notifications` 现代版本使用 Java 8+ APIs（主要是 `java.time` 日期 API）在 Kotlin/Java 通信边界。
-- Android 22 以下原生不提供这些 API；Android 13 (API 33) 设备上时代过老、运行时缺少、所以检查阶段直接拒绝构建。
-- 即使 `compileOptions { sourceCompatibility = VERSION_17 }`，AAR 元数据仍要求显式打开 desugaring 才能带 polyfill 到 APK。
-- 与 Phase 8b Kotlin daemon 竞速问题无关 — 是另一条不同错误路径。
+- **`flutter_local_notifications` 的 AAR 元数据声明要求 desugaring**。该 plugin 的 AAR 内嵌 `META-INF/com/android/build/gradle/aar-metadata.properties` 标记表明其内部使用 Java 8+ API（如 `java.time.*` 在 Kotlin/Java 通信边界）。
+- **`:app:checkProfileAarMetadata` 是 AGP 编译期任务**：app build 时枚举所有 transitive AAR 的元数据，遇到某 AAR 要求 desugaring 但 app 未配置则拒绝构建。**任务失败与否与运行设备 API level 完全无关**。
+- 原描述“Android 13 (API 33) 设备上时代过老、运行时缺少 java.time”在事实上**不准确** — 自 Android 8 (API 26) 起 `java.time.*` 即在设备运行时原生支持。AGP 报错发生在编译期，根本未走安装 / 运行阶段，不会与运行时 API level 互动。
+- `compileOptions { sourceCompatibility = VERSION_17 }` 只控制源码 / 字节码兼容性，与 AAR 元数据 desugaring 设置是**两条独立路径** — 后者必须显式 `isCoreLibraryDesugaringEnabled = true` + 引入 `coreLibraryDesugaring("desugar_jdk_libs:...")` polyfill artifact，才能消除 CheckAarMetadata 拒绝。
+- 与 Phase 8b Kotlin daemon `.tab` 锁问题无关 — 是另一条独立错误路径（编译期 AAR metadata check vs 编译期 incremental cache 锁）。两个错误都需真机走脚本在同一次 build 中先后触发。
 
 ### 解决方案
 补丁两个 `android/app/build.gradle.kts` 处：

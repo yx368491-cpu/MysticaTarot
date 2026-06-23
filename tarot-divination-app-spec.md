@@ -1473,7 +1473,7 @@ Widget build(BuildContext context) { ... }
 | 序号 | 任务 | 说明 | 期望产出 |
 |---|---|---|---|
 | **P0** | 手机上跑完 `scripts/profile-android.bat` | 拿 DevTools 帧率 + Memory 面板实数据；本会话仅完成 APK build 验证，未启动 app | 一份带真实帧 trace 的 `docs/profile-traces/<date>/flutter-run.log` + DevTools 截图 |
-| **P1** | `docs/bug-log.md` Bug #006 根因段文案校正 | 把"Android 13 (API 33) 设备缺 Java 8+ API"改为"AGP `:app:checkProfileAarMetadata` 在编译期扫描 AAR META-INF，遇到 desugaring 标记则阻断构建，与运行设备 API level 无关" | docs-only commit || **P2** | `docs/development-log.md` Phase 8b-followup-2 段 prose 复核 | 清理之前编辑阶段混入的不规范表述 | docs-only commit |
+| **P1** | `docs/bug-log.md` Bug #006 根因段文案校正 | ✅ **已在本次 correctness commit 落地** — 根因段重写为 "`:app:checkProfileAarMetadata` 是编译期 AAR 元数据扫描任务，与运行设备 API level 完全解耦"；明确删除原文 "Android 13 设备上时代过老、运行时缺少 java.time" 的错误描述 | docs-only commit || **P2** | `docs/development-log.md` Phase 8b-followup-2 段 prose 复核 | 清理之前编辑阶段混入的不规范表述 | docs-only commit |
 | **P3** | `share_plus: ^11.0.0 → ^13.0.0`（隐含 Phase 8c） | 消除 `applies KGP` 警告；v13 完全脱离 KGP apply | `pubspec.yaml` + `pubspec.lock` 单 commit |
 | **P4** | 实现 `docs/decision-log.md`：记录 Phase 8b Path B（safety net + cache wipe）与 `share_plus` 版本选择两处决策理由 | 跨 git commit 之前 0 条决策记录，需补一条 | docs-only commit |
 | **P5** | 启动 Phase 8 P4-P7（Hive lazy-load / const audit / Provider scope / i18n lazy）| 待 P0 拿到的真机 trace 定位首帧 hot path 后再启动 | N 个 feature commit |
@@ -1484,10 +1484,10 @@ Widget build(BuildContext context) { ... }
 
 | 文件 | 状态 | 最近 commit |
 |---|---|---|
-| `docs/development-log.md` | Phase 8 / 8b / 8b-followup-2 段已落地（prose 待 P2 复核）| `917846e` |
-| `docs/bug-log.md` | Bug #005 / #006 已落地（#006 根因文案待 P1 修正）| `917846e` |
-| `docs/decision-log.md` | 未更新（Phase 8b Path B、`share_plus` 升版决策理由未记录）| 待 P4 |
-| `tarot-divination-app-spec.md`（本文件）| 已追加 §14；长期需重构为 v1.1（"做什么"/"怎么走"分章节）| 本次 commit |
+| `docs/development-log.md` | Phase 8 / 8b / 8b-followup-2 / **8c（音效合成）** 段已落地；prose 已对齐 §13.1 模板 | `924d014` |
+| `docs/bug-log.md` | Bug #005 / #006 已落地；**#006 根因文案已在本次 correctness commit 修正**（重写为 compile-time AAR scan、与运行设备 API level 解耦） | 本次 correctness commit |
+| `docs/decision-log.md` | Decision #4 已落地（音效 supply chain → Python stdlib 程序化合成）+ v1.0 ⛔ Play Store | `924d014` |
+| `tarot-divination-app-spec.md`（本文件）| 已追加 §14；长期需重构为 v1.1（"做什么"/"怎么走"分章节）| `924d014` + 本次 correctness commit |
 
 ### 14.5 本节写作约定
 
