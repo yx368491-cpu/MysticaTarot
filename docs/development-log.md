@@ -639,3 +639,58 @@
 - Object.hash upper bound: dart-sdk/lib/core/object.dart
 - Hive Map read-back: https://github.com/hivedb/hive/issues/113
 - Flutter DevTools Performance: https://docs.flutter.dev/tools/devtools/performance
+
+---
+
+## Phase 8: 应用前期优化
+
+**完成日期**: 2026-06-23
+**耗时**: 续接 Phase 7
+**Git Commits**: (本批次)
+
+### 用户要求
+"按 docs/profiling-recipe.md 在 6GB Android 设备上运行 flutter run --profile，验证帧率与内存是否达标；如未达标按 docs/phase7-startup-checklist.md 逐项优化"
+
+### 实际状态
+- **P0 (Profile) 跳过**：本会话环境无 adb / flutter PATH / Android 设备/enulator，无法连到真机验收。原样下达 docs/profiling-recipe.md 留给真机拿到手后补上第一手。
+- **P1 + P2 + P3 全部完成**：这些是 checklist 上明确的 高 ROI / 低风险优化，不需 DevTools 验证。（至于 checklist 上的 30ms 阈值与应该挚起的纸仲 implement_beat 也已采纳）
+- **P4 + P5 + P6 + P7 未动**：缺测量点会不采取 Hive lazy-load / const audit / Provider scope / i18n lazy；优先以真机 profile 补好。
+
+### 代码变更 (8 个文件)
+
+**P1 — 图像解码预算**：
+- `lib/features/tarot/presentation/widgets/tarot_card_widget.dart`: `Image.asset` 加 `cacheWidth: (width * 3).round()` + `cacheHeight: (height * 3).round()`，限制解码尺寸为逻辑像素 × 3 (覆盖 3× DPR)，以防 78 张 PNG 在 6GB 手机上 OOM。
+
+**P2 — RepaintBoundary 包动画点**：
+- `lib/features/tarot/presentation/widgets/shuffle_animation.dart`: Stack 外包 `RepaintBoundary`（包 SizedBox(height: 120) 里面 + Stack 外面），防止 5 卡位 cross-Trans 动每帧重画 progress / text。
+- `lib/features/tarot/presentation/widgets/card_flip_animation.dart`: 3D `Transform` 外包 `RepaintBoundary`，让父容器（卡牌 grid）不会被一次重画。
+
+**P3 — JSON decode 上 compute()**：
+- `lib/features/astrology/services/astrology_service.dart`: 新增 top-level `parseSigns(String)`，loadSigns() 用 `await compute(parseSigns, jsonStr)` 变起 background isolate。使用了 normalizeJsonMap 后的 ZodiacSign.fromJson 现在能接受任何 dynamic map。DartDoc 明确指出该函数是 public 是有意设计（调用 compute() + 测试都可引用）。
+- `lib/features/fortune_slip/services/fortune_slip_service.dart`: 同上。top-level `parseFortuneSlips(String)` + `await compute(parseFortuneSlips, jsonStr)`。
+- `lib/features/oracle_cards/services/oracle_reading_service.dart`: 同上。top-level `parseOracleCards(String)` + `await compute(parseOracleCards, jsonStr)`。
+
+### Profile 脚本（交给真机）
+- `scripts/profile-android.bat`: Windows cmd 脚本。检查 adb / flutter 是否在 PATH；检查设备是否连接；重置 batterystats；启动 `flutter run --profile` 并 tee 输出到 `docs\profile-traces\YYYY-MM-DD\flutter-run.log`。脚本末尾会 `pause` 以避免双击后窗口反手关闭丢失 trace 路径。
+- `scripts/profile-android.ps1`: 同上、PowerShell 变量版本（用 `Read-Host` 等价 pause）。
+
+### 测试新增 (3 个文件)
+- `test/services/astrology_service_test.dart`: 新增 `parseSigns` smoke 测试（合成 JSON 解析 + 空数组 + 缺字段容忍），3 测试。
+- `test/services/fortune_slip_service_test.dart`: 新增 `parseFortuneSlips` smoke 测试同样三场景，3 测试。
+- `test/services/oracle_reading_service_test.dart`: 新增 `parseOracleCards` smoke 测试同样三场景，3 测试。
+
+### 验证
+- `flutter analyze` -> No issues found
+- `flutter test --exclude-tags=slow` -> 183 tests passed（原 174 + 9个 Phase 8 smoke tests），耗时 ~1.2s
+
+### 跳过的项 (交给真机 Profile)
+- [ ] P0: 真机 DevTools walkthrough on 6GB Android 12+ 设备（脚本 `scripts\profile-android.bat` 已交付）
+- [ ] P4: Hive lazy-load — 需 startup 上 DevTools 数据
+- [ ] P5: blanket const audit — 需 DevTools gather widget 重建热点
+- [ ] P6: Provider scope 缩小 — 需 notifyListeners() 重画路径
+- [ ] P7: i18n 懒加载 — 需 assets 体积评估
+
+### 参考资源
+- Flutter Image.asset cacheWidth: https://api.flutter.dev/flutter/widgets/Image/Image.asset.html
+- Flutter compute() + isolates: https://api.flutter.dev/flutter/foundation/compute.html
+- Flutter RepaintBoundary: https://api.flutter.dev/flutter/widgets/RepaintBoundary-class.html

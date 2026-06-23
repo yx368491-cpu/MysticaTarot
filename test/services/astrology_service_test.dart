@@ -142,6 +142,28 @@ void main() {
     });
   });
 
+  group('AstrologyService.parseSigns — compute() entrypoint (Phase8 P3)', () {
+    test('parses a synthetic 1-element JSON string into a list of signs', () {
+      const json =
+          '[{"nameEn":"Aries","nameZh":"白羊座","nameTl":"Aries","dates":"Mar21-Apr19","element":"fire","elementZh":"火","ruler":"mars","rulerZh":"火星","luckyColor":"red","luckyColorZh":"红色","luckyNumber":7,"personalityEn":"p","personalityZh":"p","personalityTl":"p","dailyEn":"d","dailyZh":"d","dailyTl":"d","weeklyEn":"w","weeklyZh":"w","weeklyTl":"w","monthlyEn":"m","monthlyZh":"m","monthlyTl":"m"}]';
+      final signs = AstrologyService.parseSigns(json);
+      expect(signs, hasLength(1));
+      expect(signs.first.localizedName('en'), 'Aries');
+      expect(signs.first.localizedName('zh'), '白羊座');
+    });
+    test('returns empty list on empty JSON array', () {
+      expect(AstrologyService.parseSigns('[]'), isEmpty);
+    });
+    test('survives malformed JSON via fromJson tolerance', () {
+      // fromJson has safe defaults for every field, so an object with
+      // missing keys parses to a sign with empty strings and 0 luckyNumber.
+      final signs = AstrologyService.parseSigns('[{}]');
+      expect(signs, hasLength(1));
+      expect(signs.first.luckyNumber, 0);
+      expect(signs.first.localizedName('en'), '');
+    });
+  });
+
   group('ZodiacSign.localized helpers', () {
     test('localizedDaily picks per-locale field', () {
       final s = signFactory(5);

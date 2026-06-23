@@ -85,4 +85,25 @@ void main() {
       expect(OraclePosition.triplePositions.first.localizedName('xx'), 'Past');
     });
   });
+
+  group('parseOracleCards — compute() entrypoint (Phase8 P3)', () {
+    test('parses a synthetic 2-element JSON into a list of cards', () {
+      const json =
+          '[{"id":1,"nameEn":"n1","nameZh":"名1","nameTl":"n1tl","messageEn":"m1","messageZh":"信1","messageTl":"m1tl"},'
+          '{"id":2,"nameEn":"n2","nameZh":"名2","nameTl":"n2tl","messageEn":"m2","messageZh":"信2","messageTl":"m2tl"}]';
+      final cards = parseOracleCards(json);
+      expect(cards, hasLength(2));
+      expect(cards[0].localizedName('zh'), '名1');
+      expect(cards[1].localizedMessage('zh'), '信2');
+    });
+    test('returns empty list on empty JSON array', () {
+      expect(parseOracleCards('[]'), isEmpty);
+    });
+    test('tolerates missing fields per fromJson defaults', () {
+      final cards = parseOracleCards('[{}]');
+      expect(cards, hasLength(1));
+      expect(cards.first.id, 0);
+      expect(cards.first.localizedName('en'), '');
+    });
+  });
 }

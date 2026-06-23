@@ -82,12 +82,17 @@ class CardFlipAnimationState extends State<CardFlipAnimation>
           });
         }
 
-        return Transform(
-          alignment: Alignment.center,
-          transform: Matrix4.identity()
-            ..setEntry(3, 2, 0.001)
-            ..rotateY(angle),
-          child: isFront ? widget.frontChild : widget.backChild,
+        return RepaintBoundary(
+          // P2 perf: isolate the 3D rotating subtree from any parent
+          // rebuilds so Flutter can cache the back buffer. Without this
+          // every flip frame invalidates the parent card grid.
+          child: Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.identity()
+              ..setEntry(3, 2, 0.001)
+              ..rotateY(angle),
+            child: isFront ? widget.frontChild : widget.backChild,
+          ),
         );
       },
     );

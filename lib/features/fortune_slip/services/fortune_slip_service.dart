@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import '../../../core/util/json_normalize.dart';
 
@@ -89,17 +90,24 @@ class FortuneSlip {
       Object.hash(id, grade, gradeEn, gradeZh, gradeTl, textEn, textZh, textTl);
 }
 
+/// Static entrypoint for `compute()` so the JSON decode + mapping happens
+/// in a background isolate. P3 perf — see `docs/phase7-startup-checklist.md`.
+List<FortuneSlip> parseFortuneSlips(String jsonStr) {
+  final List<dynamic> jsonList = json.decode(jsonStr) as List<dynamic>;
+  return jsonList.map((e) => FortuneSlip.fromJson(e)).toList(growable: false);
+}
+
 /// Service for fortune slip functionality
 class FortuneSlipService {
   List<FortuneSlip> _allSlips = [];
   final Random _random = Random();
 
-  /// Load fortune slips from JSON
+  /// Load fortune slips from JSON (parse runs off the main isolate).
   Future<List<FortuneSlip>> loadSlips() async {
     if (_allSlips.isNotEmpty) return _allSlips;
-    final jsonStr = await rootBundle.loadString('features/fortune_slip/data/json/fortune_slips.json');
-    final List<dynamic> jsonList = json.decode(jsonStr) as List<dynamic>;
-    _allSlips = jsonList.map((e) => FortuneSlip.fromJson(e as Map<String, dynamic>)).toList();
+    final jsonStr = await rootBundle.loadString(
+        'features/fortune_slip/data/json/fortune_slips.json');
+    _allSlips = await compute(parseFortuneSlips, jsonStr);
     return _allSlips;
   }
 

@@ -42,15 +42,21 @@ class TarotCardWidget extends StatelessWidget {
                 ),
               ],
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Transform(
-                alignment: Alignment.center,
-                transform: isReversed ? Matrix4.rotationZ(3.14159) : Matrix4.identity(),
-                child: Image.asset(
-                  card.imagePath,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Transform(
+              alignment: Alignment.center,
+              transform: isReversed ? Matrix4.rotationZ(3.14159) : Matrix4.identity(),
+              child: Image.asset(
+                card.imagePath,
+                fit: BoxFit.cover,
+                // P1 perf: bound the decoded image to the displayed pixel
+                // size × DPR so the engine doesn't decode the full PNG.
+                // 78 cards at full resolution easily OOM a 6 GB Android
+                // phone; this caps each card to ~ width × 3 × height × 3.
+                cacheWidth: (width * 3).round(),
+                cacheHeight: (height * 3).round(),
+                errorBuilder: (context, error, stackTrace) {
                     return Container(
                       color: AppColors.softPurple.withValues(alpha: 0.3),
                       child: Column(

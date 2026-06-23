@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import '../../../core/util/json_normalize.dart';
 
@@ -98,6 +99,13 @@ class OracleReadingResult {
   int get hashCode => Object.hash(card, position);
 }
 
+/// Static entrypoint for `compute()` so the JSON decode + mapping happens
+/// in a background isolate. P3 perf — see `docs/phase7-startup-checklist.md`.
+List<OracleCard> parseOracleCards(String jsonStr) {
+  final List<dynamic> jsonList = json.decode(jsonStr) as List<dynamic>;
+  return jsonList.map((e) => OracleCard.fromJson(e)).toList(growable: false);
+}
+
 /// Service for oracle card readings
 class OracleReadingService {
   List<OracleCard> _allCards = [];
@@ -105,9 +113,9 @@ class OracleReadingService {
 
   Future<List<OracleCard>> loadCards() async {
     if (_allCards.isNotEmpty) return _allCards;
-    final jsonStr = await rootBundle.loadString('features/oracle_cards/data/json/oracle_cards_content.json');
-    final List<dynamic> jsonList = json.decode(jsonStr) as List<dynamic>;
-    _allCards = jsonList.map((e) => OracleCard.fromJson(e as Map<String, dynamic>)).toList();
+    final jsonStr = await rootBundle.loadString(
+        'features/oracle_cards/data/json/oracle_cards_content.json');
+    _allCards = await compute(parseOracleCards, jsonStr);
     return _allCards;
   }
 

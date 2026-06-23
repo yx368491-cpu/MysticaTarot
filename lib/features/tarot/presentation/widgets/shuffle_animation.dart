@@ -62,7 +62,12 @@ class _ShuffleAnimationState extends State<ShuffleAnimation>
           children: [
             SizedBox(
               height: 120,
-              child: Stack(
+              // P2 perf: a RepaintBoundary around the animated Stack keeps
+              // each shimmer card's Translate/Rotate from invalidating the
+              // surrounding text + progress indicator. The boundary is
+              // cheap and lets Flutter cache the rasterized card layer.
+              child: RepaintBoundary(
+                child: Stack(
                 alignment: Alignment.center,
                 children: List.generate(5, (i) {
                   final offset = _cardAnimations[i].value * 30 - 15;
@@ -87,6 +92,7 @@ class _ShuffleAnimationState extends State<ShuffleAnimation>
                     ),
                   );
                 }),
+              ),
               ),
             ),
             const SizedBox(height: 20),

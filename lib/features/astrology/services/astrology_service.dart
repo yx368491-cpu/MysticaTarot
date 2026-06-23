@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import '../domain/entities/zodiac_sign.dart';
 
@@ -6,12 +7,30 @@ import '../domain/entities/zodiac_sign.dart';
 class AstrologyService {
   List<ZodiacSign>? _allSigns;
 
-  /// Load zodiac data from JSON asset
+  /// Background-isolate entrypoint referenced by [loadSigns] through
+  /// `compute(parseSigns, jsonStr)`.
+  ///
+  /// Intentionally NOT underscore-prefixed: `compute()` requires a
+  /// reference to a top-level or static callable that is reachable from a
+  /// fresh isolate, and we also want unit tests to invoke it directly
+  /// without juggling `compute()`. Do NOT rename to private — both the
+  /// isolate boundary and the test surface will break silently.
+  ///
+  /// P3 perf: triggers per `docs/phase7-startup-checklist.md` (move JSON
+  /// decode off the main isolate when the parse exceeds frame budget).
+  static List<ZodiacSign> parseSigns(String jsonStr) {
+    final List<dynamic> jsonList = json.decode(jsonStr) as List<dynamic>;
+    return jsonList
+        .map((e) => ZodiacSign.fromJson(e))
+        .toList(growable: false);
+  }
+
+  /// Load zodiac data from JSON asset (parse runs off the main isolate).
   Future<List<ZodiacSign>> loadSigns() async {
     if (_allSigns != null) return _allSigns!;
-    final jsonStr = await rootBundle.loadString('features/astrology/data/json/zodiac_content.json');
-    final List<dynamic> jsonList = json.decode(jsonStr) as List<dynamic>;
-    _allSigns = jsonList.map((e) => ZodiacSign.fromJson(e as Map<String, dynamic>)).toList();
+    final jsonStr = await rootBundle.loadString(
+        'features/astrology/data/json/zodiac_content.json');
+    _allSigns = await compute(parseSigns, jsonStr);
     return _allSigns!;
   }
 
