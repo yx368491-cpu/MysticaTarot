@@ -1433,3 +1433,65 @@ Widget build(BuildContext context) { ... }
 ---
 
 > **本文档将在开发过程中持续更新。所有重大决策应记录在此文档中。**
+
+---
+
+## 14. Phase 8 → 8b-followup-2 累计摘要与下一步（2026-06-23 追加）
+
+> 本节依据本会话三次连续跑 `scripts/profile-android.bat` 的实测顺序，记录 Phase 8 / 8b / 8b-followup / 8b-followup-2 的累计交付、错误归类、按优先级排序的待办事项。详细"怎么走"型细节请见 `docs/development-log.md`；具体 root cause 与代码级解决方案请见 `docs/bug-log.md`（Bug #005 / #006）。
+
+### 14.1 阶段交付摘要
+
+| 阶段 | 触发 | 主要交付 | Commit |
+|---|---|---|---|
+| **Phase 8** | Phase 7 收尾时预留的"真机 Profile 验收 P0-P7" | P1 Image `cacheWidth`/`cacheHeight` 预算；P2 `RepaintBoundary` 裹 Stack/Transform；P3 `compute()` 后台 isolate 解码（3 个 service）；profile 启动脚本 | `b5a7111`（perf 批交付）|
+| **Phase 8b** | 用户实测：`flutter run --profile` 在 `compileProfileKotlin` 抛 `PersistentHashMap` 报错 + 附 `build-log.txt` | `gradle.properties`（`workers.max=1` + `kotlin.incremental=false`）；`share_plus ^9 → ^11`；新增 `scripts/clean-gradle-cache.{bat,ps1}`；Bug #005 + Phase 8b 开发日志 | `f52c84d` + `9454d5b` + `9686abd` + `fd43f31` + `49c640c` |
+| **Phase 8b-followup** | 脚本本身在 Windows 11 24H2 跑出空 trace dir | 3 处脚本修补（bat 的 `wmic → powershell`、`-d %DEVICE%`；ps1 的 `$DEVICE` 切分修正 + `-d $DEVICE`） | `83bf6b3` |
+| **Phase 8b-followup-2** | 走完脚本到下一阶段，`:app:checkProfileAarMetadata` 要求 desugaring | `isCoreLibraryDesugaringEnabled = true` + `coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")`；Bug #006 + Phase 8b-followup-2 开发日志 | `917846e` |
+
+**实证**: `flutter build apk --profile --target-platform=android-arm64` 输出 55.4 MB `app-profile.apk`，三阶段报错均未复现。
+
+### 14.2 累计错误清单（按发现顺序）
+
+**严重程度图例**: 🔴 阻塞 | 🟠 中 | 🟡 低 | 🟢 轻
+
+| # | 错误 | 严重 | 根因 | Commit |
+|---|---|---|---|---|
+| 1 | Kotlin daemon `Storage already registered` / `PersistentHashMap` 报 | 🔴 阻塞 | Gradle 9.1 + AGP 9.0.1 + Kotlin 2.3.20 bleed-edge；daemon 增量缓存初始化并发缺陷 | `f52c84d` |
+| 2 | `pubspec.lock` 与 `pubspec.yaml` 约束脱同步 | 🟠 中 | `share_plus ^11` 升版后 lock 未同步 | `9454d5b` |
+| 3 | Aliyun maven 镜像置于 `google()` / `mavenCentral()` 前 | 🟠 中（潜在 CI 拖速） | 镜像顺序位置错误 | `9454d5b` |
+| 4 | `gradle-wrapper.properties` 中 BOM / CRLF cosmetic 噪音 | 🟢 轻（reverted） | 编辑器自动写入 | — |
+| 5 | `wmic` 在 Windows 11 24H2 已移除 | 🔴 阻塞 | 平台 API 弃用；脚本走不到下一步（trace dir 创建直接失败）| `83bf6b3` |
+| 6 | bat 的 `flutter run --profile` 未传 `-d %DEVICE%` | 🔴 阻塞（多设备时 "More than one device connected"） | 入参遗漏 | `49c640c` |
+| 7 | ps1 的 `$DEVICE = ($deviceList -split '<TAB>')[0]` 取整行而非首 token | 🔴 阻塞 | `adb devices` 输出用空格而非制表符分隔 | `83bf6b3` |
+| 8 | `:app:checkProfileAarMetadata` 要求 desugaring | 🔴 阻塞 | `flutter_local_notifications` AAR 声明使用 `java.time.*` 等 Java 8+ API，编译期 AAR 元数据扫描阻断构建 | `917846e` |
+| 9 | `share_plus` v11.1.0 仍发 `applies KGP` 警告 | 🟡 低（non-blocking） | 上游 KGP apply 残留；升 `^13` 后解除 | 计划中（P3）|
+| 10 | `docs/bug-log.md` Bug #006 根因段写"Android 13 (API 33) 设备上时代过老、运行时缺少" | 🟠 中（文档准确性） | `:checkProfileAarMetadata` 是**编译阶段**行为，与运行设备 API level 解耦；API 33 完整支持 Java 17 | 待 P1 |
+
+### 14.3 下一步执行顺序（P0 → P7，按优先级排列）
+
+| 序号 | 任务 | 说明 | 期望产出 |
+|---|---|---|---|
+| **P0** | 手机上跑完 `scripts/profile-android.bat` | 拿 DevTools 帧率 + Memory 面板实数据；本会话仅完成 APK build 验证，未启动 app | 一份带真实帧 trace 的 `docs/profile-traces/<date>/flutter-run.log` + DevTools 截图 |
+| **P1** | `docs/bug-log.md` Bug #006 根因段文案校正 | 把"Android 13 (API 33) 设备缺 Java 8+ API"改为"AGP `:app:checkProfileAarMetadata` 在编译期扫描 AAR META-INF，遇到 desugaring 标记则阻断构建，与运行设备 API level 无关" | docs-only commit || **P2** | `docs/development-log.md` Phase 8b-followup-2 段 prose 复核 | 清理之前编辑阶段混入的不规范表述 | docs-only commit |
+| **P3** | `share_plus: ^11.0.0 → ^13.0.0`（隐含 Phase 8c） | 消除 `applies KGP` 警告；v13 完全脱离 KGP apply | `pubspec.yaml` + `pubspec.lock` 单 commit |
+| **P4** | 实现 `docs/decision-log.md`：记录 Phase 8b Path B（safety net + cache wipe）与 `share_plus` 版本选择两处决策理由 | 跨 git commit 之前 0 条决策记录，需补一条 | docs-only commit |
+| **P5** | 启动 Phase 8 P4-P7（Hive lazy-load / const audit / Provider scope / i18n lazy）| 待 P0 拿到的真机 trace 定位首帧 hot path 后再启动 | N 个 feature commit |
+| **P6** | Phase 9 计划：依据 DevTools 数据逐项修 frame drop / 过度重绘点 | 依赖 P0 实帧 trace | 待 P5 后启动 |
+| **P7** | v1.0 spec 重构为 v1.1：把"做什么"与"怎么走"分章节；§11 路线图新增 Phase 8c 条目 | 本节 §14 是"怎么走"型 reflection 的快照，长期应拆分 | 文档结构性 commit |
+
+### 14.4 文档同步状态
+
+| 文件 | 状态 | 最近 commit |
+|---|---|---|
+| `docs/development-log.md` | Phase 8 / 8b / 8b-followup-2 段已落地（prose 待 P2 复核）| `917846e` |
+| `docs/bug-log.md` | Bug #005 / #006 已落地（#006 根因文案待 P1 修正）| `917846e` |
+| `docs/decision-log.md` | 未更新（Phase 8b Path B、`share_plus` 升版决策理由未记录）| 待 P4 |
+| `tarot-divination-app-spec.md`（本文件）| 已追加 §14；长期需重构为 v1.1（"做什么"/"怎么走"分章节）| 本次 commit |
+
+### 14.5 本节写作约定
+
+- 本节是"current state"快照，**不是 v1.0 spec 的改写**。v1.0 是"做什么"型，本节是"怎么走"型 reflection。
+- §14.3 中 P0-P7 是**执行优先级**，不是文档重要度排序。
+- 用户原问的"接下来需要执行的步骤"已落地为 §14.3 中可执行项；执行 P0-P7 不会改变 v1.0 spec 已锁定的功能与范围。
+
