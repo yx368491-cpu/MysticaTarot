@@ -27,7 +27,12 @@ if (-not $deviceList) {
     Write-Host "ERROR: No device attached. Plug in your phone and retry." -ForegroundColor Red
     exit 1
 }
-$DEVICE = ($deviceList -split "`t")[0]
+# Split on any whitespace run (matches both adb devices and adb devices -l
+# output formats); takes the first token = serial. Earlier `-split "`t"`
+# only worked on tab-separated output and produced the entire line when
+# Select-String returned a MatchInfo, so `-d $DEVICE` would have been
+# rejected by flutter with a malformed serial.
+$DEVICE = ($deviceList -split '\s+')[0]
 Write-Host "Device detected: $DEVICE" -ForegroundColor Green
 
 # 3. Trace output dir
@@ -44,7 +49,7 @@ Write-Host "=== Launching flutter run --profile ===" -ForegroundColor Cyan
 Write-Host "Press 'v' to open DevTools in the browser."
 Write-Host "Then follow docs\profiling-recipe.md Steps 3-6 for performance trace."
 Write-Host ""
-& flutter run --profile 2>&1 | Tee-Object -FilePath "$traceDir\flutter-run.log"
+& flutter run --profile -d $DEVICE 2>&1 | Tee-Object -FilePath "$traceDir\flutter-run.log"
 $RC = $LASTEXITCODE
 Write-Host ""
 Write-Host "=== Done (flutter exit code: $RC) ===" -ForegroundColor Cyan

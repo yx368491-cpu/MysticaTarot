@@ -38,7 +38,8 @@ if not defined DEVICE (
 echo Device detected: %DEVICE%
 
 REM --- 3. Trace output directory ---
-for /f "tokens=2 delims==" %%a in ('wmic os get localdatetime /value') do set DATETIME=%%a
+REM wmic was removed in Windows 11 24H2. Use PowerShell Get-Date instead.
+for /f "delims=" %%a in ('powershell -NoProfile -Command "Get-Date -Format yyyy-MM-dd"') do set "DATETIME=%%a"
 set TRACE_DATE=%DATETIME:~0,4%-%DATETIME:~4,2%-%DATETIME:~6,2%
 REM mkdir can't create intermediate parents — make sure
 REM docs\profile-traces\ itself exists before the dated subdir.
