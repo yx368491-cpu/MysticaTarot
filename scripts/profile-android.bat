@@ -56,7 +56,7 @@ echo Press 'v' in this terminal once connected to open DevTools.
 echo Then follow docs\profiling-recipe.md Step 3-6 for the actual
 echo performance trace workflow.
 echo.
-flutter run --profile 2>&1 | tee %TRACE_DIR%\flutter-run.log
+flutter run --profile -d %DEVICE% 2>&1 | tee %TRACE_DIR%\flutter-run.log
 set RC=%ERRORLEVEL%
 echo.
 echo === Done (flutter exit code: %RC%) ===
