@@ -156,20 +156,20 @@ class _HistoryCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   '${record.cards.length} cards',
-                  style: const TextStyle(
-                    fontSize: 13, color: AppColors.textPrimary),
+                  style: TextStyle(
+                    fontSize: 13, color: AppColors.primaryText(context)),
                 ),
                 Text(
                   '$dateStr $timeStr',
-                  style: const TextStyle(
-                    fontSize: 11, color: AppColors.textSecondary),
+                  style: TextStyle(
+                    fontSize: 11, color: AppColors.secondaryText(context)),
                 ),
               ],
             ),
           ),
           // Delete button
           IconButton(
-            icon: const Icon(Icons.close, size: 18, color: AppColors.textSecondary),
+            icon: Icon(Icons.close, size: 18, color: AppColors.secondaryText(context)),
             onPressed: onDelete,
           ),
         ],
@@ -197,7 +197,7 @@ class _ReadingDetailPage extends StatelessWidget {
             children: [
               Text(
                 '${record.timestamp.year}/${record.timestamp.month}/${record.timestamp.day}',
-                style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
+                style: TextStyle(fontSize: 14, color: AppColors.secondaryText(context)),
               ),
               const SizedBox(height: 8),
               Text(

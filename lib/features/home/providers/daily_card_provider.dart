@@ -6,7 +6,7 @@ import '../services/daily_card_service.dart';
 class DailyCardProvider extends ChangeNotifier {
   final DailyCardService _service = DailyCardService();
   DailyCardResult? _todayCard;
-  bool _isLoading = false;
+  bool _isLoading = true;
   bool _isDrawn = false;
   String? _errorMessage;
 
@@ -29,6 +29,7 @@ class DailyCardProvider extends ChangeNotifier {
         // Silently fall back
       }
     }
+    _isLoading = false;
     notifyListeners();
   }
 

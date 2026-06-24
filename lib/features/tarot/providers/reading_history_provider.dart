@@ -25,7 +25,7 @@ class ReadingHistoryProvider extends ChangeNotifier {
   void _loadFromHive() {
     final data = _historyBox.get('records') as List<dynamic>? ?? [];
     _records = data
-        .map((e) => ReadingRecord.fromJson(Map<String, dynamic>.from(e as Map)))
+        .map((e) => ReadingRecord.fromJson(e))
         .toList()
       ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
   }

@@ -35,7 +35,6 @@ class GradientBackground extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: gradientColors,
-          stops: const [0.0, 0.5, 1.0],
         ),
       ),
       child: child,

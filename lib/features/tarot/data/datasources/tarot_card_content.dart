@@ -11,10 +11,10 @@ class TarotCardContent {
     if (_cachedCards != null) return _cachedCards!;
 
     final majorJson = await rootBundle.loadString(
-      'features/tarot/data/json/major_arcana.json',
+      'lib/features/tarot/data/json/major_arcana.json',
     );
     final minorJson = await rootBundle.loadString(
-      'features/tarot/data/json/minor_arcana.json',
+      'lib/features/tarot/data/json/minor_arcana.json',
     );
 
     final majorList = json.decode(majorJson) as List<dynamic>;

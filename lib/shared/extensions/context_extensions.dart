@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/localization/app_localizations.dart';
+import '../../core/theme/app_colors.dart';
 
 /// BuildContext extensions for convenience
 extension ContextExtensions on BuildContext {
@@ -42,4 +43,12 @@ extension ContextExtensions on BuildContext {
       SnackBar(content: Text(message)),
     );
   }
+
+  /// Primary text color — adapts to dark mode automatically.
+  /// Replaces hardcoded [AppColors.textPrimary] which is invisible on
+  /// dark surfaces (same color as [AppColors.darkSurface]).
+  Color get textPrimary => AppColors.primaryText(this);
+
+  /// Secondary text color — adapts to dark mode automatically.
+  Color get textSecondary => AppColors.secondaryText(this);
 }

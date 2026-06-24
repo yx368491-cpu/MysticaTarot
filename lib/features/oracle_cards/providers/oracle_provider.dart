@@ -5,7 +5,7 @@ import '../services/oracle_reading_service.dart';
 class OracleProvider extends ChangeNotifier {
   final OracleReadingService _service = OracleReadingService();
   List<OracleReadingResult> _results = [];
-  bool _isLoading = false;
+  bool _isLoading = true;
   bool _isDrawing = false;
   int _cardMode = 1; // 1 or 3 cards
   String? _errorMessage;

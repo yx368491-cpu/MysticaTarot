@@ -145,8 +145,8 @@ class _BirthdayForm extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Select your birth date', style: TextStyle(
-            fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+          Text('Select your birth date', style: TextStyle(
+            fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryText(context))),
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
@@ -175,7 +175,7 @@ class _BirthdayForm extends StatelessWidget {
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.softPurpleLight.withValues(alpha: 0.3),
-                foregroundColor: AppColors.textPrimary,
+                foregroundColor: AppColors.primaryText(context),
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
@@ -205,8 +205,8 @@ class _NameForm extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Enter your full name', style: TextStyle(
-            fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+          Text('Enter your full name', style: TextStyle(
+            fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryText(context))),
           const SizedBox(height: 16),
           TextField(
             controller: controller,
@@ -293,19 +293,19 @@ class _LifePathResult extends StatelessWidget {
             ),
           const SizedBox(height: 16),
           // Meaning
-          _section('Meaning', data.meaningEn),
+          _section(context, 'Meaning', data.meaningEn),
           const SizedBox(height: 10),
           // Strengths
-          _section('Strengths', data.strengthEn),
+          _section(context, 'Strengths', data.strengthEn),
           const SizedBox(height: 10),
           // Challenges
-          _section('Challenges', data.challengeEn),
+          _section(context, 'Challenges', data.challengeEn),
         ],
       ),
     );
   }
 
-  Widget _section(String title, String content) {
+  Widget _section(BuildContext context, String title, String content) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -313,8 +313,8 @@ class _LifePathResult extends StatelessWidget {
           fontSize: 13, fontWeight: FontWeight.w600,
           color: AppColors.rosePink)),
         const SizedBox(height: 4),
-        Text(content, style: const TextStyle(
-          fontSize: 14, color: AppColors.textPrimary, height: 1.5)),
+        Text(content, style: TextStyle(
+          fontSize: 14, color: AppColors.primaryText(context), height: 1.5)),
       ],
     );
   }
@@ -347,18 +347,17 @@ class _DestinyResult extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 16),
-          const Expanded(
+          const SizedBox(width: 16),            Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Destiny Number', style: TextStyle(
-                  fontSize: 12, color: AppColors.textSecondary, letterSpacing: 2)),
-                SizedBox(height: 4),
+                  fontSize: 12, color: AppColors.secondaryText(context), letterSpacing: 2)),
+                const SizedBox(height: 4),
                 Text(
                   'Your destiny number reveals your life purpose.',
                   style: TextStyle(
-                    fontSize: 13, color: AppColors.textPrimary, height: 1.4),
+                    fontSize: 13, color: AppColors.primaryText(context), height: 1.4),
                 ),
               ],
             ),

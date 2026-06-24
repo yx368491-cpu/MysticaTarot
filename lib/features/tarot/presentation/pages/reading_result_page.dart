@@ -56,25 +56,41 @@ class ReadingResultPage extends StatelessWidget {
                   ),
                   // Cards list
                   Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(20),
-                      itemCount: provider.drawnCards.length,
-                      itemBuilder: (context, index) {
-                        final result = provider.drawnCards[index];
-                        final card = provider.getCardByResult(result);
-                        final interpretation = provider.getInterpretation(index);
+                    child: provider.drawnCards.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.auto_stories,
+                                    size: 48,
+                                    color: AppColors.rosePink.withValues(alpha: 0.5)),
+                                const SizedBox(height: 12),              Text(
+                'No reading data available',
+                style: TextStyle(
+                  fontSize: 16, color: AppColors.secondaryText(context)),
+              ),
+                              ],
+                            ),
+                          )
+                        : ListView.builder(
+                            padding: const EdgeInsets.all(20),
+                            itemCount: provider.drawnCards.length,
+                            itemBuilder: (context, index) {
+                              final result = provider.drawnCards[index];
+                              final card = provider.getCardByResult(result);
+                              final interpretation = provider.getInterpretation(index);
 
-                        if (card == null || interpretation == null) {
-                          return const SizedBox();
-                        }
+                              if (card == null || interpretation == null) {
+                                return const SizedBox();
+                              }
 
-                        return _CardDetailCard(
-                          interpretation: interpretation,
-                          positionName: provider.getPositionName(index),
-                          positionDesc: provider.getPositionDescription(index),
-                        );
-                      },
-                    ),
+                              return _CardDetailCard(
+                                interpretation: interpretation,
+                                positionName: provider.getPositionName(index),
+                                positionDesc: provider.getPositionDescription(index),
+                              );
+                            },
+                          ),
                   ),
                 ],
               ),
@@ -203,6 +219,7 @@ class _CardDetailCard extends StatelessWidget {
           const SizedBox(height: 12),
           // Meaning
           _buildSection(
+            context,
             icon: Icons.auto_stories,
             title: l10n.translate('sectionMeaning'),
             content: interpretation.meaning,
@@ -210,6 +227,7 @@ class _CardDetailCard extends StatelessWidget {
           const SizedBox(height: 10),
           // Love
           _buildSection(
+            context,
             icon: Icons.favorite,
             title: l10n.translate('love'),
             content: interpretation.love,
@@ -217,6 +235,7 @@ class _CardDetailCard extends StatelessWidget {
           const SizedBox(height: 10),
           // Career
           _buildSection(
+            context,
             icon: Icons.work,
             title: l10n.translate('career'),
             content: interpretation.career,
@@ -254,9 +273,9 @@ class _CardDetailCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         interpretation.advice,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
-                          color: AppColors.textPrimary,
+                          color: AppColors.primaryText(context),
                           height: 1.5,
                           fontStyle: FontStyle.italic,
                         ),
@@ -272,7 +291,8 @@ class _CardDetailCard extends StatelessWidget {
     );
   }
 
-  Widget _buildSection({
+  Widget _buildSection(
+    BuildContext context, {
     required IconData icon,
     required String title,
     required String content,
@@ -297,9 +317,9 @@ class _CardDetailCard extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 content,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
-                  color: AppColors.textPrimary,
+                  color: AppColors.primaryText(context),
                   height: 1.5,
                 ),
               ),

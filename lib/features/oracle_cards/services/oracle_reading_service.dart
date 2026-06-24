@@ -114,7 +114,7 @@ class OracleReadingService {
   Future<List<OracleCard>> loadCards() async {
     if (_allCards.isNotEmpty) return _allCards;
     final jsonStr = await rootBundle.loadString(
-        'features/oracle_cards/data/json/oracle_cards_content.json');
+        'lib/features/oracle_cards/data/json/oracle_cards_content.json');
     _allCards = await compute(parseOracleCards, jsonStr);
     return _allCards;
   }

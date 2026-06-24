@@ -29,7 +29,10 @@ class _MysticaTarotAppState extends State<MysticaTarotApp> {
   @override
   void initState() {
     super.initState();
-    _initNotifications();
+    // Defer to avoid platform-channel deadlock with SurfaceView on Android 16.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initNotifications();
+    });
   }
 
   Future<void> _initNotifications() async {

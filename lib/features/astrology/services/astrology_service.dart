@@ -29,7 +29,7 @@ class AstrologyService {
   Future<List<ZodiacSign>> loadSigns() async {
     if (_allSigns != null) return _allSigns!;
     final jsonStr = await rootBundle.loadString(
-        'features/astrology/data/json/zodiac_content.json');
+        'lib/features/astrology/data/json/zodiac_content.json');
     _allSigns = await compute(parseSigns, jsonStr);
     return _allSigns!;
   }

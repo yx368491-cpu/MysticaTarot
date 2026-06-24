@@ -8,7 +8,7 @@ class AstrologyProvider extends ChangeNotifier {
   List<ZodiacSign> _allSigns = [];
   ZodiacSign? _selectedSign;
   int _selectedTab = 0; // 0=daily, 1=weekly, 2=monthly
-  bool _isLoading = false;
+  bool _isLoading = true;
   String? _errorMessage;
 
   List<ZodiacSign> get allSigns => _allSigns;

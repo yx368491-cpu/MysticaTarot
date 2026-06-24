@@ -97,7 +97,7 @@ class OnboardingItem extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : AppColors.textPrimary,
+                  color: isDark ? Colors.white : AppColors.primaryText(context),
                   height: 1.3,
                   letterSpacing: 0.5,
                 ),
@@ -118,7 +118,7 @@ class OnboardingItem extends StatelessWidget {
                   height: 1.6,
                   color: isDark
                       ? Colors.white.withValues(alpha: 0.75)
-                      : AppColors.textSecondary,
+                      : AppColors.secondaryText(context),
                 ),
               ),
             ),

@@ -38,6 +38,26 @@ class AstrologyPage extends StatelessWidget {
                           children: [
                             Text(l10n.translate('selectZodiac'),
                                 style: AppTextStyles.headingMedium),
+                            // Error banner
+                            if (provider.errorMessage != null)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.error_outline,
+                                        color: Colors.red, size: 16),
+                                    const SizedBox(width: 6),
+                                    Expanded(
+                                      child: Text(
+                                        provider.errorMessage!,
+                                        style: const TextStyle(
+                                          fontSize: 12, color: Colors.red,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             const SizedBox(height: 12),
                             Expanded(
                               child: GridView.builder(
@@ -119,7 +139,7 @@ class _ZodiacGridTile extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                  color: isSelected ? AppColors.rosePink : AppColors.textPrimary,
+                  color: isSelected ? AppColors.rosePink : AppColors.primaryText(context),
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 1,
@@ -250,8 +270,8 @@ class _ZodiacDetailState extends State<_ZodiacDetail> {
                 Text(title, style: const TextStyle(
                   fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.rosePink)),
                 const SizedBox(height: 6),
-                Text(content, style: const TextStyle(
-                  fontSize: 14, color: AppColors.textPrimary, height: 1.5)),
+                Text(content, style: TextStyle(
+                  fontSize: 14, color: AppColors.primaryText(context), height: 1.5)),
               ],
             ),
           ),

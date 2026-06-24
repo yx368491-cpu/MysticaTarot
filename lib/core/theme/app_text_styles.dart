@@ -6,50 +6,46 @@ import 'app_colors.dart';
 class AppTextStyles {
   AppTextStyles._();
 
-  // Headings
+  /// Headings — inherit color from theme DefaultTextStyle for dark mode support.
+  /// Use [AppColors.primaryText] / [AppColors.secondaryText] when an explicit
+  /// color is needed, or call `.copyWith(color: …)` on these styles.
   static const TextStyle headingLarge = TextStyle(
     fontSize: 32,
     fontWeight: FontWeight.bold,
-    color: AppColors.textPrimary,
     letterSpacing: 0.5,
   );
 
   static const TextStyle headingMedium = TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.w600,
-    color: AppColors.textPrimary,
     letterSpacing: 0.3,
   );
 
   static const TextStyle headingSmall = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w600,
-    color: AppColors.textPrimary,
   );
 
-  // Body text
+  /// Body text — no hardcoded color; uses theme DefaultTextStyle.
   static const TextStyle bodyLarge = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.normal,
-    color: AppColors.textPrimary,
     height: 1.6,
   );
 
   static const TextStyle bodyMedium = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.normal,
-    color: AppColors.textPrimary,
     height: 1.5,
   );
 
   static const TextStyle bodySmall = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.normal,
-    color: AppColors.textSecondary,
     height: 1.4,
   );
 
-  // Mystical / decorative text
+  /// Decorative styles — keep branded colors regardless of theme.
   static const TextStyle mysticalTitle = TextStyle(
     fontSize: 28,
     fontWeight: FontWeight.bold,
@@ -64,7 +60,7 @@ class AppTextStyles {
     letterSpacing: 2.0,
   );
 
-  // Gold accent text
+  /// Gold accent — keep distinctive color.
   static const TextStyle goldHeading = TextStyle(
     fontSize: 22,
     fontWeight: FontWeight.w600,
@@ -79,20 +75,19 @@ class AppTextStyles {
     height: 1.5,
   );
 
-  // Card text
+  /// Card text — no hardcoded color; use together with [AppColors.primaryText]
+  /// or [AppColors.secondaryText] via `.copyWith(color: …)`.
   static const TextStyle cardTitle = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w600,
-    color: AppColors.textPrimary,
   );
 
   static const TextStyle cardSubtitle = TextStyle(
     fontSize: 13,
     fontWeight: FontWeight.w400,
-    color: AppColors.textSecondary,
   );
 
-  // Button
+  /// Button — always white text.
   static const TextStyle buttonPrimary = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w600,
@@ -100,7 +95,7 @@ class AppTextStyles {
     letterSpacing: 0.5,
   );
 
-  // On dark backgrounds
+  /// Dark-background-specific styles (kept for explicit dark-surface use).
   static const TextStyle onDarkLarge = TextStyle(
     fontSize: 28,
     fontWeight: FontWeight.bold,

@@ -28,7 +28,7 @@ class TarotHomePage extends StatelessWidget {
         child: SafeArea(
           child: provider.isLoading
               ? const Center(child: CircularProgressIndicator())
-              : Padding(
+              : SingleChildScrollView(
                   padding: const EdgeInsets.all(20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,29 +43,61 @@ class TarotHomePage extends StatelessWidget {
                         'Choose a spread layout for your reading',
                         style: AppTextStyles.bodyMedium,
                       ),
-                      const SizedBox(height: 20),
-                      // Spread grid
-                      Expanded(
-                        child: GridView.builder(
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 1.3,
-                            crossAxisSpacing: 16,
-                            mainAxisSpacing: 16,
+                      // Error banner
+                      if (provider.errorMessage != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 12),
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.red.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.red.withValues(alpha: 0.3),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.error_outline, color: Colors.red, size: 20),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    provider.errorMessage!,
+                                    style: const TextStyle(
+                                      fontSize: 13, color: Colors.red,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          itemCount: provider.spreads.length,
-                          itemBuilder: (context, index) {
-                            final spread = provider.spreads[index];
-                            return _SpreadCard(
-                              spread: spread,
-                              isSelected: provider.selectedSpread?.id == spread.id,
-                              onTap: () => provider.selectSpread(spread),
-                            );
-                          },
                         ),
+                      const SizedBox(height: 20),
+                      // Spread grid — shrinkWrap so it sizes to content
+                      // within the outer SingleChildScrollView.
+                      GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 1.3,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                        ),
+                        itemCount: provider.spreads.length,
+                        itemBuilder: (context, index) {
+                          final spread = provider.spreads[index];
+                          return _SpreadCard(
+                            spread: spread,
+                            isSelected: provider.selectedSpread?.id == spread.id,
+                            onTap: () => provider.selectSpread(spread),
+                          );
+                        },
                       ),
                       const SizedBox(height: 20),
-                      // Start reading button
+                      // Start reading button — now safely after shrinkWrap grid
+                      // (no Expanded conflict)
                       if (provider.selectedSpread != null)
                         MysticalButton(
                           text: l10n.translate('startReading'),

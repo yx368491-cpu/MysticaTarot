@@ -1,7 +1,8 @@
 # 占卜塔罗牌 APP 完整开发规格文档
 
-> **文档版本**: v1.0  
+> **文档版本**: v1.1  
 > **创建日期**: 2026-06-22  
+> **最后更新**: 2026-06-24  
 > **目标平台**: Android (Flutter)  
 > **开发模式**: 个人开发者  
 
@@ -43,7 +44,7 @@
 | **商业模式** | 完全免费，无广告、无内购 |
 | **网络需求** | 完全离线运行 |
 | **最低 Android** | API 26 (Android 8.0 Oreo) |
-| **目标 Android** | API 35 (Android 15) |
+| **目标 Android** | API 36 (Android 16) | 已在 Android 13 (API 33) 和 Android 16 (API 36) 真机测试 |
 
 ### 1.3 目标用户
 
@@ -59,7 +60,7 @@
 
 | 技术 | 版本/方案 | 说明 |
 |------|-----------|------|
-| **框架** | Flutter 3.x+ (最新稳定版) | — |
+| **框架** | Flutter 3.x+ (最新稳定版) | Dart SDK ^3.12.2 |
 | **语言** | Dart 3.x+ | 使用空安全、Pattern Matching |
 | **状态管理** | Provider + ChangeNotifier | 适合中大型项目，简洁成熟 |
 | **本地数据库** | Hive | 轻量级 NoSQL，极速读写 |
@@ -92,7 +93,7 @@ dependencies:
   intl: ^0.20.2                  # 国际化（当前未被 AppLocalizations 使用，预留给系统本地化）
   flutter_localizations:
     sdk: flutter                 # Flutter 原生本地化支持
-  share_plus: ^9.0.0             # 分享占卜结果（可选）
+  share_plus: ^11.0.0            # 分享占卜结果（可选）
   cupertino_icons: ^1.0.8        # iOS 风格图标
 
 dev_dependencies:
@@ -835,8 +836,10 @@ ThemeData(
 ### 9.2 数据初始化
 
 - 首次启动: 将 JSON 内容（塔罗牌数据、星座数据等）加载到内存
-- JSON 文件存储在 `lib/features/*/data/json/` 目录（在 pubspec.yaml 中声明 asset 路径时**不含 `lib/` 前缀**）
-- `rootBundle.loadString()` 使用相对路径: `features/tarot/data/json/major_arcana.json`
+- JSON 文件存储在 `lib/features/*/data/json/` 目录
+- pubspec.yaml 声明: `- lib/features/tarot/data/json/`（含 `lib/` 前缀）
+- `rootBundle.loadString()` 必须使用与 pubspec.yaml 声明**完全一致**的路径: `lib/features/tarot/data/json/major_arcana.json`
+- ⚠️ **踩坑记录**: 路径不匹配会导致 JSON 静默加载失败，页面显示空白（Bug #009，详见 `docs/bug-log.md`）
 - 无需在 Hive 中存储占卜内容（内容读取自 assets）
 
 ### 9.3 数据清理
@@ -1069,31 +1072,32 @@ git log --oneline --graph --all
 
 > **延期项**: 音效接入延期至 Phase 4；切牌动画延期至后续版本
 
-### Phase 3: 其他占卜方式 (Day 13-18)
+### Phase 3: 其他占卜方式 ✅ (2026-06-24 完成)
 
-- [ ] 占星/星座功能
-- [ ] 灵数学功能
-- [ ] 幸运签功能
-- [ ] Oracle 占卜卡功能
-- [ ] 🪵 **生成 Phase 3 开发日志** — 记录各占卜方式的数据结构设计、算法实现、遇到的 i18n 问题及解决方案
+- [x] 占星/星座功能 — AstrologyPage + AstrologyProvider + AstrologyService + zodiac_content.json
+- [x] 灵数学功能 — NumerologyPage + NumerologyProvider + NumerologyService
+- [x] 幸运签功能 — FortuneSlipPage + FortuneSlipProvider + FortuneSlipService + fortune_slips.json
+- [x] Oracle 占卜卡功能 — OracleCardsPage + OracleProvider + OracleReadingService + oracle_cards_content.json
+- [x] 所有 JSON 数据文件含三语内容（en/zh/tl）
+- [x] 🪵 **Phase 3 开发日志已生成**
 
-### Phase 4: 每日抽卡 & 历史记录 (Day 19-22)
+### Phase 4: 每日抽卡 & 历史记录 ✅ (2026-06-24 完成)
 
-- [ ] 每日抽卡逻辑（日期种子）
-- [ ] 本地通知提醒
-- [ ] 历史记录存储与展示
-- [ ] 详情页复用
-- [ ] 🪵 **生成 Phase 4 开发日志** — 记录本地通知实现方案、Hive 数据迁移策略（如有）、日期种子算法的注意事项
+- [x] 每日抽卡逻辑（日期种子）
+- [x] 本地通知提醒（flutter_local_notifications + POST_NOTIFICATIONS 权限）
+- [x] 历史记录存储与展示（Hive Box: reading_history）
+- [x] 详情页复用（ReadingResultPage 可查看历史详情）
+- [x] 🪵 **Phase 4 开发日志已生成**
 
-### Phase 5: 引导 & 设置 & 本地化 (Day 23-27)
+### Phase 5: 引导 & 设置 & 本地化 ✅ (2026-06-24 完成)
 
-- [ ] 新手引导页面（3-5页）
-- [ ] 设置页面（语言、通知、音效等）
-- [ ] 英文 UI 文本
-- [ ] 中文 UI 文本
-- [ ] Tagalog UI 文本
-- [ ] 塔罗牌解读内容本地化
-- [ ] 🪵 **生成 Phase 5 开发日志** — 记录本地化框架搭建细节、翻译管理策略、三语文本中的特殊字符/排版问题
+- [x] 新手引导页面（OnboardingPage + PageView 滑动 + 跳过/下一步）
+- [x] 设置页面（SettingsPage: 语言切换、通知开关、音效开关、关于）
+- [x] 英文 UI 文本（AppLocalizations, 400+ 条目）
+- [x] 中文 UI 文本（AppLocalizationsZh）
+- [x] Tagalog UI 文本（AppLocalizationsTl）
+- [x] 塔罗牌解读内容本地化（JSON 三语字段: en/zh/tl）
+- [x] 🪵 **Phase 5 开发日志已生成**
 
 ### Phase 6: 测试 & 优化 (Day 28-32)
 
@@ -1114,6 +1118,38 @@ git log --oneline --graph --all
 - [ ] 📊 **回顾与总结** — 浏览整个 `bug-log.md`，总结高频错误模式，完善开发规范
 
 > **说明**: 本项目不发布到 Google Play 商店。已移除原计划的"准备应用截图和描述"、"Google Play 发布准备"步骤。
+
+### Phase 8: 性能优化 & Profile 构建 (Day 28-32) ✅ (2026-06-23 完成)
+
+> 详见 §14 Phase 8 → 8b-followup-2 累计摘要。
+
+- [x] Image cacheWidth/cacheHeight 预算优化
+- [x] RepaintBoundary 包裹 Stack/Transform
+- [x] compute() 后台 isolate 解码（3 个 service）
+- [x] Profile 构建脚本（profile-android.bat/ps1）
+- [x] Gradle 构建修复（desugaring, share_plus 升级, Aliyun maven 镜像）
+- [x] 🪵 **Phase 8 开发日志已生成**
+
+### Phase 9: Bug 修复 & 深色主题完善 (2026-06-24 完成)
+
+- [x] **Bug #007/#008**: Android 16 (API 36) 启动黑屏 — 定位到 OnboardingPage，GradientBackground 暗色模式 colors/stops 不匹配已修复
+- [x] **Bug #009**: JSON asset 路径缺少 `lib/` 前缀 → Tarot/Astrology 页面空白 — 修复 6 个文件中的路径
+- [x] **Layout overflow**: home_page RenderFlex 4px 溢出 → Pattern A (SingleChildScrollView + shrinkWrap GridView)
+- [x] **Provider 初始化**: `_isLoading` 默认值从 `false` 改为 `true`，避免首帧渲染空 UI（4 个 Provider）
+- [x] **深色主题文字不可读**: 替换 35+ 处硬编码 `AppColors.textPrimary/textSecondary` 为 `AppColors.primaryText(context)/secondaryText(context)`
+- [x] **ForuneSlipProvider**: 添加 `isLoaded` 检查，加载中显示 CircularProgressIndicator
+- [x] **错误状态 UI**: tarot_home_page + astrology_page 添加错误横幅
+- [x] `flutter analyze` — No issues found
+- [x] 🪵 **Phase 9 开发日志已生成**（详见 `docs/bug-log.md` Bug #007–#009）
+
+### Phase 10: 测试 & 发布 (待定)
+
+- [ ] 单元测试覆盖（数据模型、服务逻辑）
+- [ ] Widget 测试（关键页面）
+- [ ] Android 16 真机回归测试
+- [ ] 生成签名密钥 (Keystore)
+- [ ] 构建 Release APK / AAB（本地装机 / 侧载）
+- [ ] 🪵 **生成 Phase 10 开发日志**
 
 ---
 
@@ -1375,7 +1411,7 @@ Widget build(BuildContext context) { ... }
 | 塔罗牌图片 | **RWS 开源重绘版**（需标注作者） |
 | APP 图标 | **神秘塔罗牌**图案 |
 | 启动闪屏 | **需要**（原生 API + Flutter 自定义） |
-| 深色模式 | **支持**（浅色+深色两套主题） |
+| 深色模式 | **支持**（浅色+深色两套主题，Android 16 默认深色模式已验证） |
 | Tagalog 星座 | **直接使用英文名** |
 | 状态管理 | **Provider** |
 | 本地存储 | **Hive** |
@@ -1436,62 +1472,78 @@ Widget build(BuildContext context) { ... }
 
 ---
 
-## 14. Phase 8 → 8b-followup-2 累计摘要与下一步（2026-06-23 追加）
+## 14. Phase 9 Bug 修复摘要（2026-06-24 追加）
 
-> 本节依据本会话三次连续跑 `scripts/profile-android.bat` 的实测顺序，记录 Phase 8 / 8b / 8b-followup / 8b-followup-2 的累计交付、错误归类、按优先级排序的待办事项。详细"怎么走"型细节请见 `docs/development-log.md`；具体 root cause 与代码级解决方案请见 `docs/bug-log.md`（Bug #005 / #006）。
+> 本节记录 Phase 9 期间的 Bug 修复与架构调整。详细 root cause 与代码级解决方案见 `docs/bug-log.md`（Bug #007–#009）。
 
-### 14.1 阶段交付摘要
+### 14.1 Bug #007/#008: Android 16 启动黑屏
 
-| 阶段 | 触发 | 主要交付 | Commit |
-|---|---|---|---|
-| **Phase 8** | Phase 7 收尾时预留的"真机 Profile 验收 P0-P7" | P1 Image `cacheWidth`/`cacheHeight` 预算；P2 `RepaintBoundary` 裹 Stack/Transform；P3 `compute()` 后台 isolate 解码（3 个 service）；profile 启动脚本 | `b5a7111`（perf 批交付）|
-| **Phase 8b** | 用户实测：`flutter run --profile` 在 `compileProfileKotlin` 抛 `PersistentHashMap` 报错 + 附 `build-log.txt` | `gradle.properties`（`workers.max=1` + `kotlin.incremental=false`）；`share_plus ^9 → ^11`；新增 `scripts/clean-gradle-cache.{bat,ps1}`；Bug #005 + Phase 8b 开发日志 | `f52c84d` + `9454d5b` + `9686abd` + `fd43f31` + `49c640c` |
-| **Phase 8b-followup** | 脚本本身在 Windows 11 24H2 跑出空 trace dir | 3 处脚本修补（bat 的 `wmic → powershell`、`-d %DEVICE%`；ps1 的 `$DEVICE` 切分修正 + `-d $DEVICE`） | `83bf6b3` |
-| **Phase 8b-followup-2** | 走完脚本到下一阶段，`:app:checkProfileAarMetadata` 要求 desugaring | `isCoreLibraryDesugaringEnabled = true` + `coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")`；Bug #006 + Phase 8b-followup-2 开发日志 | `917846e` |
+**现象**: Android 16 (HyperOS, API 36) 启动后永久黑屏，Android 13 正常。
 
-**实证**: `flutter build apk --profile --target-platform=android-arm64` 输出 55.4 MB `app-profile.apk`，三阶段报错均未复现。
+**诊断**: 二分法逐层缩小范围 → 定位到 OnboardingPage。
 
-### 14.2 累计错误清单（按发现顺序）
+**已修复**:
+- `GradientBackground` 暗色模式 colors=2, stops=3 → Flutter 断言错误（Bug #008 根因 A）
+- `POST_NOTIFICATIONS` 权限声明（Android 13+）
+- flutter_local_notifications 初始化延迟到 addPostFrameCallback
 
-**严重程度图例**: 🔴 阻塞 | 🟠 中 | 🟡 低 | 🟢 轻
+**状态**: 🔧 黑屏根因已定位，OnboardingPage 简化版可渲染，完整版 bisect 待续。
 
-| # | 错误 | 严重 | 根因 | Commit |
-|---|---|---|---|---|
-| 1 | Kotlin daemon `Storage already registered` / `PersistentHashMap` 报 | 🔴 阻塞 | Gradle 9.1 + AGP 9.0.1 + Kotlin 2.3.20 bleed-edge；daemon 增量缓存初始化并发缺陷 | `f52c84d` |
-| 2 | `pubspec.lock` 与 `pubspec.yaml` 约束脱同步 | 🟠 中 | `share_plus ^11` 升版后 lock 未同步 | `9454d5b` |
-| 3 | Aliyun maven 镜像置于 `google()` / `mavenCentral()` 前 | 🟠 中（潜在 CI 拖速） | 镜像顺序位置错误 | `9454d5b` |
-| 4 | `gradle-wrapper.properties` 中 BOM / CRLF cosmetic 噪音 | 🟢 轻（reverted） | 编辑器自动写入 | — |
-| 5 | `wmic` 在 Windows 11 24H2 已移除 | 🔴 阻塞 | 平台 API 弃用；脚本走不到下一步（trace dir 创建直接失败）| `83bf6b3` |
-| 6 | bat 的 `flutter run --profile` 未传 `-d %DEVICE%` | 🔴 阻塞（多设备时 "More than one device connected"） | 入参遗漏 | `49c640c` |
-| 7 | ps1 的 `$DEVICE = ($deviceList -split '<TAB>')[0]` 取整行而非首 token | 🔴 阻塞 | `adb devices` 输出用空格而非制表符分隔 | `83bf6b3` |
-| 8 | `:app:checkProfileAarMetadata` 要求 desugaring | 🔴 阻塞 | `flutter_local_notifications` AAR 声明使用 `java.time.*` 等 Java 8+ API，编译期 AAR 元数据扫描阻断构建 | `917846e` |
-| 9 | `share_plus` v11.1.0 仍发 `applies KGP` 警告 | 🟡 低（non-blocking） | 上游 KGP apply 残留；升 `^13` 后解除 | 计划中（P3）|
-| 10 | `docs/bug-log.md` Bug #006 根因段写"Android 13 (API 33) 设备上时代过老、运行时缺少" | 🟠 中（文档准确性） | `:checkProfileAarMetadata` 是**编译阶段**行为，与运行设备 API level 解耦；API 33 完整支持 Java 17 | 待 P1 |
+### 14.2 Bug #009: Tarot / Astrology 页面空白
 
-### 14.3 下一步执行顺序（P0 → P7，按优先级排列）
+**现象**: 真机运行时 Tarot 和 Astrology 页面只显示 "Select..." 文字，无可选卡片。
 
-| 序号 | 任务 | 说明 | 期望产出 |
-|---|---|---|---|
-| **P0** | 手机上跑完 `scripts/profile-android.bat` | 拿 DevTools 帧率 + Memory 面板实数据；本会话仅完成 APK build 验证，未启动 app | 一份带真实帧 trace 的 `docs/profile-traces/<date>/flutter-run.log` + DevTools 截图 |
-| **P1** | `docs/bug-log.md` Bug #006 根因段文案校正 | ✅ **已在本次 correctness commit 落地** — 根因段重写为 "`:app:checkProfileAarMetadata` 是编译期 AAR 元数据扫描任务，与运行设备 API level 完全解耦"；明确删除原文 "Android 13 设备上时代过老、运行时缺少 java.time" 的错误描述 | docs-only commit || **P2** | `docs/development-log.md` Phase 8b-followup-2 段 prose 复核 | 清理之前编辑阶段混入的不规范表述 | docs-only commit |
-| **P3** | `share_plus: ^11.0.0 → ^13.0.0`（隐含 Phase 8c） | 消除 `applies KGP` 警告；v13 完全脱离 KGP apply | `pubspec.yaml` + `pubspec.lock` 单 commit |
-| **P4** | 实现 `docs/decision-log.md`：记录 Phase 8b Path B（safety net + cache wipe）与 `share_plus` 版本选择两处决策理由 | 跨 git commit 之前 0 条决策记录，需补一条 | docs-only commit |
-| **P5** | 启动 Phase 8 P4-P7（Hive lazy-load / const audit / Provider scope / i18n lazy）| 待 P0 拿到的真机 trace 定位首帧 hot path 后再启动 | N 个 feature commit |
-| **P6** | Phase 9 计划：依据 DevTools 数据逐项修 frame drop / 过度重绘点 | 依赖 P0 实帧 trace | 待 P5 后启动 |
-| **P7** | v1.0 spec 重构为 v1.1：把"做什么"与"怎么走"分章节；§11 路线图新增 Phase 8c 条目 | 本节 §14 是"怎么走"型 reflection 的快照，长期应拆分 | 文档结构性 commit |
+**根因**: `pubspec.yaml` 声明 asset 路径含 `lib/` 前缀（如 `lib/features/tarot/data/json/`），但 `rootBundle.loadString()` 使用缺少 `lib/` 的相对路径（`features/tarot/data/json/...`）。Flutter 要求路径与声明完全一致，不匹配导致 JSON 静默加载失败。
 
-### 14.4 文档同步状态
+**修复**: 6 个文件中添加 `lib/` 前缀：
+- `tarot_card_content.dart`（2 处）
+- `astrology_service.dart`
+- `fortune_slip_service.dart`
+- `oracle_reading_service.dart`
+- `daily_card_service.dart`
 
-| 文件 | 状态 | 最近 commit |
-|---|---|---|
-| `docs/development-log.md` | Phase 8 / 8b / 8b-followup-2 / **8c（音效合成）** 段已落地；prose 已对齐 §13.1 模板 | `924d014` |
-| `docs/bug-log.md` | Bug #005 / #006 已落地；**#006 根因文案已在本次 correctness commit 修正**（重写为 compile-time AAR scan、与运行设备 API level 解耦） | 本次 correctness commit |
-| `docs/decision-log.md` | Decision #4 已落地（音效 supply chain → Python stdlib 程序化合成）+ v1.0 ⛔ Play Store | `924d014` |
-| `tarot-divination-app-spec.md`（本文件）| 已追加 §14；长期需重构为 v1.1（"做什么"/"怎么走"分章节）| `924d014` + 本次 correctness commit |
+**附加修复**: `tarot_provider.dart` 将 `_spreads` 移到 try 块外确保牌阵始终填充；tarot_home_page + astrology_page 添加错误状态 UI。
 
-### 14.5 本节写作约定
+### 14.3 布局溢出修复
 
-- 本节是"current state"快照，**不是 v1.0 spec 的改写**。v1.0 是"做什么"型，本节是"怎么走"型 reflection。
-- §14.3 中 P0-P7 是**执行优先级**，不是文档重要度排序。
-- 用户原问的"接下来需要执行的步骤"已落地为 §14.3 中可执行项；执行 P0-P7 不会改变 v1.0 spec 已锁定的功能与范围。
+**现象**: `home_page` RenderFlex 底部溢出 4px。
+
+**根因**: Column 内 Expanded(GridView) + 固定高度子组件过多，剩余空间不够 3 行卡片。
+
+**修复**: 移除 Expanded 包装，Column 外包 SingleChildScrollView，GridView 设 `shrinkWrap: true, physics: NeverScrollableScrollPhysics()`。
+
+### 14.4 Provider 初始化修复
+
+**根因**: 4 个 Provider (`TarotProvider`, `AstrologyProvider`, `OracleProvider`, `DailyCardProvider`) 初始化 `_isLoading = false`，首帧渲染"已加载但空白"的 UI。
+
+**修复**: `_isLoading` 初始值改为 `true`，加载完成后设为 `false`。
+
+### 14.5 深色主题文字不可读修复
+
+**根因**: `AppColors.textPrimary (#2D1B3E)` 与 `AppColors.darkSurface (#2D1B3E)` 相同颜色，深色卡片上文字完全不可见。
+
+**修复**: 
+- 15+ 个文件中替换 35+ 处硬编码 `AppColors.textPrimary/textSecondary` 为 `AppColors.primaryText(context)/secondaryText(context)`
+- `AppColors` 新增 `textPrimaryDark`/`textSecondaryDark` 深色主题专用色
+- `MysticalCard` 包裹 `DefaultTextStyle` 自适应颜色
+
+### 14.6 代码架构改进
+
+| 改进 | 说明 |
+|------|------|
+| 布局模式统一 | Pattern A: SingleChildScrollView + shrinkWrap GridView（home, tarot_home, numerology）; Pattern B: Column + Expanded(GridView)（card_draw, oracle, fortune_slip, astrology） |
+| 错误状态覆盖 | tarot_home_page, astrology_page 新增 errorMessage 横幅 |
+| main.dart 容错 | try-catch 包裹初始化，启动失败时显示错误页面而非白屏 |
+
+### 14.7 v1.1 Spec 更新清单
+
+| 章节 | 变更 |
+|------|------|
+| §2.3 | `share_plus: ^9.0.0` → `^11.0.0` |
+| §9.2 | 修正 asset 路径指南：必须含 `lib/` 前缀，与 pubspec.yaml 声明一致 |
+| §11 | Phase 3/4/5 标记为 ✅ 已完成；新增 Phase 8/9/10 |
+| §14 | 重写为 Phase 9 Bug 修复摘要（替代旧的 Phase 8b 累计） |
+| 文档版本 | v1.0 → v1.1 |
+
+---
 

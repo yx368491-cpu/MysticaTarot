@@ -102,11 +102,13 @@ class FortuneSlipService {
   List<FortuneSlip> _allSlips = [];
   final Random _random = Random();
 
+  bool get isLoaded => _allSlips.isNotEmpty;
+
   /// Load fortune slips from JSON (parse runs off the main isolate).
   Future<List<FortuneSlip>> loadSlips() async {
     if (_allSlips.isNotEmpty) return _allSlips;
     final jsonStr = await rootBundle.loadString(
-        'features/fortune_slip/data/json/fortune_slips.json');
+        'lib/features/fortune_slip/data/json/fortune_slips.json');
     _allSlips = await compute(parseFortuneSlips, jsonStr);
     return _allSlips;
   }

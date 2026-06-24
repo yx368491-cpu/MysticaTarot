@@ -24,6 +24,7 @@ class CardDrawPage extends StatefulWidget {
 class _CardDrawPageState extends State<CardDrawPage> {
   bool _showShuffle = true;
   int _currentRevealIndex = -1;
+  bool _isRevealing = false; // guard against double-fire during animation
   final List<GlobalKey<CardFlipAnimationState>> _flipKeys = [];
 
   @override
@@ -43,15 +44,20 @@ class _CardDrawPageState extends State<CardDrawPage> {
   }
 
   void _revealNextCard() {
+    if (_isRevealing) return;
     if (_currentRevealIndex + 1 < _flipKeys.length) {
+      _isRevealing = true;
       setState(() => _currentRevealIndex++);
-      final key = _flipKeys[_currentRevealIndex];
       Future.delayed(const Duration(milliseconds: 300), () {
-        SoundUtils.playReveal();
-        key.currentState?.flip();
         if (mounted) {
+          SoundUtils.playReveal();
+          // Update provider state — this triggers a rebuild, which causes
+          // CardFlipAnimation.didUpdateWidget to detect isFlipped true
+          // and start the 3D flip animation. When animation completes,
+          // onFlipComplete chains to the next card.
           context.read<TarotProvider>().revealCard(_currentRevealIndex);
         }
+        _isRevealing = false;
       });
     }
   }
@@ -147,7 +153,34 @@ class _CardDrawPageState extends State<CardDrawPage> {
 
   Widget _buildCardGrid(TarotProvider provider) {
     final cards = provider.drawnCards;
-    if (cards.isEmpty) return const SizedBox();
+    if (cards.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline,
+                size: 48,
+                color: AppColors.rosePink.withValues(alpha: 0.5)),
+            const SizedBox(height: 12),
+            Text(
+              'No cards drawn yet',
+              style: TextStyle(
+                fontSize: 16,
+                color: AppColors.secondaryText(context),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Tap "Start Reading" to begin',
+              style: TextStyle(
+                fontSize: 13,
+                color: AppColors.secondaryText(context).withValues(alpha: 0.7),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -183,6 +216,7 @@ class _CardDrawPageState extends State<CardDrawPage> {
                       onTap: isCurrent ? () => _revealNextCard() : null,
                     ),
                     isFlipped: isRevealed,
+                  onFlipComplete: () => _revealNextCard(),
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -190,7 +224,9 @@ class _CardDrawPageState extends State<CardDrawPage> {
                   provider.getPositionName(index),
                   style: TextStyle(
                     fontSize: 11,
-                    color: isRevealed ? AppColors.rosePink : AppColors.textSecondary,
+                    color: isRevealed
+                      ? AppColors.rosePink
+                      : AppColors.secondaryText(context),
                     fontWeight: isRevealed ? FontWeight.w600 : FontWeight.normal,
                   ),
                   textAlign: TextAlign.center,

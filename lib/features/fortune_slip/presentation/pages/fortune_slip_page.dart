@@ -34,11 +34,13 @@ class FortuneSlipPage extends StatelessWidget {
                   // Shake animation / result area
                   Expanded(
                     child: Center(
-                      child: provider.isShaking
-                          ? _ShakeAnimation()
-                          : provider.currentSlip != null
-                              ? _SlipResult(slip: provider.currentSlip!)
-                              : _InitialPrompt(),
+                      child: !provider.isLoaded
+                          ? const Center(child: CircularProgressIndicator())
+                          : provider.isShaking
+                              ? _ShakeAnimation()
+                              : provider.currentSlip != null
+                                  ? _SlipResult(slip: provider.currentSlip!)
+                                  : _InitialPrompt(),
                     ),
                   ),
                   // Draw button
@@ -56,7 +58,7 @@ class FortuneSlipPage extends StatelessWidget {
                     const SizedBox(height: 12),
                     TextButton(
                       onPressed: () => provider.reset(),
-                      child: const Text('Clear', style: TextStyle(color: AppColors.textSecondary)),
+                        child: Text('Clear', style: TextStyle(color: AppColors.secondaryText(context))),
                     ),
                   ],
                 ],
@@ -206,9 +208,9 @@ class _SlipResult extends StatelessWidget {
           MysticalCard(
             child: Text(
               slip.localizedText(locale),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
-                color: AppColors.textPrimary,
+                color: AppColors.primaryText(context),
                 height: 1.6,
               ),
               textAlign: TextAlign.center,

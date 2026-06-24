@@ -62,7 +62,7 @@ class DailyCardService {
   }
 
   Future<List<OracleCard>> _loadOracleCards() async {
-    final jsonStr = await rootBundle.loadString('features/oracle_cards/data/json/oracle_cards_content.json');
+    final jsonStr = await rootBundle.loadString('lib/features/oracle_cards/data/json/oracle_cards_content.json');
     final List<dynamic> jsonList = json.decode(jsonStr) as List<dynamic>;
     return jsonList.map((e) => OracleCard.fromJson(e as Map<String, dynamic>)).toList();
   }

@@ -440,3 +440,124 @@ dependencies {                                       // <-- added block
 ### 相关链接
 - Android Java 8+ desugaring: https://developer.android.com/studio/write/java8-support
 - flutter_local_notifications: https://pub.dev/packages/flutter_local_notifications
+
+---
+
+## Bug #007: Android 16 (API 36) 启动后永久黑屏 — ~~平台线程死锁~~（已排除）
+
+**发现日期**: 2026-06-24
+**发现阶段**: 生产 — Android 16 (HyperOS, API 36) 设备测试
+**严重程度**: 🔴 阻塞
+**状态**: ❌ 假设未验证 — 见 Bug #008
+
+### 初始假设
+
+推测 `_initNotifications()` 在 `initState()` 中调用导致 platform channel 与 SurfaceView 创建冲突，造成平台线程死锁。
+
+### 采取的修复
+
+1. `lib/app.dart`: 将 `_initNotifications()` 移入 `WidgetsBinding.instance.addPostFrameCallback`
+2. `android/app/src/main/AndroidManifest.xml`: 添加 `POST_NOTIFICATIONS` 权限
+
+### 验证结果
+
+**❌ 修复无效** — Android 16 上仍然黑屏。该假设被排除。说明黑屏根因不在此。
+
+### 后续诊断
+
+参见 Bug #008 中的完整诊断过程。
+
+---
+
+## Bug #008: Android 16 (API 36) 启动后永久黑屏 — 二分法诊断实录
+
+**发现日期**: 2026-06-24
+**发现阶段**: 生产 — Android 16 (HyperOS, API 36) 设备持续排查
+**严重程度**: 🔴 阻塞
+**状态**: 🔧 定位中（已缩小到 OnboardingPage，初步修复已验证）
+
+### 现象描述
+
+同 Bug #007。Android 13 正常运行，Android 16 启动后永久黑屏。
+
+### 诊断过程
+
+采用二分法（binary search）逐层缩小问题范围。
+
+#### Step 1 — 隔离 Flutter Engine vs Widget Tree
+
+**修改**: 将 `MaterialApp.home` 从 `Consumer<OnboardingProvider>(...)` 替换为简单 `Scaffold(body: Center(child: Text("TEST PAGE")))`
+
+**结果**: ✅ "TEST PAGE" 正常显示
+
+**结论**: Flutter Engine、Surface 渲染管线、MaterialApp 均正常。问题在 Widget 树内部（OnboardingProvider / HomePage / OnboardingPage）。
+
+#### Step 1b — 测试 HomePage 直接渲染
+
+**修改**: 将 `home` 设为 `const HomePage()`
+
+**结果**: ✅ HomePage 显示（用户反馈"主页面什么功能都没显示"，但非黑屏）
+
+**结论**: HomePage 的 Scaffold/IndexedStack 框架可正常渲染。
+
+#### Step 1c — 测试 OnboardingPage 直接渲染
+
+**修改**: 将 `home` 设为 `const OnboardingPage()`
+
+**结果**: ❌ **黑屏**
+
+**结论**: OnboardingPage 是导致黑屏的直接原因。
+
+#### Step 1d — 简化 OnboardingPage 到最小可渲染版本
+
+**修改**: 将 OnboardingPage 的 body 替换为简单的 `GradientBackground + Scaffold + SafeArea + Center(Text("ONBOARDING TEST") + ElevatedButton)`
+
+**结果**: ✅ "ONBOARDING TEST" 正常显示（按钮点击无反应属预期 — 无回调绑定）
+
+**结论**: 问题在 OnboardingPage 的完整 Widget 组合中，具体需要进一步 bisect：
+- `GradientBackground` 自身可正常渲染
+- `Scaffold(backgroundColor: Colors.transparent)` 可正常渲染
+- 需要逐一加回 `PageView.builder`、`AnimatedBuilder`、`OnboardingItem`、`MysticalButton`、`RadialGradient` 等子组件
+
+#### 附：Step 0 — Bug #007 假设验证（无效）
+
+`addPostFrameCallback` 延迟 notification 初始化 + `POST_NOTIFICATIONS` 权限声明 → 仍黑屏。说明黑屏与 `flutter_local_notifications` 无关。
+
+### 根因分析（当前进展）
+
+#### 已发现的 Bug（非唯一根因，但必须修复）：
+
+**`GradientBackground` 暗色模式 colors/stops 不匹配**
+- `lib/shared/widgets/gradient_background.dart`
+- 暗色路径仅提供 2 种颜色：`[AppColors.darkBackground, Color(0xFF0D1B2A)]`
+- 但 `LinearGradient` 的 `stops` 硬编码为 `[0.0, 0.5, 1.0]`（3 个值）
+- Flutter 要求 colors 和 stops 长度一致，否则抛出断言错误
+- Android 16 默认启用系统深色模式 → 触发该错误路径
+- **修复**: 移除硬编码 `stops`，让 Flutter 根据 colors 数量自动分配
+
+#### 待续（Bisect 进行中）：
+
+简化版 OnboardingPage 渲染正常（仅 GradientBackground + Scaffold + Text + Button）。下一步需逐个恢复以下子组件找到具体的崩溃组件：
+
+1. 加回完整 `Scaffold` body（Column + SafeArea + 顶部 Skip 按钮）
+2. 加回 `PageView.builder` + `AnimatedBuilder(animation: _pageController)`
+3. 加回 `OnboardingItem`（含 `RadialGradient` / `LinearGradient` / `Transform` / `Opacity`）
+4. 加回 `MysticalButton`
+
+可能的崩溃原因（待验证）：
+- **`PageView.builder` + `AnimatedBuilder(animation: _pageController)`**: `_pageController` 在首次 build 时的 `page` 为 `null`，触发 `AnimatedBuilder` 的第一个 rebuild。Android 16 的 GPU 管线对此动画连接的初始化可能更敏感。
+- **`OnboardingItem` 的 `RadialGradient`**: Android 16 的渲染管线对 `RadialGradient` 的实现可能有变化。
+- **`AppLocalizations.of(context)` 在 OnboardingPage 中调用**: 首次渲染时 localization delegate 尚未就绪，在 Android 16 上可能静默失败。
+
+### 临时解决方案（当前代码状态）
+
+- `app.dart`: `home: const OnboardingPage()` — 直接渲染 OnboardingPage
+- `onboarding_page.dart`: body 被简化为最小测试版本
+- `gradient_background.dart`: 移除硬编码 `stops`
+
+### 教训/预防措施
+
+- **先诊断、后修复**: Bug #007 的 platform channel theory 看似合理但实际不是根因。三分法诊断（binary search）是唯一可靠的方法。
+- **Android 16 默认深色模式**: 新设备默认启用深色模式，暴露了大量仅在暗色代码路径中存在的 bug。
+- **`LinearGradient` colors/stops 一致性**: 当使用自定义 colors 覆盖时，stops 必须等长。如果不指定 stops，Flutter 会自动均匀分配（推荐方式）。
+- **Provider Consumer 切换不能忽略**: 最初的 `Consumer<OnboardingProvider>` 在初始化时触发 OnboardingPage 渲染，暴露了 OnboardingPage 中的黑屏问题。HomePage 直接渲染绕过了 Consumer 的异步状态同步过程。

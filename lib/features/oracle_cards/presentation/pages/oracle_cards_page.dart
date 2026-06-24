@@ -67,7 +67,7 @@ class OracleCardsPage extends StatelessWidget {
                         const SizedBox(height: 8),
                         TextButton(
                           onPressed: () => provider.reset(),
-                          child: const Text('Clear', style: TextStyle(color: AppColors.textSecondary)),
+                          child: Text('Clear', style: TextStyle(color: AppColors.secondaryText(context))),
                         ),
                       ],
                     ],
@@ -100,7 +100,7 @@ class _ModeButton extends StatelessWidget {
         child: Text(label, style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w500,
-          color: isSelected ? Colors.white : AppColors.textPrimary,
+          color: isSelected ? Colors.white : AppColors.primaryText(context),
         )),
       ),
     );
@@ -256,9 +256,9 @@ class _OracleResults extends StatelessWidget {
                   // Message
                   Text(
                     '"${result.card.localizedMessage(locale)}"',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15,
-                      color: AppColors.textPrimary,
+                      color: AppColors.primaryText(context),
                       height: 1.6,
                       fontStyle: FontStyle.italic,
                     ),

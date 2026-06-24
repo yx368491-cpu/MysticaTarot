@@ -13,7 +13,7 @@ class TarotProvider extends ChangeNotifier {
   Spread? _selectedSpread;
   List<CardResult> _drawnCards = [];
   List<bool> _revealedCards = [];
-  bool _isLoading = false;
+  bool _isLoading = true;
   bool _isShuffling = false;
   String? _errorMessage;
   String _locale = 'en';
@@ -41,9 +41,11 @@ class TarotProvider extends ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
 
+    // Always set spreads — static const, never depends on async card loading.
+    _spreads = SpreadService.allSpreads;
+
     try {
       _allCards = await TarotCardContent.loadAll();
-      _spreads = SpreadService.allSpreads;
     } catch (e) {
       _errorMessage = 'Failed to load tarot data: $e';
     }

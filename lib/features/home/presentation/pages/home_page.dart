@@ -109,7 +109,9 @@ class _NavItem extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: isSelected ? AppColors.rosePink : AppColors.textSecondary,
+            color: isSelected
+                ? AppColors.rosePink
+                : AppColors.secondaryText(context),
             size: 24,
           ),
           const SizedBox(height: 2),
@@ -117,7 +119,9 @@ class _NavItem extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 11,
-              color: isSelected ? AppColors.rosePink : AppColors.textSecondary,
+              color: isSelected
+                  ? AppColors.rosePink
+                  : AppColors.secondaryText(context),
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
             ),
           ),
@@ -136,7 +140,9 @@ class _HomeContent extends StatelessWidget {
 
     return GradientBackground(
       child: SafeArea(
-        child: Padding(
+        top: true,
+        bottom: false,
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,13 +182,15 @@ class _HomeContent extends StatelessWidget {
                 style: AppTextStyles.headingSmall,
               ),
               const SizedBox(height: 12),
-              // Divination methods grid
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 1.0,
+              // Divination methods grid — shrinkWrap + NeverScrollable so it sizes
+              // to its content within the outer SingleChildScrollView.
+              GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: 2,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                childAspectRatio: 1.0,
                   children: [
                     DivinationCard(
                       icon: Icons.auto_stories,
@@ -219,8 +227,7 @@ class _HomeContent extends StatelessWidget {
                       color: AppColors.rosePinkDark,
                       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const OracleCardsPage())),
                     ),
-                  ],
-                ),
+                ],
               ),
             ],
           ),

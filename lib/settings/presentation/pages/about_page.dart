@@ -244,7 +244,7 @@ class _Hero extends StatelessWidget {
             textAlign: TextAlign.center,
             style: AppTextStyles.bodyMedium.copyWith(
               fontStyle: FontStyle.italic,
-              color: AppColors.textSecondary,
+              color: AppColors.secondaryText(context),
             ),
           ),
         ],

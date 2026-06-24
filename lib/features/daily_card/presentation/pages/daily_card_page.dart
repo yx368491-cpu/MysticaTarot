@@ -118,8 +118,8 @@ class _DailyCardDisplay extends StatelessWidget {
       child: Column(
         children: [
           // Date header
-          Text(result.date, style: const TextStyle(
-            fontSize: 14, color: AppColors.textSecondary, letterSpacing: 2)),
+          Text(result.date, style: TextStyle(
+            fontSize: 14, color: AppColors.secondaryText(context), letterSpacing: 2)),
           const SizedBox(height: 4),
           const Text(
             'Today\'s Card',
@@ -158,9 +158,9 @@ class _DailyCardDisplay extends StatelessWidget {
                           ? result.tarotCard!.localizedReversedMeaning(locale)
                           : result.tarotCard!.localizedUprightMeaning(locale))
                       : result.message,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
-                    color: AppColors.textPrimary,
+                    color: AppColors.primaryText(context),
                     height: 1.6,
                   ),
                 ),
@@ -208,7 +208,7 @@ class _TarotCardPreview extends StatelessWidget {
                 child: Center(
                   child: Text(
                     card.nameEn,
-                    style: const TextStyle(fontSize: 12, color: AppColors.textPrimary),
+                    style: TextStyle(fontSize: 12, color: AppColors.primaryText(context)),
                     textAlign: TextAlign.center,
                   ),
                 ),

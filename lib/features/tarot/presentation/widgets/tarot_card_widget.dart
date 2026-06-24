@@ -54,8 +54,10 @@ class TarotCardWidget extends StatelessWidget {
                 // size × DPR so the engine doesn't decode the full PNG.
                 // 78 cards at full resolution easily OOM a 6 GB Android
                 // phone; this caps each card to ~ width × 3 × height × 3.
-                cacheWidth: (width * 3).round(),
-                cacheHeight: (height * 3).round(),
+                // Guard: skip cache when dimensions are infinite (e.g.
+                // double.infinity passed from Expanded grid cells).
+                cacheWidth: width.isFinite ? (width * 3).round() : null,
+                cacheHeight: height.isFinite ? (height * 3).round() : null,
                 errorBuilder: (context, error, stackTrace) {
                     return Container(
                       color: AppColors.softPurple.withValues(alpha: 0.3),
@@ -68,7 +70,7 @@ class TarotCardWidget extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 4),
                             child: Text(
                               card.nameEn,
-                              style: const TextStyle(fontSize: 9, color: AppColors.textPrimary),
+                              style: TextStyle(fontSize: 9, color: AppColors.primaryText(context)),
                               textAlign: TextAlign.center,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,

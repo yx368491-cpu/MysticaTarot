@@ -877,3 +877,56 @@ shuffle.wav  44 B   RIFF (little-endian) WAVE, Microsoft PCM, 16-bit, mono 44100
 ### 参考资源
 - Python `wave` module: https://docs.python.org/3/library/wave.html
 - 项目已使用中的 `tools/generate_json_data.py` — 同样的“脚本 + 产物提交”模式参考
+---
+
+## Phase 9: Android 16 (API 36) 黑屏诊断
+
+**开始日期**: 2026-06-24
+**当前状态**: 🔧 bisect 中（已定位到 OnboardingPage，初步修复已验证）
+
+### 问题概述
+
+Android 16 (HyperOS, API 36) 安装成功但启动后永久黑屏。Android 13 (Redmi K40S) 正常运行。
+
+### 诊断历程
+
+#### Step 0 — Bug #007 假设（平台线程死锁说）验证失败
+**推测**: `flutter_local_notifications` 的 platform channel 与 SurfaceView 创建冲突。
+**修复**: `addPostFrameCallback` + `POST_NOTIFICATIONS` 权限。
+**结果**: ❌ 无效 — 仍黑屏。假设被排除。
+
+#### Step 1 — 隔离 Flutter Engine vs Widget Tree
+**修改**: `MaterialApp.home` = `Scaffold(body: Center(child: Text("TEST PAGE")))`
+**结果**: ✅ "TEST PAGE" 正常显示。Engine 和 Surface 均正常。
+
+#### Step 1b — 测试 HomePage 直接渲染
+**修改**: `home: const HomePage()`
+**结果**: ✅ HomePage 框架显示。
+
+#### Step 1c — 测试 OnboardingPage 直接渲染
+**修改**: `home: const OnboardingPage()`
+**结果**: ❌ **黑屏**。
+**结论**: OnboardingPage 是直接原因。
+
+#### Step 1d — 简化 OnboardingPage 到最小可渲染
+**修改**: body 替换为 `GradientBackground + Scaffold + SafeArea + Center(Text + Button)`
+**结果**: ✅ "ONBOARDING TEST" 正常显示。
+
+### 已发现并修复的 Bug
+
+**Bug A**: `GradientBackground` 暗色模式 colors=2, stops=3 → Flutter 断言错误
+  - 文件: `lib/shared/widgets/gradient_background.dart`
+  - 触发: Android 16 默认深色模式
+  - 修复: 移除硬编码 `stops`
+
+**Bug B**: 缺少 `POST_NOTIFICATIONS` 权限
+  - 文件: `AndroidManifest.xml`
+  - 修复: 添加权限声明
+
+### 当前状态
+- `app.dart`: `home: const OnboardingPage()`（诊断用，跳过 Consumer）
+- `onboarding_page.dart`: body 简化为最小测试版本
+- 下一步需恢复完整子组件找到具体崩溃组件
+
+### 相关文档
+- `docs/bug-log.md#008`
