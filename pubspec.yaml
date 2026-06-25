@@ -2,7 +2,7 @@ name: mystica_tarot
 description: "MysticaTarot — 占卜塔罗牌 Android APP，支持英语 / 他加禄语 / 中文"
 publish_to: 'none'
 
-version: 0.1.0+1
+version: 1.0.0+1
 
 environment:
   sdk: ^3.12.2
