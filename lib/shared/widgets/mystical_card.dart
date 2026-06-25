@@ -42,12 +42,19 @@ class MysticalCard extends StatelessWidget {
       ),
       color: cardColor,
       surfaceTintColor: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(borderRadius ?? 16),
-        child: Padding(
-          padding: padding ?? const EdgeInsets.all(16),
-          child: child,
+      child: DefaultTextStyle(
+        style: DefaultTextStyle.of(context).style.copyWith(
+          color: isDark
+              ? AppColors.textPrimaryDark
+              : AppColors.textPrimary,
+        ),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(borderRadius ?? 16),
+          child: Padding(
+            padding: padding ?? const EdgeInsets.all(16),
+            child: child,
+          ),
         ),
       ),
     );

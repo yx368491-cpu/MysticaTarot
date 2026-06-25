@@ -35,11 +35,31 @@ class AppColors {
   static const Color lightSurface = Color(0xFFFFF5F8);
   static const Color lightCard = Color(0xB3FFFFFF);
 
-  // Text colors
+  // Text colors — light mode
   static const Color textPrimary = Color(0xFF2D1B3E);
   static const Color textSecondary = Color(0xFF6B5B7B);
+
+  // Text colors — dark mode (high contrast on darkSurface #2D1B3E)
+  static const Color textPrimaryDark = Color(0xFFF5EAF0);
+  static const Color textSecondaryDark = Color(0xFFC9B1D0);
+
+  // Deprecated: use textPrimaryDark / textSecondaryDark instead
   static const Color textOnDark = Color(0xFFF5EAF0);
   static const Color textGold = Color(0xFFE8C87A);
+
+  /// Returns the appropriate primary text color for the given brightness.
+  static Color primaryText(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? textPrimaryDark
+        : textPrimary;
+  }
+
+  /// Returns the appropriate secondary text color for the given brightness.
+  static Color secondaryText(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? textSecondaryDark
+        : textSecondary;
+  }
 
   // Semantic colors
   static const Color error = Color(0xFFD32F2F);

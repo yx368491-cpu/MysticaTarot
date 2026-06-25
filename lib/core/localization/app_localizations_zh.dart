@@ -35,6 +35,7 @@ class AppLocalizationsZh {
     'tarotTitle': '塔罗占卜',
     'selectSpread': '选择牌阵',
     'startReading': '开始占卜',
+    'sectionMeaning': '正逆位解读',
     'shuffling': '洗牌中…',
     'cardMeaning': '牌义解读',
     'upright': '正位',
@@ -111,6 +112,35 @@ class AppLocalizationsZh {
     'aboutDescription': '神秘塔罗是一款免费的离线塔罗占卜应用。',
     'aboutDisclaimer':
         '仅供娱乐参考。塔罗占卜不能替代专业建议。',
+
+    // About page
+    'aboutTitle': '关于神秘塔罗',
+    'aboutTagline': '探索你的命运',
+    'aboutHero': '塔罗、占星、灵数、幸运签与 Oracle 指引卡的随身伙伴。',
+    'aboutSectionFeatures': '功能列表',
+    'aboutFeatureList':
+        '• 78 张塔罗牌 + 6 种牌阵\n'
+        '• 十二星座 + 每日/每周/每月运势\n'
+        '• 灵数学（生命路径数 + 命运数）\n'
+        '• 幸运签，等级涵盖大吉至凶\n'
+        '• Oracle 指引卡（40 张正能量讯息）\n'
+        '• 每日抽卡，日期种子确定性结果',
+    'aboutSectionArt': '塔罗牌插画',
+    'aboutArtAttribution':
+        '塔罗牌插画来自公有领域 RWS 塔罗牌 (Geldard 版)，托管于 Wikimedia Commons。',
+    'aboutSectionPrivacy': '隐私',
+    'aboutPrivacyBody':
+        '神秘塔罗完全离线运行。无账号、无分析、无遥测。占卜记录和设置均只保存在本机。',
+    'aboutSectionOpenSource': '开源致谢',
+    'aboutOpenSourceIntro': '本应用由以下开源社区成果构建：',
+    'aboutSectionLicense': '许可证',
+    'aboutLicenseBody':
+        '神秘塔罗源代码以 MIT 许可证发布。点击查看完整许可证文本。',
+    'aboutSectionDisclaimer': '免责声明',
+    'aboutDisclaimerBody':
+        '神秘塔罗仅供娱乐与自我反思之用，不能替代专业的医疗、法律、财务或心理咨询。',
+    'aboutLinkWikimedia': 'Wikimedia Commons',
+    'aboutLinkLicense': 'MIT 许可证全文',
 
     // Onboarding
     'onboardingWelcome': '欢迎来到\n神秘塔罗',

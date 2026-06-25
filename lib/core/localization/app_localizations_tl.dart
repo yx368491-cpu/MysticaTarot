@@ -35,6 +35,7 @@ class AppLocalizationsTl {
     'tarotTitle': 'Tarot Reading',
     'selectSpread': 'Pumili ng Spread',
     'startReading': 'Simulan ang Pagbabasa',
+    'sectionMeaning': 'Kahulugan',
     'shuffling': 'Naghahalo…',
     'cardMeaning': 'Kahulugan ng Card',
     'upright': 'Tuwid',
@@ -112,6 +113,37 @@ class AppLocalizationsTl {
         'Ang MysticaTarot ay isang libreng offline na tarot at panghuhula app.',
     'aboutDisclaimer':
         'Para sa libangan lamang. Ang pagbabasa ng tarot ay hindi kapalit ng propesyonal na payo.',
+
+    // About page
+    'aboutTitle': 'Tungkol sa MysticaTarot',
+    'aboutTagline': 'Tuklasin ang iyong kapalaran',
+    'aboutHero':
+        'Isang mystical na kasama para sa tarot, astrolohiya, numerolohiya, fortune slip at oracle na gabay — lahat sa iyong bulsa.',
+    'aboutSectionFeatures': 'Mga Tampok',
+    'aboutFeatureList':
+        '• 78-card Tarot na may 6 spreads\n'
+        '• 12-sign Astrolohiya na may daily / weekly / monthly horoscope\n'
+        '• Numerolohiya (life path + destiny numbers)\n'
+        '• Fortune Slip na may anim na antas ng biyaya\n'
+        '• Oracle Cards (40 mensahe ng pag-asa)\n'
+        '• Araw-araw na Card na may date-seeded deterministic na draw',
+    'aboutSectionArt': 'Sining ng Card',
+    'aboutArtAttribution':
+        'Ang mga ilustrasyon ng tarot card ay mula sa public-domain RWS Tarot (Geldard edition), na naka-host sa Wikimedia Commons.',
+    'aboutSectionPrivacy': 'Privacy',
+    'aboutPrivacyBody':
+        'Ang MysticaTarot ay ganap na offline. Walang account, walang analytics, walang telemetry. Ang iyong kasaysayan ng pagbabasa at settings ay nananatili sa device na ito.',
+    'aboutSectionOpenSource': 'Pagkilala sa Open Source',
+    'aboutOpenSourceIntro':
+        'Ang app na ito ay ginawa sa tulong ng bukas-puso na gawain ng open-source community:',
+    'aboutSectionLicense': 'Lisensya',
+    'aboutLicenseBody':
+        'Ang source code ng MysticaTarot ay inilabas sa ilalim ng MIT License. I-tap para makita ang buong text ng lisensya.',
+    'aboutSectionDisclaimer': 'Disclaimer',
+    'aboutDisclaimerBody':
+        'Ang MysticaTarot ay para sa libangan at personal na pag-iisip lamang. Ang tarot, astrolohiya, numerolohiya at fortune slip ay hindi kapalit ng propesyonal na medikal, legal, pananalapi o sikolohikal na payo.',
+    'aboutLinkWikimedia': 'Wikimedia Commons',
+    'aboutLinkLicense': 'Buong text ng MIT License',
 
     // Onboarding
     'onboardingWelcome': 'Maligayang Pagdating\nsa MysticaTarot',

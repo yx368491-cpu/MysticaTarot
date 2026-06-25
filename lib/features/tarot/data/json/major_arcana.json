@@ -1,0 +1,834 @@
+[
+  {
+    "id": 0,
+    "nameEn": "The Fool",
+    "nameZh": "愚人",
+    "nameTl": "Ang Mangmang",
+    "keywordsEn": [
+      "Beginnings",
+      "Innocence",
+      "Spontaneity"
+    ],
+    "keywordsZh": [
+      "开始",
+      "纯真",
+      "自发性"
+    ],
+    "keywordsTl": [
+      "Simula",
+      "Inosente",
+      "Kusa"
+    ],
+    "meaningUprightEn": "New beginnings, spontaneity, free spirit. Embrace the unknown with optimism.",
+    "meaningUprightZh": "新的开始、自发性、自由精神。以乐观拥抱未知。",
+    "meaningUprightTl": "Mga bagong simula, kusa, malayang espiritu. Yakapin ang hindi kilala.",
+    "meaningReversedEn": "Recklessness, risk-taking, naivety. Acting without thinking.",
+    "meaningReversedZh": "鲁莽、冒险、天真。不经思考的行动。",
+    "meaningReversedTl": "Pagkawalang-ingat, pagiging musmos. Kumilos nang hindi nag-iisip.",
+    "loveEn": "A new romance or phase is beginning. Be open to love surprises.",
+    "loveZh": "新的恋情或阶段开始。对爱的惊喜保持开放。",
+    "loveTl": "Isang bagong pag-ibig ay nagsisimula. Maging bukas sa mga sorpresa.",
+    "careerEn": "A new job or project calls. Trust your instincts and take the leap.",
+    "careerZh": "新工作或项目在召唤。相信直觉，勇敢迈出。",
+    "careerTl": "Isang bagong trabaho ang tumatawag. Magtiwala sa instincts.",
+    "adviceEn": "Take a leap of faith. The universe supports your journey.",
+    "adviceZh": "大胆一跃。宇宙支持你的旅程。",
+    "adviceTl": "Magtiwala sa paglalakbay. Ang sansinukob ay sumusuporta."
+  },
+  {
+    "id": 1,
+    "nameEn": "The Magician",
+    "nameZh": "魔术师",
+    "nameTl": "Ang Salamangkero",
+    "keywordsEn": [
+      "Willpower",
+      "Skill",
+      "Resourcefulness"
+    ],
+    "keywordsZh": [
+      "意志力",
+      "技能",
+      "足智多谋"
+    ],
+    "keywordsTl": [
+      "Lakas ng loob",
+      "Kasanayan",
+      "Mapamaraan"
+    ],
+    "meaningUprightEn": "Willpower, skill, manifestation. You have all the tools you need.",
+    "meaningUprightZh": "意志力、技能、显化。你拥有所需的一切工具。",
+    "meaningUprightTl": "Lakas ng loob, kasanayan, pagpapakita. Nasa iyo na ang lahat.",
+    "meaningReversedEn": "Manipulation, trickery, untapped potential. Misusing talents.",
+    "meaningReversedZh": "操纵、欺骗、未开发的潜力。误用才能。",
+    "meaningReversedTl": "Pagmamanipula, daya, hindi nagamit na potensyal.",
+    "loveEn": "Charm and confidence attract love. Express your true feelings.",
+    "loveZh": "魅力与自信吸引爱情。表达真实感受。",
+    "loveTl": "Alindog at kumpiyansa ay umaakit ng pag-ibig. Ipahayag ang nararamdaman.",
+    "careerEn": "Skills align for success. Take action on your ideas now.",
+    "careerZh": "技能与成功匹配。为想法采取行动。",
+    "careerTl": "Ang mga kasanayan ay nakaayon para sa tagumpay. Kumilos na.",
+    "adviceEn": "You have everything. Focus your will and take action.",
+    "adviceZh": "你拥有一切。集中意志，采取行动。",
+    "adviceTl": "Nasa iyo na ang lahat. Tumutok at kumilos."
+  },
+  {
+    "id": 2,
+    "type": "major",
+    "number": 2,
+    "nameEn": "The High Priestess",
+    "nameZh": "女祭司",
+    "nameTl": "Ang Dakilang Saserdotisa",
+    "keywordsEn": [
+      "Intuition",
+      "Mystery",
+      "Inner Knowledge"
+    ],
+    "keywordsZh": [
+      "直觉",
+      "神秘",
+      "内在知识"
+    ],
+    "keywordsTl": [
+      "Intuwisyon",
+      "Misteryo",
+      "Panloob na Kaalaman"
+    ],
+    "meaningUprightEn": "The High Priestess represents transformation and growth. Embrace the energy of this card.",
+    "meaningUprightZh": "女祭司代表转变与成长。拥抱这张卡的能量。",
+    "meaningUprightTl": "Si Ang Dakilang Saserdotisa ay kumakatawan sa transpormasyon at paglago.",
+    "meaningReversedEn": "Reversed, The High Priestess suggests resistance to change or blocked energy.",
+    "meaningReversedZh": "逆位女祭司暗示抗拒变化或被阻塞的能量。",
+    "meaningReversedTl": "Sa baligtad, si Ang Dakilang Saserdotisa ay nagpapahiwatig ng paglaban sa pagbabago.",
+    "loveEn": "The High Priestess energy in love brings depth and transformation to relationships.",
+    "loveZh": "女祭司在爱情中的能量为关系带来深度和转变。",
+    "loveTl": "Ang enerhiya ng Ang Dakilang Saserdotisa sa pag-ibig ay nagdudulot ng lalim at transpormasyon.",
+    "careerEn": "The High Priestess influences career with positive change and new opportunities.",
+    "careerZh": "女祭司影响事业，带来积极变化和新机遇。",
+    "careerTl": "Naiimpluwensyahan ng Ang Dakilang Saserdotisa ang karera na may positibong pagbabago.",
+    "adviceEn": "Trust the journey with The High Priestess. Transformation leads to growth.",
+    "adviceZh": "相信女祭司的旅程。转变带来成长。",
+    "adviceTl": "Magtiwala sa paglalakbay kasama si Ang Dakilang Saserdotisa. Ang transpormasyon ay nagdudulot ng paglago."
+  },
+  {
+    "id": 3,
+    "type": "major",
+    "number": 3,
+    "nameEn": "The Empress",
+    "nameZh": "女皇",
+    "nameTl": "Ang Emperatris",
+    "keywordsEn": [
+      "Femininity",
+      "Nurturing",
+      "Abundance"
+    ],
+    "keywordsZh": [
+      "女性气质",
+      "滋养",
+      "丰盛"
+    ],
+    "keywordsTl": [
+      "Pagkababae",
+      "Pag-aalaga",
+      "Kasaganaan"
+    ],
+    "meaningUprightEn": "The Empress represents transformation and growth. Embrace the energy of this card.",
+    "meaningUprightZh": "女皇代表转变与成长。拥抱这张卡的能量。",
+    "meaningUprightTl": "Si Ang Emperatris ay kumakatawan sa transpormasyon at paglago.",
+    "meaningReversedEn": "Reversed, The Empress suggests resistance to change or blocked energy.",
+    "meaningReversedZh": "逆位女皇暗示抗拒变化或被阻塞的能量。",
+    "meaningReversedTl": "Sa baligtad, si Ang Emperatris ay nagpapahiwatig ng paglaban sa pagbabago.",
+    "loveEn": "The Empress energy in love brings depth and transformation to relationships.",
+    "loveZh": "女皇在爱情中的能量为关系带来深度和转变。",
+    "loveTl": "Ang enerhiya ng Ang Emperatris sa pag-ibig ay nagdudulot ng lalim at transpormasyon.",
+    "careerEn": "The Empress influences career with positive change and new opportunities.",
+    "careerZh": "女皇影响事业，带来积极变化和新机遇。",
+    "careerTl": "Naiimpluwensyahan ng Ang Emperatris ang karera na may positibong pagbabago.",
+    "adviceEn": "Trust the journey with The Empress. Transformation leads to growth.",
+    "adviceZh": "相信女皇的旅程。转变带来成长。",
+    "adviceTl": "Magtiwala sa paglalakbay kasama si Ang Emperatris. Ang transpormasyon ay nagdudulot ng paglago."
+  },
+  {
+    "id": 4,
+    "type": "major",
+    "number": 4,
+    "nameEn": "The Emperor",
+    "nameZh": "皇帝",
+    "nameTl": "Ang Emperador",
+    "keywordsEn": [
+      "Authority",
+      "Structure",
+      "Stability"
+    ],
+    "keywordsZh": [
+      "权威",
+      "结构",
+      "稳定"
+    ],
+    "keywordsTl": [
+      "Awtoridad",
+      "Istraktura",
+      "Katatagan"
+    ],
+    "meaningUprightEn": "The Emperor represents transformation and growth. Embrace the energy of this card.",
+    "meaningUprightZh": "皇帝代表转变与成长。拥抱这张卡的能量。",
+    "meaningUprightTl": "Si Ang Emperador ay kumakatawan sa transpormasyon at paglago.",
+    "meaningReversedEn": "Reversed, The Emperor suggests resistance to change or blocked energy.",
+    "meaningReversedZh": "逆位皇帝暗示抗拒变化或被阻塞的能量。",
+    "meaningReversedTl": "Sa baligtad, si Ang Emperador ay nagpapahiwatig ng paglaban sa pagbabago.",
+    "loveEn": "The Emperor energy in love brings depth and transformation to relationships.",
+    "loveZh": "皇帝在爱情中的能量为关系带来深度和转变。",
+    "loveTl": "Ang enerhiya ng Ang Emperador sa pag-ibig ay nagdudulot ng lalim at transpormasyon.",
+    "careerEn": "The Emperor influences career with positive change and new opportunities.",
+    "careerZh": "皇帝影响事业，带来积极变化和新机遇。",
+    "careerTl": "Naiimpluwensyahan ng Ang Emperador ang karera na may positibong pagbabago.",
+    "adviceEn": "Trust the journey with The Emperor. Transformation leads to growth.",
+    "adviceZh": "相信皇帝的旅程。转变带来成长。",
+    "adviceTl": "Magtiwala sa paglalakbay kasama si Ang Emperador. Ang transpormasyon ay nagdudulot ng paglago."
+  },
+  {
+    "id": 5,
+    "type": "major",
+    "number": 5,
+    "nameEn": "The Hierophant",
+    "nameZh": "教皇",
+    "nameTl": "Ang Hieropante",
+    "keywordsEn": [
+      "Tradition",
+      "Guidance",
+      "Conformity"
+    ],
+    "keywordsZh": [
+      "传统",
+      "指引",
+      "遵从"
+    ],
+    "keywordsTl": [
+      "Tradisyon",
+      "Gabay",
+      "Pagsunod"
+    ],
+    "meaningUprightEn": "The Hierophant represents transformation and growth. Embrace the energy of this card.",
+    "meaningUprightZh": "教皇代表转变与成长。拥抱这张卡的能量。",
+    "meaningUprightTl": "Si Ang Hieropante ay kumakatawan sa transpormasyon at paglago.",
+    "meaningReversedEn": "Reversed, The Hierophant suggests resistance to change or blocked energy.",
+    "meaningReversedZh": "逆位教皇暗示抗拒变化或被阻塞的能量。",
+    "meaningReversedTl": "Sa baligtad, si Ang Hieropante ay nagpapahiwatig ng paglaban sa pagbabago.",
+    "loveEn": "The Hierophant energy in love brings depth and transformation to relationships.",
+    "loveZh": "教皇在爱情中的能量为关系带来深度和转变。",
+    "loveTl": "Ang enerhiya ng Ang Hieropante sa pag-ibig ay nagdudulot ng lalim at transpormasyon.",
+    "careerEn": "The Hierophant influences career with positive change and new opportunities.",
+    "careerZh": "教皇影响事业，带来积极变化和新机遇。",
+    "careerTl": "Naiimpluwensyahan ng Ang Hieropante ang karera na may positibong pagbabago.",
+    "adviceEn": "Trust the journey with The Hierophant. Transformation leads to growth.",
+    "adviceZh": "相信教皇的旅程。转变带来成长。",
+    "adviceTl": "Magtiwala sa paglalakbay kasama si Ang Hieropante. Ang transpormasyon ay nagdudulot ng paglago."
+  },
+  {
+    "id": 6,
+    "type": "major",
+    "number": 6,
+    "nameEn": "The Lovers",
+    "nameZh": "恋人",
+    "nameTl": "Ang Mga Magkasintahan",
+    "keywordsEn": [
+      "Love",
+      "Harmony",
+      "Choices"
+    ],
+    "keywordsZh": [
+      "爱情",
+      "和谐",
+      "选择"
+    ],
+    "keywordsTl": [
+      "Pag-ibig",
+      "Harmoniya",
+      "Pagpili"
+    ],
+    "meaningUprightEn": "The Lovers represents transformation and growth. Embrace the energy of this card.",
+    "meaningUprightZh": "恋人代表转变与成长。拥抱这张卡的能量。",
+    "meaningUprightTl": "Si Ang Mga Magkasintahan ay kumakatawan sa transpormasyon at paglago.",
+    "meaningReversedEn": "Reversed, The Lovers suggests resistance to change or blocked energy.",
+    "meaningReversedZh": "逆位恋人暗示抗拒变化或被阻塞的能量。",
+    "meaningReversedTl": "Sa baligtad, si Ang Mga Magkasintahan ay nagpapahiwatig ng paglaban sa pagbabago.",
+    "loveEn": "The Lovers energy in love brings depth and transformation to relationships.",
+    "loveZh": "恋人在爱情中的能量为关系带来深度和转变。",
+    "loveTl": "Ang enerhiya ng Ang Mga Magkasintahan sa pag-ibig ay nagdudulot ng lalim at transpormasyon.",
+    "careerEn": "The Lovers influences career with positive change and new opportunities.",
+    "careerZh": "恋人影响事业，带来积极变化和新机遇。",
+    "careerTl": "Naiimpluwensyahan ng Ang Mga Magkasintahan ang karera na may positibong pagbabago.",
+    "adviceEn": "Trust the journey with The Lovers. Transformation leads to growth.",
+    "adviceZh": "相信恋人的旅程。转变带来成长。",
+    "adviceTl": "Magtiwala sa paglalakbay kasama si Ang Mga Magkasintahan. Ang transpormasyon ay nagdudulot ng paglago."
+  },
+  {
+    "id": 7,
+    "type": "major",
+    "number": 7,
+    "nameEn": "The Chariot",
+    "nameZh": "战车",
+    "nameTl": "Ang Karwahe",
+    "keywordsEn": [
+      "Willpower",
+      "Victory",
+      "Determination"
+    ],
+    "keywordsZh": [
+      "意志力",
+      "胜利",
+      "决心"
+    ],
+    "keywordsTl": [
+      "Lakas ng Loob",
+      "Tagumpay",
+      "Determinasyon"
+    ],
+    "meaningUprightEn": "The Chariot represents transformation and growth. Embrace the energy of this card.",
+    "meaningUprightZh": "战车代表转变与成长。拥抱这张卡的能量。",
+    "meaningUprightTl": "Si Ang Karwahe ay kumakatawan sa transpormasyon at paglago.",
+    "meaningReversedEn": "Reversed, The Chariot suggests resistance to change or blocked energy.",
+    "meaningReversedZh": "逆位战车暗示抗拒变化或被阻塞的能量。",
+    "meaningReversedTl": "Sa baligtad, si Ang Karwahe ay nagpapahiwatig ng paglaban sa pagbabago.",
+    "loveEn": "The Chariot energy in love brings depth and transformation to relationships.",
+    "loveZh": "战车在爱情中的能量为关系带来深度和转变。",
+    "loveTl": "Ang enerhiya ng Ang Karwahe sa pag-ibig ay nagdudulot ng lalim at transpormasyon.",
+    "careerEn": "The Chariot influences career with positive change and new opportunities.",
+    "careerZh": "战车影响事业，带来积极变化和新机遇。",
+    "careerTl": "Naiimpluwensyahan ng Ang Karwahe ang karera na may positibong pagbabago.",
+    "adviceEn": "Trust the journey with The Chariot. Transformation leads to growth.",
+    "adviceZh": "相信战车的旅程。转变带来成长。",
+    "adviceTl": "Magtiwala sa paglalakbay kasama si Ang Karwahe. Ang transpormasyon ay nagdudulot ng paglago."
+  },
+  {
+    "id": 8,
+    "type": "major",
+    "number": 8,
+    "nameEn": "Strength",
+    "nameZh": "力量",
+    "nameTl": "Lakas",
+    "keywordsEn": [
+      "Courage",
+      "Inner Strength",
+      "Compassion"
+    ],
+    "keywordsZh": [
+      "勇气",
+      "内在力量",
+      "慈悲"
+    ],
+    "keywordsTl": [
+      "Tapang",
+      "Panloob na Lakas",
+      "Habag"
+    ],
+    "meaningUprightEn": "Strength represents transformation and growth. Embrace the energy of this card.",
+    "meaningUprightZh": "力量代表转变与成长。拥抱这张卡的能量。",
+    "meaningUprightTl": "Si Lakas ay kumakatawan sa transpormasyon at paglago.",
+    "meaningReversedEn": "Reversed, Strength suggests resistance to change or blocked energy.",
+    "meaningReversedZh": "逆位力量暗示抗拒变化或被阻塞的能量。",
+    "meaningReversedTl": "Sa baligtad, si Lakas ay nagpapahiwatig ng paglaban sa pagbabago.",
+    "loveEn": "Strength energy in love brings depth and transformation to relationships.",
+    "loveZh": "力量在爱情中的能量为关系带来深度和转变。",
+    "loveTl": "Ang enerhiya ng Lakas sa pag-ibig ay nagdudulot ng lalim at transpormasyon.",
+    "careerEn": "Strength influences career with positive change and new opportunities.",
+    "careerZh": "力量影响事业，带来积极变化和新机遇。",
+    "careerTl": "Naiimpluwensyahan ng Lakas ang karera na may positibong pagbabago.",
+    "adviceEn": "Trust the journey with Strength. Transformation leads to growth.",
+    "adviceZh": "相信力量的旅程。转变带来成长。",
+    "adviceTl": "Magtiwala sa paglalakbay kasama si Lakas. Ang transpormasyon ay nagdudulot ng paglago."
+  },
+  {
+    "id": 9,
+    "type": "major",
+    "number": 9,
+    "nameEn": "The Hermit",
+    "nameZh": "隐士",
+    "nameTl": "Ang Ermitanyo",
+    "keywordsEn": [
+      "Soul-searching",
+      "Introspection",
+      "Guidance"
+    ],
+    "keywordsZh": [
+      "灵魂探索",
+      "内省",
+      "指引"
+    ],
+    "keywordsTl": [
+      "Pagmumuni",
+      "Pagninilay",
+      "Gabay"
+    ],
+    "meaningUprightEn": "The Hermit represents transformation and growth. Embrace the energy of this card.",
+    "meaningUprightZh": "隐士代表转变与成长。拥抱这张卡的能量。",
+    "meaningUprightTl": "Si Ang Ermitanyo ay kumakatawan sa transpormasyon at paglago.",
+    "meaningReversedEn": "Reversed, The Hermit suggests resistance to change or blocked energy.",
+    "meaningReversedZh": "逆位隐士暗示抗拒变化或被阻塞的能量。",
+    "meaningReversedTl": "Sa baligtad, si Ang Ermitanyo ay nagpapahiwatig ng paglaban sa pagbabago.",
+    "loveEn": "The Hermit energy in love brings depth and transformation to relationships.",
+    "loveZh": "隐士在爱情中的能量为关系带来深度和转变。",
+    "loveTl": "Ang enerhiya ng Ang Ermitanyo sa pag-ibig ay nagdudulot ng lalim at transpormasyon.",
+    "careerEn": "The Hermit influences career with positive change and new opportunities.",
+    "careerZh": "隐士影响事业，带来积极变化和新机遇。",
+    "careerTl": "Naiimpluwensyahan ng Ang Ermitanyo ang karera na may positibong pagbabago.",
+    "adviceEn": "Trust the journey with The Hermit. Transformation leads to growth.",
+    "adviceZh": "相信隐士的旅程。转变带来成长。",
+    "adviceTl": "Magtiwala sa paglalakbay kasama si Ang Ermitanyo. Ang transpormasyon ay nagdudulot ng paglago."
+  },
+  {
+    "id": 10,
+    "type": "major",
+    "number": 10,
+    "nameEn": "Wheel of Fortune",
+    "nameZh": "命运之轮",
+    "nameTl": "Gulong ng Kapalaran",
+    "keywordsEn": [
+      "Change",
+      "Cycle",
+      "Destiny"
+    ],
+    "keywordsZh": [
+      "变化",
+      "循环",
+      "命运"
+    ],
+    "keywordsTl": [
+      "Pagbabago",
+      "Siklo",
+      "Kapalaran"
+    ],
+    "meaningUprightEn": "Wheel of Fortune represents transformation and growth. Embrace the energy of this card.",
+    "meaningUprightZh": "命运之轮代表转变与成长。拥抱这张卡的能量。",
+    "meaningUprightTl": "Si Gulong ng Kapalaran ay kumakatawan sa transpormasyon at paglago.",
+    "meaningReversedEn": "Reversed, Wheel of Fortune suggests resistance to change or blocked energy.",
+    "meaningReversedZh": "逆位命运之轮暗示抗拒变化或被阻塞的能量。",
+    "meaningReversedTl": "Sa baligtad, si Gulong ng Kapalaran ay nagpapahiwatig ng paglaban sa pagbabago.",
+    "loveEn": "Wheel of Fortune energy in love brings depth and transformation to relationships.",
+    "loveZh": "命运之轮在爱情中的能量为关系带来深度和转变。",
+    "loveTl": "Ang enerhiya ng Gulong ng Kapalaran sa pag-ibig ay nagdudulot ng lalim at transpormasyon.",
+    "careerEn": "Wheel of Fortune influences career with positive change and new opportunities.",
+    "careerZh": "命运之轮影响事业，带来积极变化和新机遇。",
+    "careerTl": "Naiimpluwensyahan ng Gulong ng Kapalaran ang karera na may positibong pagbabago.",
+    "adviceEn": "Trust the journey with Wheel of Fortune. Transformation leads to growth.",
+    "adviceZh": "相信命运之轮的旅程。转变带来成长。",
+    "adviceTl": "Magtiwala sa paglalakbay kasama si Gulong ng Kapalaran. Ang transpormasyon ay nagdudulot ng paglago."
+  },
+  {
+    "id": 11,
+    "type": "major",
+    "number": 11,
+    "nameEn": "Justice",
+    "nameZh": "正义",
+    "nameTl": "Katarungan",
+    "keywordsEn": [
+      "Justice",
+      "Fairness",
+      "Truth"
+    ],
+    "keywordsZh": [
+      "正义",
+      "公平",
+      "真相"
+    ],
+    "keywordsTl": [
+      "Katarungan",
+      "Pagkamakatarungan",
+      "Katotohanan"
+    ],
+    "meaningUprightEn": "Justice represents transformation and growth. Embrace the energy of this card.",
+    "meaningUprightZh": "正义代表转变与成长。拥抱这张卡的能量。",
+    "meaningUprightTl": "Si Katarungan ay kumakatawan sa transpormasyon at paglago.",
+    "meaningReversedEn": "Reversed, Justice suggests resistance to change or blocked energy.",
+    "meaningReversedZh": "逆位正义暗示抗拒变化或被阻塞的能量。",
+    "meaningReversedTl": "Sa baligtad, si Katarungan ay nagpapahiwatig ng paglaban sa pagbabago.",
+    "loveEn": "Justice energy in love brings depth and transformation to relationships.",
+    "loveZh": "正义在爱情中的能量为关系带来深度和转变。",
+    "loveTl": "Ang enerhiya ng Katarungan sa pag-ibig ay nagdudulot ng lalim at transpormasyon.",
+    "careerEn": "Justice influences career with positive change and new opportunities.",
+    "careerZh": "正义影响事业，带来积极变化和新机遇。",
+    "careerTl": "Naiimpluwensyahan ng Katarungan ang karera na may positibong pagbabago.",
+    "adviceEn": "Trust the journey with Justice. Transformation leads to growth.",
+    "adviceZh": "相信正义的旅程。转变带来成长。",
+    "adviceTl": "Magtiwala sa paglalakbay kasama si Katarungan. Ang transpormasyon ay nagdudulot ng paglago."
+  },
+  {
+    "id": 12,
+    "type": "major",
+    "number": 12,
+    "nameEn": "The Hanged Man",
+    "nameZh": "倒吊人",
+    "nameTl": "Ang Binitay",
+    "keywordsEn": [
+      "Surrender",
+      "New Perspective",
+      "Pause"
+    ],
+    "keywordsZh": [
+      "臣服",
+      "新视角",
+      "暂停"
+    ],
+    "keywordsTl": [
+      "Pagsuko",
+      "Bagong Pananaw",
+      "Pahinga"
+    ],
+    "meaningUprightEn": "The Hanged Man represents transformation and growth. Embrace the energy of this card.",
+    "meaningUprightZh": "倒吊人代表转变与成长。拥抱这张卡的能量。",
+    "meaningUprightTl": "Si Ang Binitay ay kumakatawan sa transpormasyon at paglago.",
+    "meaningReversedEn": "Reversed, The Hanged Man suggests resistance to change or blocked energy.",
+    "meaningReversedZh": "逆位倒吊人暗示抗拒变化或被阻塞的能量。",
+    "meaningReversedTl": "Sa baligtad, si Ang Binitay ay nagpapahiwatig ng paglaban sa pagbabago.",
+    "loveEn": "The Hanged Man energy in love brings depth and transformation to relationships.",
+    "loveZh": "倒吊人在爱情中的能量为关系带来深度和转变。",
+    "loveTl": "Ang enerhiya ng Ang Binitay sa pag-ibig ay nagdudulot ng lalim at transpormasyon.",
+    "careerEn": "The Hanged Man influences career with positive change and new opportunities.",
+    "careerZh": "倒吊人影响事业，带来积极变化和新机遇。",
+    "careerTl": "Naiimpluwensyahan ng Ang Binitay ang karera na may positibong pagbabago.",
+    "adviceEn": "Trust the journey with The Hanged Man. Transformation leads to growth.",
+    "adviceZh": "相信倒吊人的旅程。转变带来成长。",
+    "adviceTl": "Magtiwala sa paglalakbay kasama si Ang Binitay. Ang transpormasyon ay nagdudulot ng paglago."
+  },
+  {
+    "id": 13,
+    "type": "major",
+    "number": 13,
+    "nameEn": "Death",
+    "nameZh": "死神",
+    "nameTl": "Kamatayan",
+    "keywordsEn": [
+      "Transformation",
+      "Endings",
+      "Change"
+    ],
+    "keywordsZh": [
+      "转变",
+      "结束",
+      "变化"
+    ],
+    "keywordsTl": [
+      "Pagbabago",
+      "Pagtatapos",
+      "Transpormasyon"
+    ],
+    "meaningUprightEn": "Death represents transformation and growth. Embrace the energy of this card.",
+    "meaningUprightZh": "死神代表转变与成长。拥抱这张卡的能量。",
+    "meaningUprightTl": "Si Kamatayan ay kumakatawan sa transpormasyon at paglago.",
+    "meaningReversedEn": "Reversed, Death suggests resistance to change or blocked energy.",
+    "meaningReversedZh": "逆位死神暗示抗拒变化或被阻塞的能量。",
+    "meaningReversedTl": "Sa baligtad, si Kamatayan ay nagpapahiwatig ng paglaban sa pagbabago.",
+    "loveEn": "Death energy in love brings depth and transformation to relationships.",
+    "loveZh": "死神在爱情中的能量为关系带来深度和转变。",
+    "loveTl": "Ang enerhiya ng Kamatayan sa pag-ibig ay nagdudulot ng lalim at transpormasyon.",
+    "careerEn": "Death influences career with positive change and new opportunities.",
+    "careerZh": "死神影响事业，带来积极变化和新机遇。",
+    "careerTl": "Naiimpluwensyahan ng Kamatayan ang karera na may positibong pagbabago.",
+    "adviceEn": "Trust the journey with Death. Transformation leads to growth.",
+    "adviceZh": "相信死神的旅程。转变带来成长。",
+    "adviceTl": "Magtiwala sa paglalakbay kasama si Kamatayan. Ang transpormasyon ay nagdudulot ng paglago."
+  },
+  {
+    "id": 14,
+    "type": "major",
+    "number": 14,
+    "nameEn": "Temperance",
+    "nameZh": "节制",
+    "nameTl": "Pagtitimpi",
+    "keywordsEn": [
+      "Balance",
+      "Moderation",
+      "Patience"
+    ],
+    "keywordsZh": [
+      "平衡",
+      "适度",
+      "耐心"
+    ],
+    "keywordsTl": [
+      "Balanse",
+      "Pagkamoderasyon",
+      "Pasensya"
+    ],
+    "meaningUprightEn": "Temperance represents transformation and growth. Embrace the energy of this card.",
+    "meaningUprightZh": "节制代表转变与成长。拥抱这张卡的能量。",
+    "meaningUprightTl": "Si Pagtitimpi ay kumakatawan sa transpormasyon at paglago.",
+    "meaningReversedEn": "Reversed, Temperance suggests resistance to change or blocked energy.",
+    "meaningReversedZh": "逆位节制暗示抗拒变化或被阻塞的能量。",
+    "meaningReversedTl": "Sa baligtad, si Pagtitimpi ay nagpapahiwatig ng paglaban sa pagbabago.",
+    "loveEn": "Temperance energy in love brings depth and transformation to relationships.",
+    "loveZh": "节制在爱情中的能量为关系带来深度和转变。",
+    "loveTl": "Ang enerhiya ng Pagtitimpi sa pag-ibig ay nagdudulot ng lalim at transpormasyon.",
+    "careerEn": "Temperance influences career with positive change and new opportunities.",
+    "careerZh": "节制影响事业，带来积极变化和新机遇。",
+    "careerTl": "Naiimpluwensyahan ng Pagtitimpi ang karera na may positibong pagbabago.",
+    "adviceEn": "Trust the journey with Temperance. Transformation leads to growth.",
+    "adviceZh": "相信节制的旅程。转变带来成长。",
+    "adviceTl": "Magtiwala sa paglalakbay kasama si Pagtitimpi. Ang transpormasyon ay nagdudulot ng paglago."
+  },
+  {
+    "id": 15,
+    "type": "major",
+    "number": 15,
+    "nameEn": "The Devil",
+    "nameZh": "恶魔",
+    "nameTl": "Ang Diyablo",
+    "keywordsEn": [
+      "Bondage",
+      "Materialism",
+      "Shadow Self"
+    ],
+    "keywordsZh": [
+      "束缚",
+      "物质主义",
+      "阴影自我"
+    ],
+    "keywordsTl": [
+      "Pagkaalipin",
+      "Materyalismo",
+      "Anino ng Sarili"
+    ],
+    "meaningUprightEn": "The Devil represents transformation and growth. Embrace the energy of this card.",
+    "meaningUprightZh": "恶魔代表转变与成长。拥抱这张卡的能量。",
+    "meaningUprightTl": "Si Ang Diyablo ay kumakatawan sa transpormasyon at paglago.",
+    "meaningReversedEn": "Reversed, The Devil suggests resistance to change or blocked energy.",
+    "meaningReversedZh": "逆位恶魔暗示抗拒变化或被阻塞的能量。",
+    "meaningReversedTl": "Sa baligtad, si Ang Diyablo ay nagpapahiwatig ng paglaban sa pagbabago.",
+    "loveEn": "The Devil energy in love brings depth and transformation to relationships.",
+    "loveZh": "恶魔在爱情中的能量为关系带来深度和转变。",
+    "loveTl": "Ang enerhiya ng Ang Diyablo sa pag-ibig ay nagdudulot ng lalim at transpormasyon.",
+    "careerEn": "The Devil influences career with positive change and new opportunities.",
+    "careerZh": "恶魔影响事业，带来积极变化和新机遇。",
+    "careerTl": "Naiimpluwensyahan ng Ang Diyablo ang karera na may positibong pagbabago.",
+    "adviceEn": "Trust the journey with The Devil. Transformation leads to growth.",
+    "adviceZh": "相信恶魔的旅程。转变带来成长。",
+    "adviceTl": "Magtiwala sa paglalakbay kasama si Ang Diyablo. Ang transpormasyon ay nagdudulot ng paglago."
+  },
+  {
+    "id": 16,
+    "type": "major",
+    "number": 16,
+    "nameEn": "The Tower",
+    "nameZh": "高塔",
+    "nameTl": "Ang Tore",
+    "keywordsEn": [
+      "Sudden Change",
+      "Upheaval",
+      "Revelation"
+    ],
+    "keywordsZh": [
+      "突然变化",
+      "剧变",
+      "启示"
+    ],
+    "keywordsTl": [
+      "Biglang Pagbabago",
+      "Kaguluhan",
+      "Paghahayag"
+    ],
+    "meaningUprightEn": "The Tower represents transformation and growth. Embrace the energy of this card.",
+    "meaningUprightZh": "高塔代表转变与成长。拥抱这张卡的能量。",
+    "meaningUprightTl": "Si Ang Tore ay kumakatawan sa transpormasyon at paglago.",
+    "meaningReversedEn": "Reversed, The Tower suggests resistance to change or blocked energy.",
+    "meaningReversedZh": "逆位高塔暗示抗拒变化或被阻塞的能量。",
+    "meaningReversedTl": "Sa baligtad, si Ang Tore ay nagpapahiwatig ng paglaban sa pagbabago.",
+    "loveEn": "The Tower energy in love brings depth and transformation to relationships.",
+    "loveZh": "高塔在爱情中的能量为关系带来深度和转变。",
+    "loveTl": "Ang enerhiya ng Ang Tore sa pag-ibig ay nagdudulot ng lalim at transpormasyon.",
+    "careerEn": "The Tower influences career with positive change and new opportunities.",
+    "careerZh": "高塔影响事业，带来积极变化和新机遇。",
+    "careerTl": "Naiimpluwensyahan ng Ang Tore ang karera na may positibong pagbabago.",
+    "adviceEn": "Trust the journey with The Tower. Transformation leads to growth.",
+    "adviceZh": "相信高塔的旅程。转变带来成长。",
+    "adviceTl": "Magtiwala sa paglalakbay kasama si Ang Tore. Ang transpormasyon ay nagdudulot ng paglago."
+  },
+  {
+    "id": 17,
+    "type": "major",
+    "number": 17,
+    "nameEn": "The Star",
+    "nameZh": "星星",
+    "nameTl": "Ang Bituin",
+    "keywordsEn": [
+      "Hope",
+      "Inspiration",
+      "Serenity"
+    ],
+    "keywordsZh": [
+      "希望",
+      "灵感",
+      "宁静"
+    ],
+    "keywordsTl": [
+      "Pag-asa",
+      "Inspirasyon",
+      "Katahimikan"
+    ],
+    "meaningUprightEn": "The Star represents transformation and growth. Embrace the energy of this card.",
+    "meaningUprightZh": "星星代表转变与成长。拥抱这张卡的能量。",
+    "meaningUprightTl": "Si Ang Bituin ay kumakatawan sa transpormasyon at paglago.",
+    "meaningReversedEn": "Reversed, The Star suggests resistance to change or blocked energy.",
+    "meaningReversedZh": "逆位星星暗示抗拒变化或被阻塞的能量。",
+    "meaningReversedTl": "Sa baligtad, si Ang Bituin ay nagpapahiwatig ng paglaban sa pagbabago.",
+    "loveEn": "The Star energy in love brings depth and transformation to relationships.",
+    "loveZh": "星星在爱情中的能量为关系带来深度和转变。",
+    "loveTl": "Ang enerhiya ng Ang Bituin sa pag-ibig ay nagdudulot ng lalim at transpormasyon.",
+    "careerEn": "The Star influences career with positive change and new opportunities.",
+    "careerZh": "星星影响事业，带来积极变化和新机遇。",
+    "careerTl": "Naiimpluwensyahan ng Ang Bituin ang karera na may positibong pagbabago.",
+    "adviceEn": "Trust the journey with The Star. Transformation leads to growth.",
+    "adviceZh": "相信星星的旅程。转变带来成长。",
+    "adviceTl": "Magtiwala sa paglalakbay kasama si Ang Bituin. Ang transpormasyon ay nagdudulot ng paglago."
+  },
+  {
+    "id": 18,
+    "type": "major",
+    "number": 18,
+    "nameEn": "The Moon",
+    "nameZh": "月亮",
+    "nameTl": "Ang Buwan",
+    "keywordsEn": [
+      "Illusion",
+      "Fear",
+      "Subconscious"
+    ],
+    "keywordsZh": [
+      "幻象",
+      "恐惧",
+      "潜意识"
+    ],
+    "keywordsTl": [
+      "Ilusyon",
+      "Takot",
+      "Subconscious"
+    ],
+    "meaningUprightEn": "The Moon represents transformation and growth. Embrace the energy of this card.",
+    "meaningUprightZh": "月亮代表转变与成长。拥抱这张卡的能量。",
+    "meaningUprightTl": "Si Ang Buwan ay kumakatawan sa transpormasyon at paglago.",
+    "meaningReversedEn": "Reversed, The Moon suggests resistance to change or blocked energy.",
+    "meaningReversedZh": "逆位月亮暗示抗拒变化或被阻塞的能量。",
+    "meaningReversedTl": "Sa baligtad, si Ang Buwan ay nagpapahiwatig ng paglaban sa pagbabago.",
+    "loveEn": "The Moon energy in love brings depth and transformation to relationships.",
+    "loveZh": "月亮在爱情中的能量为关系带来深度和转变。",
+    "loveTl": "Ang enerhiya ng Ang Buwan sa pag-ibig ay nagdudulot ng lalim at transpormasyon.",
+    "careerEn": "The Moon influences career with positive change and new opportunities.",
+    "careerZh": "月亮影响事业，带来积极变化和新机遇。",
+    "careerTl": "Naiimpluwensyahan ng Ang Buwan ang karera na may positibong pagbabago.",
+    "adviceEn": "Trust the journey with The Moon. Transformation leads to growth.",
+    "adviceZh": "相信月亮的旅程。转变带来成长。",
+    "adviceTl": "Magtiwala sa paglalakbay kasama si Ang Buwan. Ang transpormasyon ay nagdudulot ng paglago."
+  },
+  {
+    "id": 19,
+    "type": "major",
+    "number": 19,
+    "nameEn": "The Sun",
+    "nameZh": "太阳",
+    "nameTl": "Ang Araw",
+    "keywordsEn": [
+      "Joy",
+      "Success",
+      "Vitality"
+    ],
+    "keywordsZh": [
+      "喜悦",
+      "成功",
+      "活力"
+    ],
+    "keywordsTl": [
+      "Kagalakan",
+      "Tagumpay",
+      "Sigla"
+    ],
+    "meaningUprightEn": "The Sun represents transformation and growth. Embrace the energy of this card.",
+    "meaningUprightZh": "太阳代表转变与成长。拥抱这张卡的能量。",
+    "meaningUprightTl": "Si Ang Araw ay kumakatawan sa transpormasyon at paglago.",
+    "meaningReversedEn": "Reversed, The Sun suggests resistance to change or blocked energy.",
+    "meaningReversedZh": "逆位太阳暗示抗拒变化或被阻塞的能量。",
+    "meaningReversedTl": "Sa baligtad, si Ang Araw ay nagpapahiwatig ng paglaban sa pagbabago.",
+    "loveEn": "The Sun energy in love brings depth and transformation to relationships.",
+    "loveZh": "太阳在爱情中的能量为关系带来深度和转变。",
+    "loveTl": "Ang enerhiya ng Ang Araw sa pag-ibig ay nagdudulot ng lalim at transpormasyon.",
+    "careerEn": "The Sun influences career with positive change and new opportunities.",
+    "careerZh": "太阳影响事业，带来积极变化和新机遇。",
+    "careerTl": "Naiimpluwensyahan ng Ang Araw ang karera na may positibong pagbabago.",
+    "adviceEn": "Trust the journey with The Sun. Transformation leads to growth.",
+    "adviceZh": "相信太阳的旅程。转变带来成长。",
+    "adviceTl": "Magtiwala sa paglalakbay kasama si Ang Araw. Ang transpormasyon ay nagdudulot ng paglago."
+  },
+  {
+    "id": 20,
+    "type": "major",
+    "number": 20,
+    "nameEn": "Judgement",
+    "nameZh": "审判",
+    "nameTl": "Paghuhukom",
+    "keywordsEn": [
+      "Rebirth",
+      "Inner Calling",
+      "Absolution"
+    ],
+    "keywordsZh": [
+      "重生",
+      "内在召唤",
+      "宽恕"
+    ],
+    "keywordsTl": [
+      "Muling Pagsilang",
+      "Panloob na Tawag",
+      "Kapatawaran"
+    ],
+    "meaningUprightEn": "Judgement represents transformation and growth. Embrace the energy of this card.",
+    "meaningUprightZh": "审判代表转变与成长。拥抱这张卡的能量。",
+    "meaningUprightTl": "Si Paghuhukom ay kumakatawan sa transpormasyon at paglago.",
+    "meaningReversedEn": "Reversed, Judgement suggests resistance to change or blocked energy.",
+    "meaningReversedZh": "逆位审判暗示抗拒变化或被阻塞的能量。",
+    "meaningReversedTl": "Sa baligtad, si Paghuhukom ay nagpapahiwatig ng paglaban sa pagbabago.",
+    "loveEn": "Judgement energy in love brings depth and transformation to relationships.",
+    "loveZh": "审判在爱情中的能量为关系带来深度和转变。",
+    "loveTl": "Ang enerhiya ng Paghuhukom sa pag-ibig ay nagdudulot ng lalim at transpormasyon.",
+    "careerEn": "Judgement influences career with positive change and new opportunities.",
+    "careerZh": "审判影响事业，带来积极变化和新机遇。",
+    "careerTl": "Naiimpluwensyahan ng Paghuhukom ang karera na may positibong pagbabago.",
+    "adviceEn": "Trust the journey with Judgement. Transformation leads to growth.",
+    "adviceZh": "相信审判的旅程。转变带来成长。",
+    "adviceTl": "Magtiwala sa paglalakbay kasama si Paghuhukom. Ang transpormasyon ay nagdudulot ng paglago."
+  },
+  {
+    "id": 21,
+    "type": "major",
+    "number": 21,
+    "nameEn": "The World",
+    "nameZh": "世界",
+    "nameTl": "Ang Mundo",
+    "keywordsEn": [
+      "Completion",
+      "Achievement",
+      "Wholeness"
+    ],
+    "keywordsZh": [
+      "完成",
+      "成就",
+      "完整"
+    ],
+    "keywordsTl": [
+      "Pagkumpleto",
+      "Tagumpay",
+      "Kabuuan"
+    ],
+    "meaningUprightEn": "The World represents transformation and growth. Embrace the energy of this card.",
+    "meaningUprightZh": "世界代表转变与成长。拥抱这张卡的能量。",
+    "meaningUprightTl": "Si Ang Mundo ay kumakatawan sa transpormasyon at paglago.",
+    "meaningReversedEn": "Reversed, The World suggests resistance to change or blocked energy.",
+    "meaningReversedZh": "逆位世界暗示抗拒变化或被阻塞的能量。",
+    "meaningReversedTl": "Sa baligtad, si Ang Mundo ay nagpapahiwatig ng paglaban sa pagbabago.",
+    "loveEn": "The World energy in love brings depth and transformation to relationships.",
+    "loveZh": "世界在爱情中的能量为关系带来深度和转变。",
+    "loveTl": "Ang enerhiya ng Ang Mundo sa pag-ibig ay nagdudulot ng lalim at transpormasyon.",
+    "careerEn": "The World influences career with positive change and new opportunities.",
+    "careerZh": "世界影响事业，带来积极变化和新机遇。",
+    "careerTl": "Naiimpluwensyahan ng Ang Mundo ang karera na may positibong pagbabago.",
+    "adviceEn": "Trust the journey with The World. Transformation leads to growth.",
+    "adviceZh": "相信世界的旅程。转变带来成长。",
+    "adviceTl": "Magtiwala sa paglalakbay kasama si Ang Mundo. Ang transpormasyon ay nagdudulot ng paglago."
+  }
+]

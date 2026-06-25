@@ -1,0 +1,181 @@
+import '../../../../core/util/json_normalize.dart';
+
+/// Zodiac sign entity with multi-language content
+class ZodiacSign {
+  final String nameEn;
+  final String nameZh;
+  final String nameTl;
+  final String dates;
+  final String element;
+  final String elementZh;
+  final String ruler;
+  final String rulerZh;
+  final String luckyColor;
+  final String luckyColorZh;
+  final int luckyNumber;
+  final String personalityEn;
+  final String personalityZh;
+  final String personalityTl;
+  final String dailyEn;
+  final String dailyZh;
+  final String dailyTl;
+  final String weeklyEn;
+  final String weeklyZh;
+  final String weeklyTl;
+  final String monthlyEn;
+  final String monthlyZh;
+  final String monthlyTl;
+
+  const ZodiacSign({
+    required this.nameEn,
+    required this.nameZh,
+    required this.nameTl,
+    required this.dates,
+    required this.element,
+    required this.elementZh,
+    required this.ruler,
+    required this.rulerZh,
+    required this.luckyColor,
+    required this.luckyColorZh,
+    required this.luckyNumber,
+    required this.personalityEn,
+    required this.personalityZh,
+    required this.personalityTl,
+    required this.dailyEn,
+    required this.dailyZh,
+    required this.dailyTl,
+    required this.weeklyEn,
+    required this.weeklyZh,
+    required this.weeklyTl,
+    required this.monthlyEn,
+    required this.monthlyZh,
+    required this.monthlyTl,
+  });
+
+  String localizedName(String locale) {
+    switch (locale) {
+      case 'zh': return nameZh;
+      case 'tl': return nameTl;
+      default: return nameEn;
+    }
+  }
+
+  String localizedElement(String locale) {
+    switch (locale) {
+      case 'zh': return elementZh;
+      default: return element;
+    }
+  }
+
+  String localizedPersonality(String locale) {
+    switch (locale) {
+      case 'zh': return personalityZh;
+      case 'tl': return personalityTl;
+      default: return personalityEn;
+    }
+  }
+
+  String localizedDaily(String locale) {
+    switch (locale) {
+      case 'zh': return dailyZh;
+      case 'tl': return dailyTl;
+      default: return dailyEn;
+    }
+  }
+
+  String localizedWeekly(String locale) {
+    switch (locale) {
+      case 'zh': return weeklyZh;
+      case 'tl': return weeklyTl;
+      default: return weeklyEn;
+    }
+  }
+
+  String localizedMonthly(String locale) {
+    switch (locale) {
+      case 'zh': return monthlyZh;
+      case 'tl': return monthlyTl;
+      default: return monthlyEn;
+    }
+  }
+
+  /// Accepts any Map-like input (including Hive's dynamic-keyed read-back);
+  /// see docs/bug-log.md entry 004.
+  factory ZodiacSign.fromJson(dynamic raw) {
+    final json = normalizeJsonMap(raw);
+    return ZodiacSign(
+      nameEn: json['nameEn'] as String? ?? '',
+      nameZh: json['nameZh'] as String? ?? '',
+      nameTl: json['nameTl'] as String? ?? '',
+      dates: json['dates'] as String? ?? '',
+      element: json['element'] as String? ?? '',
+      elementZh: json['elementZh'] as String? ?? '',
+      ruler: json['ruler'] as String? ?? '',
+      rulerZh: json['rulerZh'] as String? ?? '',
+      luckyColor: json['luckyColor'] as String? ?? '',
+      luckyColorZh: json['luckyColorZh'] as String? ?? '',
+      luckyNumber: json['luckyNumber'] as int? ?? 0,
+      personalityEn: json['personalityEn'] as String? ?? '',
+      personalityZh: json['personalityZh'] as String? ?? '',
+      personalityTl: json['personalityTl'] as String? ?? '',
+      dailyEn: json['dailyEn'] as String? ?? '',
+      dailyZh: json['dailyZh'] as String? ?? '',
+      dailyTl: json['dailyTl'] as String? ?? '',
+      weeklyEn: json['weeklyEn'] as String? ?? '',
+      weeklyZh: json['weeklyZh'] as String? ?? '',
+      weeklyTl: json['weeklyTl'] as String? ?? '',
+      monthlyEn: json['monthlyEn'] as String? ?? '',
+      monthlyZh: json['monthlyZh'] as String? ?? '',
+      monthlyTl: json['monthlyTl'] as String? ?? '',
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ZodiacSign &&
+          runtimeType == other.runtimeType &&
+          nameEn == other.nameEn &&
+          nameZh == other.nameZh &&
+          nameTl == other.nameTl &&
+          dates == other.dates &&
+          element == other.element &&
+          elementZh == other.elementZh &&
+          ruler == other.ruler &&
+          rulerZh == other.rulerZh &&
+          luckyColor == other.luckyColor &&
+          luckyColorZh == other.luckyColorZh &&
+          luckyNumber == other.luckyNumber &&
+          personalityEn == other.personalityEn &&
+          personalityZh == other.personalityZh &&
+          personalityTl == other.personalityTl &&
+          dailyEn == other.dailyEn &&
+          dailyZh == other.dailyZh &&
+          dailyTl == other.dailyTl &&
+          weeklyEn == other.weeklyEn &&
+          weeklyZh == other.weeklyZh &&
+          weeklyTl == other.weeklyTl &&
+          monthlyEn == other.monthlyEn &&
+          monthlyZh == other.monthlyZh &&
+          monthlyTl == other.monthlyTl;
+
+  @override
+  int get hashCode {
+    // Object.hash accepts up to 20 positional args; precompute sub-hashes
+    // so the 3-tuples each collapse into one slot.
+    final monthly = Object.hash(monthlyEn, monthlyZh, monthlyTl);
+    final weekAndMonthly = Object.hash(
+      Object.hash(weeklyEn, weeklyZh, weeklyTl),
+      monthly,
+    );
+    return Object.hash(
+      nameEn, nameZh, nameTl,
+      dates, element, elementZh,
+      ruler, rulerZh,
+      luckyColor, luckyColorZh, luckyNumber,
+      personalityEn, personalityZh, personalityTl,
+      dailyEn, dailyZh, dailyTl,
+      weekAndMonthly,
+    );
+  }
+}

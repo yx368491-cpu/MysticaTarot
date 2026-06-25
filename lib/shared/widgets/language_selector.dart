@@ -20,9 +20,9 @@ class LanguageSelector extends StatelessWidget {
       children: [
         for (final locale in ['en', 'zh', 'tl']) ...[
           if (locale != 'en')
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4),
-              child: Text('|', style: TextStyle(color: AppColors.textSecondary)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Text('|', style: TextStyle(color: AppColors.secondaryText(context))),
             ),
           GestureDetector(
             onTap: () => onLocaleChanged(locale),
@@ -42,7 +42,7 @@ class LanguageSelector extends StatelessWidget {
                       currentLocale == locale ? FontWeight.w600 : FontWeight.normal,
                   color: currentLocale == locale
                       ? AppColors.rosePink
-                      : AppColors.textSecondary,
+                      : AppColors.secondaryText(context),
                 ),
               ),
             ),

@@ -18,25 +18,25 @@ class SoundUtils {
   /// Play shuffle sound
   static Future<void> playShuffle() async {
     if (!_enabled) return;
-    await _play('sounds/shuffle.mp3');
+    await _play('sounds/shuffle.wav');
   }
 
   /// Play flip card sound
   static Future<void> playFlip() async {
     if (!_enabled) return;
-    await _play('sounds/flip.mp3');
+    await _play('sounds/flip.wav');
   }
 
   /// Play fan card sound
   static Future<void> playFan() async {
     if (!_enabled) return;
-    await _play('sounds/fan.mp3');
+    await _play('sounds/fan.wav');
   }
 
   /// Play reveal sound
   static Future<void> playReveal() async {
     if (!_enabled) return;
-    await _play('sounds/reveal.mp3');
+    await _play('sounds/reveal.wav');
   }
 
   /// Play a sound from assets

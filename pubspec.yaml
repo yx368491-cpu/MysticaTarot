@@ -2,7 +2,7 @@ name: mystica_tarot
 description: "MysticaTarot — 占卜塔罗牌 Android APP，支持英语 / 他加禄语 / 中文"
 publish_to: 'none'
 
-version: 0.1.0+1
+version: 1.0.0+1
 
 environment:
   sdk: ^3.12.2
@@ -30,7 +30,11 @@ dependencies:
     sdk: flutter
 
   # Share
-  share_plus: ^9.0.0
+  # ^11.0.0 最低版本已不再 apply KGP（Kotlin Gradle Plugin），
+  # 适配 AGP 8.7+ / Kotlin 2.0+ 且消除 Flutter "outdated: applies KGP" 警告。
+  # ^9.0.0 在新版 Daemon 下会触发 flutter_tools 的兼容性警告并可能影响后续编译路径。
+  # 详见 docs/bug-log.md Bug #005。
+  share_plus: ^11.0.0
 
   # The following adds the Cupertino Icons font to your application.
   cupertino_icons: ^1.0.8
@@ -60,5 +64,17 @@ flutter:
     - assets/images/onboarding/
     - assets/sounds/
     - resources/l10n/
+    - lib/features/tarot/data/json/
+    - lib/features/astrology/data/json/
+    - lib/features/fortune_slip/data/json/
+    - lib/features/oracle_cards/data/json/
 
-  # fonts: (to be added after downloading PlayfairDisplay and NotoSerifSC)
+  fonts:
+    - family: PlayfairDisplay
+      fonts:
+        - asset: assets/fonts/PlayfairDisplay-Regular.ttf
+        - asset: assets/fonts/PlayfairDisplay-Italic.ttf
+          style: italic
+    - family: NotoSerifSC
+      fonts:
+        - asset: assets/fonts/NotoSerifSC-Variable.ttf

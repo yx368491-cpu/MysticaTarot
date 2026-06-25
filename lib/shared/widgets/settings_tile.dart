@@ -34,8 +34,7 @@ class SettingsTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(icon, color: color, size: 22),
-      ),
-      title: Text(
+      ),        title: Text(
         title,
         style: const TextStyle(
           fontSize: 16,
@@ -45,9 +44,9 @@ class SettingsTile extends StatelessWidget {
       subtitle: subtitle != null
           ? Text(
               subtitle!,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
-                color: AppColors.textSecondary,
+                color: AppColors.secondaryText(context),
               ),
             )
           : null,

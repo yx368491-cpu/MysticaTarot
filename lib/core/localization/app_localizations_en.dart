@@ -35,6 +35,7 @@ class AppLocalizationsEn {
     'tarotTitle': 'Tarot Reading',
     'selectSpread': 'Select Spread',
     'startReading': 'Start Reading',
+    'sectionMeaning': 'Meaning',
     'shuffling': 'Shuffling…',
     'cardMeaning': 'Card Meaning',
     'upright': 'Upright',
@@ -112,6 +113,36 @@ class AppLocalizationsEn {
         'MysticaTarot is a free offline tarot and divination app.',
     'aboutDisclaimer':
         'For entertainment purposes only. Tarot readings are not a substitute for professional advice.',
+
+    // About page
+    'aboutTitle': 'About MysticaTarot',
+    'aboutTagline': 'Discover your destiny',
+    'aboutHero': 'A mystical companion for tarot, astrology, numerology, fortune slips and oracle guidance — all in your pocket.',
+    'aboutSectionFeatures': 'Features',
+    'aboutFeatureList':
+        '• 78-card Tarot with 6 spreads\n'
+        '• 12-sign Astrology with daily / weekly / monthly horoscopes\n'
+        '• Numerology (life path + destiny numbers)\n'
+        '• Fortune Slip with six blessing tiers\n'
+        '• Oracle Cards (40 inspirational messages)\n'
+        '• Daily Card with date-seeded deterministic draw',
+    'aboutSectionArt': 'Card Artwork',
+    'aboutArtAttribution':
+        'Tarot card illustrations are from the public-domain RWS Tarot (Geldard edition), hosted on Wikimedia Commons.',
+    'aboutSectionPrivacy': 'Privacy',
+    'aboutPrivacyBody':
+        'MysticaTarot runs fully offline. No accounts, no analytics, no telemetry. Your reading history and settings stay on this device.',
+    'aboutSectionOpenSource': 'Open Source Acknowledgements',
+    'aboutOpenSourceIntro':
+        'This app is built with the generous work of the open-source community:',
+    'aboutSectionLicense': 'License',
+    'aboutLicenseBody':
+        'MysticaTarot source code is released under the MIT License. Tap to view the full license text.',
+    'aboutSectionDisclaimer': 'Disclaimer',
+    'aboutDisclaimerBody':
+        'MysticaTarot is intended for entertainment and personal reflection only. Tarot, astrology, numerology and fortune slips are not substitutes for professional medical, legal, financial or psychological advice.',
+    'aboutLinkWikimedia': 'Wikimedia Commons',
+    'aboutLinkLicense': 'MIT License full text',
 
     // Onboarding
     'onboardingWelcome': 'Welcome to\nMysticaTarot',
