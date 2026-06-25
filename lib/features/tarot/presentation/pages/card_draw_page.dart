@@ -54,14 +54,19 @@ class _CardDrawPageState extends State<CardDrawPage> {
     if (_currentRevealIndex + 1 < _flipKeys.length) {
       _isRevealing = true;
       setState(() => _currentRevealIndex++);
+      // Capture provider pre-async to satisfy use_build_context_synchronously:
+      // the lint forbids `context.read` after an async gap even if guarded
+      // by `context.mounted`. `State.mounted` (used below) is fine because
+      // it does not read BuildContext.
+      final provider = context.read<TarotProvider>();
       Future.delayed(const Duration(milliseconds: 300), () {
-        if (context.mounted) {
+        if (mounted) {
           SoundUtils.playReveal();
           // Update provider state — this triggers a rebuild, which causes
           // CardFlipAnimation.didUpdateWidget to detect isFlipped true
           // and start the 3D flip animation. When animation completes,
           // onFlipComplete chains to the next card.
-          context.read<TarotProvider>().revealCard(_currentRevealIndex);
+          provider.revealCard(_currentRevealIndex);
         }
         _isRevealing = false;
       });
@@ -79,15 +84,21 @@ class _CardDrawPageState extends State<CardDrawPage> {
       provider.revealAllCards();
     }
 
+    // Capture Navigator pre-await so the post-await push holds a
+    // NavigatorState (no BuildContext). The lint `use_build_context_synchronously`
+    // marks `context.mounted` as an "unrelated guard" because it tracks
+    // BuildContext use, not State.mounted; capturing Navigator.of(context)
+    // pre-await is the canonical fix.
+    final navigator = Navigator.of(context);
+
     // Persist the completed reading to history (Bug fix: no caller was ever
     // invoking addRecord, so the History page was always empty after a
     // Tarot draw). Guarded by `_hasSavedToHistory` because the user can
     // navigate back from ReadingResultPage and re-tap "View Full Reading".
     await _persistReading(provider);
 
-    if (!context.mounted) return;
-    Navigator.push(
-      context,
+    if (!mounted) return;
+    navigator.push(
       MaterialPageRoute(builder: (_) => const ReadingResultPage()),
     );
   }
@@ -98,14 +109,19 @@ class _CardDrawPageState extends State<CardDrawPage> {
     if (_isCompleting) return;
     _isCompleting = true;
 
+    // Capture Navigator pre-await so the post-await pop holds a
+    // NavigatorState (no BuildContext). See `_goToResults` for the rationale
+    // on why `context.mounted` is flagged as an "unrelated guard" here.
+    final navigator = Navigator.of(context);
+
     // If the reading was fully revealed but the user closed before tapping
     // "View Full Reading", still persist so the history matches their intent.
     if (provider.drawnCards.isNotEmpty && provider.allRevealed) {
       await _persistReading(provider);
     }
-    if (!context.mounted) return;
+    if (!mounted) return;
     provider.reset();
-    Navigator.pop(context);
+    navigator.pop();
   }
 
   Future<void> _persistReading(TarotProvider provider) async {
