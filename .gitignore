@@ -45,6 +45,11 @@ app.*.map.json
 
 # Do NOT ignore docs/*.log - dev logs and bug logs need version control
 
+# DevTools profile traces are date-stamped build artifacts, not source.
+# Contributors dump `flutter run --profile` timeline JSONs here locally
+# (see docs/phase7-startup-checklist.md) — keep them out of the repo.
+docs/profile-traces/
+
 # Sensitive files
 Github API.txt
 install-skills-spec.md
